@@ -27,7 +27,7 @@ namespace Examine.Lucene.Indexing
             if (!TryConvert(value, out DateTime parsedVal))
                 return;
 
-            var val = DateToLong(parsedVal);
+            long val = DateToLong(parsedVal);
 
             doc.Add(new Int64Field(FieldName,val, Store ? Field.Store.YES : Field.Store.NO));;
         }

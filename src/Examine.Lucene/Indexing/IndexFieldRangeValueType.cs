@@ -14,8 +14,8 @@ namespace Examine.Lucene.Indexing
 
         public Query GetQuery(string lower, string upper, bool lowerInclusive = true, bool upperInclusive = true)
         {
-            var lowerParsed = TryConvert<T>(lower, out var lowerValue);
-            var upperParsed = TryConvert<T>(upper, out var upperValue);
+            bool lowerParsed = TryConvert<T>(lower, out T lowerValue);
+            bool upperParsed = TryConvert<T>(upper, out T upperValue);
 
             return GetQuery(lowerParsed ? (T?)lowerValue : null, upperParsed ? (T?)upperValue : null, lowerInclusive, upperInclusive);
         }

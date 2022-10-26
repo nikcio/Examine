@@ -19,22 +19,22 @@ namespace Examine.Web.Demo.Data
 
         public void RebuildIndex(string indexName, int dataSize)
         {
-            var index = GetIndex(indexName);
+            IIndex index = GetIndex(indexName);
 
             index.CreateIndex();
 
-            var data = _bogusDataService.GenerateData(dataSize);
+            IEnumerable<ValueSet> data = _bogusDataService.GenerateData(dataSize);
 
             index.IndexItems(data);
         }
 
         public IndexInformation GetIndexInformation(string indexName)
         {
-            var index = GetIndex(indexName);
+            IIndex index = GetIndex(indexName);
 
             if (index is IIndexStats indexStats)
             {
-                var fields = indexStats.GetFieldNames();
+                IEnumerable<string> fields = indexStats.GetFieldNames();
                 return new IndexInformation(
                     indexStats.GetDocumentCount(),
                     fields.ToList());
@@ -47,9 +47,9 @@ namespace Examine.Web.Demo.Data
 
         public void AddToIndex(string indexName, int dataSize)
         {
-            var index = GetIndex(indexName);
+            IIndex index = GetIndex(indexName);
 
-            var data = _bogusDataService.GenerateData(dataSize);
+            IEnumerable<ValueSet> data = _bogusDataService.GenerateData(dataSize);
 
             index.IndexItems(data);
         }
@@ -61,37 +61,37 @@ namespace Examine.Web.Demo.Data
 
         public ISearchResults SearchNativeQuery(string indexName, string query)
         {
-            var index = GetIndex(indexName);
+            IIndex index = GetIndex(indexName);
 
-            var searcher = index.Searcher;
-            var criteria = searcher.CreateQuery();
+            ISearcher searcher = index.Searcher;
+            IQuery criteria = searcher.CreateQuery();
             return criteria.NativeQuery(query).Execute();
         }
 
         public ISearchResults SearchNativeQueryAcrossIndexes(string query)
         {
-            if (!_examineManager.TryGetSearcher("MultiIndexSearcher", out var multiIndexSearcher))
+            if (!_examineManager.TryGetSearcher("MultiIndexSearcher", out ISearcher? multiIndexSearcher))
             {
                 throw new InvalidOperationException("Failed to get MultiIndexSearcher");
             }
 
-            var searcher = multiIndexSearcher;
-            var criteria = searcher.CreateQuery();
+            ISearcher searcher = multiIndexSearcher;
+            IQuery criteria = searcher.CreateQuery();
             return criteria.NativeQuery(query).Execute();
         }
 
         public ISearchResults GetAllIndexedItems(string indexName, int skip, int take)
         {
-            var index = GetIndex(indexName);
+            IIndex index = GetIndex(indexName);
 
-            var searcher = index.Searcher;
-            var criteria = searcher.CreateQuery();
+            ISearcher searcher = index.Searcher;
+            IQuery criteria = searcher.CreateQuery();
             return criteria.All().Execute(QueryOptions.SkipTake(skip, take));
         }
 
         private IIndex GetIndex(string indexName)
         {
-            if (!_examineManager.TryGetIndex(indexName, out var index))
+            if (!_examineManager.TryGetIndex(indexName, out IIndex? index))
             {
                 throw new ArgumentException($"Index '{indexName}' not found");
             }

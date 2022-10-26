@@ -26,9 +26,9 @@ namespace Examine
         {
             if (definitions == null) return;
 
-            foreach (var f in definitions.GroupBy(x => x.Name))
+            foreach (IGrouping<string, FieldDefinition> f in definitions.GroupBy(x => x.Name))
             {
-                var indexField = f.FirstOrDefault();
+                FieldDefinition indexField = f.FirstOrDefault();
                 if (indexField != default)
                 {
                     Definitions.TryAdd(f.Key, indexField);

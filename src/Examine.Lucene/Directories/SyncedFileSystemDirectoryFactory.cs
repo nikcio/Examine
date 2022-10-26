@@ -39,7 +39,7 @@ namespace Examine.Lucene.Directories
 
         protected override Directory CreateDirectory(LuceneIndex luceneIndex, bool forceUnlock)
         {
-            var path = Path.Combine(_localDir.FullName, luceneIndex.Name);
+            string path = Path.Combine(_localDir.FullName, luceneIndex.Name);
             var localLuceneIndexFolder = new DirectoryInfo(path);
 
             Directory mainDir = base.CreateDirectory(luceneIndex, forceUnlock);

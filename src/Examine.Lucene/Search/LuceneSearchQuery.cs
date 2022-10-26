@@ -106,7 +106,7 @@ namespace Examine.Lucene.Search
                 //if no fields are specified then use all fields
                 fields = fields ?? AllFields;
 
-                var types = fields.Select(f => _searchContext.GetFieldValueType(f)).Where(t => t != null);
+                IEnumerable<IIndexFieldValueType> types = fields.Select(f => _searchContext.GetFieldValueType(f)).Where(t => t != null);
 
                 //Strangely we need an inner and outer query. If we don't do this then the lucene syntax returned is incorrect 
                 //since it doesn't wrap in parenthesis properly. I'm unsure if this is a lucene issue (assume so) since that is what
@@ -115,9 +115,9 @@ namespace Examine.Lucene.Search
                 var outer = new BooleanQuery();
                 var inner = new BooleanQuery();
 
-                foreach (var type in types)
+                foreach (IIndexFieldValueType type in types)
                 {
-                    var q = type.GetQuery(query);
+                    Query q = type.GetQuery(query);
 
                     if (q != null)
                     {
@@ -146,13 +146,13 @@ namespace Examine.Lucene.Search
                 var outer = new BooleanQuery();
                 var inner = new BooleanQuery();
 
-                foreach (var f in fields)
+                foreach (string f in fields)
                 {
-                    var valueType = _searchContext.GetFieldValueType(f);
+                    IIndexFieldValueType valueType = _searchContext.GetFieldValueType(f);
 
                     if (valueType is IIndexRangeValueType<T> type)
                     {
-                        var q = type.GetQuery(min, max, minInclusive, maxInclusive);
+                        Query q = type.GetQuery(min, max, minInclusive, maxInclusive);
 
                         if (q != null)
                         {
@@ -183,7 +183,7 @@ namespace Examine.Lucene.Search
         private ISearchResults Search(QueryOptions options)
         {
             // capture local
-            var query = Query;
+            BooleanQuery query = Query;
 
             if (!string.IsNullOrEmpty(Category))
             {
@@ -204,7 +204,7 @@ namespace Examine.Lucene.Search
                 };
 
                 // add the ones that we're already existing
-                foreach (var c in existingClauses)
+                foreach (BooleanClause c in existingClauses)
                 {
                     query.Add(c);
                 }
@@ -212,7 +212,7 @@ namespace Examine.Lucene.Search
 
             var executor = new LuceneSearchExecutor(options, query, SortFields, _searchContext, _fieldsToLoad);
 
-            var pagesResults = executor.Execute();
+            ISearchResults pagesResults = executor.Execute();
 
             return pagesResults;
         }        
@@ -227,11 +227,11 @@ namespace Examine.Lucene.Search
         {
             if (fields == null) throw new ArgumentNullException(nameof(fields));
 
-            foreach (var f in fields)
+            foreach (SortableField f in fields)
             {
-                var fieldName = f.FieldName;
+                string fieldName = f.FieldName;
 
-                var defaultSort =  SortFieldType.STRING;
+                SortFieldType defaultSort =  SortFieldType.STRING;
 
                 switch (f.SortType)
                 {
@@ -261,7 +261,7 @@ namespace Examine.Lucene.Search
                 }
 
                 //get the sortable field name if this field type has one
-                var valType = _searchContext.GetFieldValueType(fieldName);
+                IIndexFieldValueType valType = _searchContext.GetFieldValueType(fieldName);
 
                 if (valType?.SortableFieldName != null)
                     fieldName = valType.SortableFieldName;

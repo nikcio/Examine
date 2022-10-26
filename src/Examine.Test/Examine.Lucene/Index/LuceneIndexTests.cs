@@ -33,9 +33,9 @@ namespace Examine.Test.Examine.Lucene.Index
         {
             using (var d = new RandomIdRAMDirectory())
             using (var writer = new IndexWriter(d, new IndexWriterConfig(LuceneInfo.CurrentVersion, new CultureInvariantStandardAnalyzer())))
-            using (var indexer = GetTestIndex(writer))
+            using (TestIndex indexer = GetTestIndex(writer))
             {
-                var callCount = 0;
+                int callCount = 0;
                 var waitHandle = new ManualResetEvent(false);
 
                 void OperationComplete(object sender, IndexOperationEventArgs e)
@@ -70,9 +70,9 @@ namespace Examine.Test.Examine.Lucene.Index
         {
             using (var d = new RandomIdRAMDirectory())
             using (var writer = new IndexWriter(d, new IndexWriterConfig(LuceneInfo.CurrentVersion, new CultureInvariantStandardAnalyzer())))
-            using (var indexer = GetTestIndex(writer))
+            using (TestIndex indexer = GetTestIndex(writer))
             {
-                var callCount = 0;
+                int callCount = 0;
                 var waitHandle = new ManualResetEvent(false);
 
                 void OperationComplete(object sender, IndexOperationEventArgs e)
@@ -117,7 +117,7 @@ namespace Examine.Test.Examine.Lucene.Index
             {
                 Assert.IsFalse(IndexWriter.IsLocked(luceneDir));
 
-                using (var indexer = GetTestIndex(luceneDir, new StandardAnalyzer(LuceneInfo.CurrentVersion)))
+                using (TestIndex indexer = GetTestIndex(luceneDir, new StandardAnalyzer(LuceneInfo.CurrentVersion)))
                 {
                     indexer.CreateIndex();
                     indexer.IndexItems(indexer.AllData());
@@ -134,13 +134,13 @@ namespace Examine.Test.Examine.Lucene.Index
         public void Rebuild_Index()
         {
             using (var d = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(d, new StandardAnalyzer(LuceneInfo.CurrentVersion)))
+            using (TestIndex indexer = GetTestIndex(d, new StandardAnalyzer(LuceneInfo.CurrentVersion)))
             {
                 indexer.CreateIndex();
                 indexer.IndexItems(indexer.AllData());
 
-                var indexWriter = indexer.IndexWriter;
-                var reader = indexWriter.IndexWriter.GetReader(true);
+                TrackingIndexWriter indexWriter = indexer.IndexWriter;
+                DirectoryReader reader = indexWriter.IndexWriter.GetReader(true);
                 Assert.AreEqual(100, reader.NumDocs);
             }
         }
@@ -150,7 +150,7 @@ namespace Examine.Test.Examine.Lucene.Index
         public void Index_Exists()
         {
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, new StandardAnalyzer(LuceneInfo.CurrentVersion)))
+            using (TestIndex indexer = GetTestIndex(luceneDir, new StandardAnalyzer(LuceneInfo.CurrentVersion)))
             {
                 indexer.EnsureIndex(true);
                 Assert.IsTrue(indexer.IndexExists());
@@ -161,7 +161,7 @@ namespace Examine.Test.Examine.Lucene.Index
         public void Can_Add_One_Document()
         {
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, new StandardAnalyzer(LuceneInfo.CurrentVersion)))
+            using (TestIndex indexer = GetTestIndex(luceneDir, new StandardAnalyzer(LuceneInfo.CurrentVersion)))
             {
 
 
@@ -172,8 +172,8 @@ namespace Examine.Test.Examine.Lucene.Index
                         {"item2", new List<object>(new[] {"value2"})}
                     }));
 
-                var indexWriter = indexer.IndexWriter;
-                var reader = indexWriter.IndexWriter.GetReader(true);
+                TrackingIndexWriter indexWriter = indexer.IndexWriter;
+                DirectoryReader reader = indexWriter.IndexWriter.GetReader(true);
                 Assert.AreEqual(1, reader.NumDocs);
             }
         }
@@ -182,7 +182,7 @@ namespace Examine.Test.Examine.Lucene.Index
         public void Can_Add_Same_Document_Twice_Without_Duplication()
         {
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, new StandardAnalyzer(LuceneInfo.CurrentVersion)))
+            using (TestIndex indexer = GetTestIndex(luceneDir, new StandardAnalyzer(LuceneInfo.CurrentVersion)))
             {
 
 
@@ -196,8 +196,8 @@ namespace Examine.Test.Examine.Lucene.Index
                 indexer.IndexItem(value);
                 indexer.IndexItem(value);
 
-                var indexWriter = indexer.IndexWriter;
-                var reader = indexWriter.IndexWriter.GetReader(true);
+                TrackingIndexWriter indexWriter = indexer.IndexWriter;
+                DirectoryReader reader = indexWriter.IndexWriter.GetReader(true);
                 Assert.AreEqual(1, reader.NumDocs);
             }
         }
@@ -206,11 +206,11 @@ namespace Examine.Test.Examine.Lucene.Index
         public void Can_Add_Multiple_Docs()
         {
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, new StandardAnalyzer(LuceneInfo.CurrentVersion)))
+            using (TestIndex indexer = GetTestIndex(luceneDir, new StandardAnalyzer(LuceneInfo.CurrentVersion)))
             {
 
 
-                for (var i = 0; i < 10; i++)
+                for (int i = 0; i < 10; i++)
                 {
                     indexer.IndexItem(new ValueSet(i.ToString(), "content",
                         new Dictionary<string, IEnumerable<object>>
@@ -220,8 +220,8 @@ namespace Examine.Test.Examine.Lucene.Index
                         }));
                 }
 
-                var indexWriter = indexer.IndexWriter;
-                var reader = indexWriter.IndexWriter.GetReader(true);
+                TrackingIndexWriter indexWriter = indexer.IndexWriter;
+                DirectoryReader reader = indexWriter.IndexWriter.GetReader(true);
                 Assert.AreEqual(10, reader.NumDocs);
             }
         }
@@ -230,9 +230,9 @@ namespace Examine.Test.Examine.Lucene.Index
         public void Can_Delete()
         {
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, new StandardAnalyzer(LuceneInfo.CurrentVersion)))
+            using (TestIndex indexer = GetTestIndex(luceneDir, new StandardAnalyzer(LuceneInfo.CurrentVersion)))
             {
-                for (var i = 0; i < 10; i++)
+                for (int i = 0; i < 10; i++)
                 {
                     indexer.IndexItem(new ValueSet(i.ToString(), "content",
                         new Dictionary<string, IEnumerable<object>>
@@ -242,7 +242,7 @@ namespace Examine.Test.Examine.Lucene.Index
                         }));
                 }
 
-                var found = indexer.Searcher.CreateQuery().Id("9").Execute();
+                ISearchResults found = indexer.Searcher.CreateQuery().Id("9").Execute();
                 Assert.AreEqual(1, found.TotalItemCount);
 
                 indexer.DeleteFromIndex("9");
@@ -250,8 +250,8 @@ namespace Examine.Test.Examine.Lucene.Index
                 found = indexer.Searcher.CreateQuery().Id("9").Execute();
                 Assert.AreEqual(0, found.TotalItemCount);
 
-                var indexWriter = indexer.IndexWriter;
-                using (var reader = indexWriter.IndexWriter.GetReader(true))
+                TrackingIndexWriter indexWriter = indexer.IndexWriter;
+                using (DirectoryReader reader = indexWriter.IndexWriter.GetReader(true))
                 {
                     Assert.AreEqual(9, reader.NumDocs);
                 }
@@ -263,7 +263,7 @@ namespace Examine.Test.Examine.Lucene.Index
         public void Can_Add_Doc_With_Fields()
         {
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, new StandardAnalyzer(LuceneInfo.CurrentVersion)))
+            using (TestIndex indexer = GetTestIndex(luceneDir, new StandardAnalyzer(LuceneInfo.CurrentVersion)))
             {
 
 
@@ -275,12 +275,12 @@ namespace Examine.Test.Examine.Lucene.Index
                     }));
 
                 var s = (LuceneSearcher)indexer.Searcher;
-                var searchContext = s.GetSearchContext();
-                using (var searchRef = searchContext.GetSearcher())
+                global::Examine.Lucene.Search.ISearchContext searchContext = s.GetSearchContext();
+                using (global::Examine.Lucene.Search.ISearcherReference searchRef = searchContext.GetSearcher())
                 {
-                    var luceneSearcher = searchRef.IndexSearcher;
+                    global::Lucene.Net.Search.IndexSearcher luceneSearcher = searchRef.IndexSearcher;
 
-                    var fields = luceneSearcher.Doc(0).Fields.ToArray();
+                    IIndexableField[] fields = luceneSearcher.Doc(0).Fields.ToArray();
 
                     Assert.IsNotNull(fields.SingleOrDefault(x => x.Name == "item1"));
                     Assert.IsNotNull(fields.SingleOrDefault(x => x.Name == "item2"));
@@ -301,7 +301,7 @@ namespace Examine.Test.Examine.Lucene.Index
         public void Can_Add_Doc_With_Easy_Fields()
         {
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, new StandardAnalyzer(LuceneInfo.CurrentVersion)))
+            using (TestIndex indexer = GetTestIndex(luceneDir, new StandardAnalyzer(LuceneInfo.CurrentVersion)))
             {
 
 
@@ -309,11 +309,11 @@ namespace Examine.Test.Examine.Lucene.Index
                     new { item1 = "value1", item2 = "value2" }));
 
                 var s = (LuceneSearcher)indexer.Searcher;
-                var searchContext = s.GetSearchContext();
-                using (var searchRef = searchContext.GetSearcher())
+                global::Examine.Lucene.Search.ISearchContext searchContext = s.GetSearchContext();
+                using (global::Examine.Lucene.Search.ISearcherReference searchRef = searchContext.GetSearcher())
                 {
-                    var luceneSearcher = searchRef.IndexSearcher;
-                    var fields = luceneSearcher.Doc(0).Fields.ToArray();
+                    global::Lucene.Net.Search.IndexSearcher luceneSearcher = searchRef.IndexSearcher;
+                    IIndexableField[] fields = luceneSearcher.Doc(0).Fields.ToArray();
                     Assert.IsNotNull(fields.SingleOrDefault(x => x.Name == "item1"));
                     Assert.IsNotNull(fields.SingleOrDefault(x => x.Name == "item2"));
                     Assert.AreEqual("value1", fields.Single(x => x.Name == "item1").GetStringValue());
@@ -344,7 +344,7 @@ namespace Examine.Test.Examine.Lucene.Index
             }
 
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, new StandardAnalyzer(LuceneInfo.CurrentVersion)))
+            using (TestIndex indexer = GetTestIndex(luceneDir, new StandardAnalyzer(LuceneInfo.CurrentVersion)))
             {
 
                 indexer.TransformingIndexValues += (sender, e) => AddData(sender, e, "newItem1", "value1");
@@ -354,11 +354,11 @@ namespace Examine.Test.Examine.Lucene.Index
                     new { item1 = "value1" }));
 
                 var s = (LuceneSearcher)indexer.Searcher;
-                var searchContext = s.GetSearchContext();
-                using (var searchRef = searchContext.GetSearcher())
+                global::Examine.Lucene.Search.ISearchContext searchContext = s.GetSearchContext();
+                using (global::Examine.Lucene.Search.ISearcherReference searchRef = searchContext.GetSearcher())
                 {
-                    var luceneSearcher = searchRef.IndexSearcher;
-                    var fields = luceneSearcher.Doc(0).Fields.ToArray();
+                    global::Lucene.Net.Search.IndexSearcher luceneSearcher = searchRef.IndexSearcher;
+                    IIndexableField[] fields = luceneSearcher.Doc(0).Fields.ToArray();
                     Assert.IsNull(fields.SingleOrDefault(x => x.Name == "item1"));
                     Assert.AreEqual("value1", fields.Single(x => x.Name == "newItem1").GetStringValue());
                 }
@@ -372,7 +372,7 @@ namespace Examine.Test.Examine.Lucene.Index
         public void Can_Have_Multiple_Values_In_Fields()
         {
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, new StandardAnalyzer(LuceneInfo.CurrentVersion)))
+            using (TestIndex indexer = GetTestIndex(luceneDir, new StandardAnalyzer(LuceneInfo.CurrentVersion)))
             {
 
 
@@ -388,11 +388,11 @@ namespace Examine.Test.Examine.Lucene.Index
                     }));
 
                 var s = (LuceneSearcher)indexer.Searcher;
-                var searchContext = s.GetSearchContext();
-                using (var searchRef = searchContext.GetSearcher())
+                global::Examine.Lucene.Search.ISearchContext searchContext = s.GetSearchContext();
+                using (global::Examine.Lucene.Search.ISearcherReference searchRef = searchContext.GetSearcher())
                 {
-                    var luceneSearcher = searchRef.IndexSearcher;
-                    var fields = luceneSearcher.Doc(0).Fields.ToArray();
+                    global::Lucene.Net.Search.IndexSearcher luceneSearcher = searchRef.IndexSearcher;
+                    IIndexableField[] fields = luceneSearcher.Doc(0).Fields.ToArray();
                     ;
                     Assert.AreEqual(2, fields.Count(x => x.Name == "item1"));
                     Assert.AreEqual(3, fields.Count(x => x.Name == "item2"));
@@ -411,7 +411,7 @@ namespace Examine.Test.Examine.Lucene.Index
         public void Can_Update_Document()
         {
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, new StandardAnalyzer(LuceneInfo.CurrentVersion)))
+            using (TestIndex indexer = GetTestIndex(luceneDir, new StandardAnalyzer(LuceneInfo.CurrentVersion)))
             {
 
 
@@ -422,11 +422,11 @@ namespace Examine.Test.Examine.Lucene.Index
                     new { item1 = "value3", item2 = "value4" }));
 
                 var s = (LuceneSearcher)indexer.Searcher;
-                var searchContext = s.GetSearchContext();
-                using (var searchRef = searchContext.GetSearcher())
+                global::Examine.Lucene.Search.ISearchContext searchContext = s.GetSearchContext();
+                using (global::Examine.Lucene.Search.ISearcherReference searchRef = searchContext.GetSearcher())
                 {
-                    var luceneSearcher = searchRef.IndexSearcher;
-                    var fields = luceneSearcher.Doc(luceneSearcher.IndexReader.MaxDoc - 1).Fields.ToArray();
+                    global::Lucene.Net.Search.IndexSearcher luceneSearcher = searchRef.IndexSearcher;
+                    IIndexableField[] fields = luceneSearcher.Doc(luceneSearcher.IndexReader.MaxDoc - 1).Fields.ToArray();
                     Assert.IsNotNull(fields.SingleOrDefault(x => x.Name == "item1"));
                     Assert.IsNotNull(fields.SingleOrDefault(x => x.Name == "item2"));
                     Assert.AreEqual("value3", fields.Single(x => x.Name == "item1").GetStringValue());
@@ -439,7 +439,7 @@ namespace Examine.Test.Examine.Lucene.Index
         public void Number_Field()
         {
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(
+            using (TestIndex indexer = GetTestIndex(
                 luceneDir,
                 new StandardAnalyzer(LuceneInfo.CurrentVersion),
                 new FieldDefinitionCollection(new FieldDefinition("item2", "number"))))
@@ -454,14 +454,14 @@ namespace Examine.Test.Examine.Lucene.Index
                     }));
 
                 var s = (LuceneSearcher)indexer.Searcher;
-                var searchContext = s.GetSearchContext();
-                using (var searchRef = searchContext.GetSearcher())
+                global::Examine.Lucene.Search.ISearchContext searchContext = s.GetSearchContext();
+                using (global::Examine.Lucene.Search.ISearcherReference searchRef = searchContext.GetSearcher())
                 {
-                    var luceneSearcher = searchRef.IndexSearcher;
+                    global::Lucene.Net.Search.IndexSearcher luceneSearcher = searchRef.IndexSearcher;
 
-                    var fields = luceneSearcher.Doc(luceneSearcher.IndexReader.MaxDoc - 1).Fields.ToArray();
+                    IIndexableField[] fields = luceneSearcher.Doc(luceneSearcher.IndexReader.MaxDoc - 1).Fields.ToArray();
 
-                    var valType = indexer.FieldValueTypeCollection.GetValueType("item2");
+                    IIndexFieldValueType valType = indexer.FieldValueTypeCollection.GetValueType("item2");
                     Assert.AreEqual(typeof(Int32Type), valType.GetType());
                     Assert.IsNotNull(fields.SingleOrDefault(x => x.Name == "item2"));
                 }
@@ -476,7 +476,7 @@ namespace Examine.Test.Examine.Lucene.Index
         public void Can_Overwrite_Index_During_Indexing_Operation()
         {
             // capture the original console out
-            var consoleOut = TestContext.Out;
+            TextWriter consoleOut = TestContext.Out;
 
             void WriteLog(string msg)
             {
@@ -491,7 +491,7 @@ namespace Examine.Test.Examine.Lucene.Index
 
             using (var d = new RandomIdRAMDirectory())
             using (var writer = new IndexWriter(d, new IndexWriterConfig(LuceneInfo.CurrentVersion, new CultureInvariantStandardAnalyzer())))
-            using (var customIndexer = GetTestIndex(writer))
+            using (TestIndex customIndexer = GetTestIndex(writer))
             using (var customSearcher = (LuceneSearcher)customIndexer.Searcher)
             {
 
@@ -504,7 +504,7 @@ namespace Examine.Test.Examine.Lucene.Index
 
                 var middleCompletedWaitHandle = new ManualResetEvent(false);
 
-                var opCompleteCount = 0;
+                int opCompleteCount = 0;
                 void OperationComplete(object sender, IndexOperationEventArgs e)
                 {
                     Interlocked.Increment(ref opCompleteCount);
@@ -529,13 +529,13 @@ namespace Examine.Test.Examine.Lucene.Index
                 using (customIndexer.WithThreadingMode(IndexThreadingMode.Asynchronous))
                 {
                     //get a node from the data repo
-                    var node = _contentService.GetPublishedContentByXPath("//*[string-length(@id)>0 and number(@id)>0]")
+                    XElement node = _contentService.GetPublishedContentByXPath("//*[string-length(@id)>0 and number(@id)>0]")
                         .Root
                         .Elements()
                         .First();
 
                     //get the id for th node we're re-indexing.
-                    var id = (int)node.Attribute("id");
+                    int id = (int)node.Attribute("id");
 
                     //spawn a bunch of threads to perform some reading
                     var tasks = new List<Task>();
@@ -543,9 +543,9 @@ namespace Examine.Test.Examine.Lucene.Index
                     var rand = new Random(DateTime.Now.Second);
 
                     //index a node a bunch of times - then while this is running we'll overwrite below
-                    for (var i = 0; i < ThreadCount; i++)
+                    for (int i = 0; i < ThreadCount; i++)
                     {
-                        var indexer = customIndexer;
+                        TestIndex indexer = customIndexer;
                         int docId = i + 1;
                         tasks.Add(Task.Run(() =>
                         {
@@ -577,7 +577,7 @@ namespace Examine.Test.Examine.Lucene.Index
                     {
                         var sb = new StringBuilder();
                         sb.Append(e.Message + ": ");
-                        foreach (var v in e.InnerExceptions)
+                        foreach (Exception v in e.InnerExceptions)
                         {
                             sb.Append(v.Message + "; ");
                         }
@@ -591,7 +591,7 @@ namespace Examine.Test.Examine.Lucene.Index
                 customIndexer.WaitForChanges();
 
                 //ensure no data since it's a new index
-                var results = customSearcher.CreateQuery()
+                ISearchResults results = customSearcher.CreateQuery()
                     .Field("nodeName", (IExamineValue)new ExamineValue(Examineness.Explicit, "Home"))
                     .Execute();
 
@@ -612,7 +612,7 @@ namespace Examine.Test.Examine.Lucene.Index
 
             using (var d = new RandomIdRAMDirectory())
             using (var writer = new IndexWriter(d, new IndexWriterConfig(LuceneInfo.CurrentVersion, new CultureInvariantStandardAnalyzer())))
-            using (var customIndexer = GetTestIndex(writer))
+            using (TestIndex customIndexer = GetTestIndex(writer))
             {
                 var waitHandle = new ManualResetEvent(false);
 
@@ -633,13 +633,13 @@ namespace Examine.Test.Examine.Lucene.Index
                 {
                     //get a node from the data repo
                     var idQueue = new ConcurrentQueue<int>(Enumerable.Range(1, 3));
-                    var node = _contentService.GetPublishedContentByXPath("//*[string-length(@id)>0 and number(@id)>0]")
+                    XElement node = _contentService.GetPublishedContentByXPath("//*[string-length(@id)>0 and number(@id)>0]")
                         .Root
                         .Elements()
                         .First();
 
                     //reindex the same nodes a bunch of times
-                    for (var i = 0; i < idQueue.Count * 20; i++)
+                    for (int i = 0; i < idQueue.Count * 20; i++)
                     {
                         //get next id and put it to the back of the list
                         if (idQueue.TryDequeue(out int docId))
@@ -665,9 +665,9 @@ namespace Examine.Test.Examine.Lucene.Index
                 //ensure no duplicates
 
                 var customSearcher = (LuceneSearcher)customIndexer.Searcher;
-                var results = customSearcher.CreateQuery().Field("nodeName", (IExamineValue)new ExamineValue(Examineness.Explicit, "Home")).Execute();
+                ISearchResults results = customSearcher.CreateQuery().Field("nodeName", (IExamineValue)new ExamineValue(Examineness.Explicit, "Home")).Execute();
 
-                foreach (var r in results)
+                foreach (ISearchResult r in results)
                 {
                     Console.WriteLine($"Result Id: {r.Id}");
                 }
@@ -700,7 +700,7 @@ namespace Examine.Test.Examine.Lucene.Index
             else
             {
                 // try to clear out old files
-                var tempBasePath = Path.Combine(Path.GetTempPath(), "ExamineTests");
+                string tempBasePath = Path.Combine(Path.GetTempPath(), "ExamineTests");
                 if (System.IO.Directory.Exists(tempBasePath))
                 {
                     try
@@ -712,17 +712,17 @@ namespace Examine.Test.Examine.Lucene.Index
                     }
                 }
 
-                var tempPath = Path.Combine(tempBasePath, Guid.NewGuid().ToString());
+                string tempPath = Path.Combine(tempBasePath, Guid.NewGuid().ToString());
                 System.IO.Directory.CreateDirectory(tempPath);
                 temp = new DirectoryInfo(tempPath);
                 directory = new SimpleFSDirectory(temp);
             }
             try
             {
-                using (var d = directory)
+                using (global::Lucene.Net.Store.Directory d = directory)
                 using (var writer = new IndexWriter(d,
                     new IndexWriterConfig(LuceneInfo.CurrentVersion, new CultureInvariantStandardAnalyzer())))
-                using (var customIndexer = GetTestIndex(writer))
+                using (TestIndex customIndexer = GetTestIndex(writer))
                 using (var customSearcher = (LuceneSearcher)customIndexer.Searcher)
                 using (customIndexer.WithThreadingMode(IndexThreadingMode.Asynchronous))
                 {
@@ -755,8 +755,8 @@ namespace Examine.Test.Examine.Lucene.Index
                     // we know there are 20 documents available, this is important for the getNode call
                     var idQueue = new ConcurrentQueue<int>(Enumerable.Range(1, 20));
 
-                    var searchCountPerThread = Convert.ToInt32(searchCount / searchThreadCount);
-                    var indexCountPerThread = Convert.ToInt32(indexCount / indexThreadCount);
+                    int searchCountPerThread = Convert.ToInt32(searchCount / searchThreadCount);
+                    int indexCountPerThread = Convert.ToInt32(indexCount / indexThreadCount);
 
                     //spawn a bunch of threads to perform some reading
                     var tasks = new List<Task>();
@@ -765,13 +765,13 @@ namespace Examine.Test.Examine.Lucene.Index
                     {
                         try
                         {
-                            for (var counter = 0; counter < searchCountPerThread; counter++)
+                            for (int counter = 0; counter < searchCountPerThread; counter++)
                             {
                                 //get next id and put it to the back of the list
                                 if (idQueue.TryDequeue(out int docId))
                                 {
                                     idQueue.Enqueue(docId);
-                                    var r = s.CreateQuery().Id(docId.ToString()).Execute();
+                                    ISearchResults r = s.CreateQuery().Id(docId.ToString()).Execute();
                                     Console.WriteLine("searching thread: {0}, id: {1}, found: {2}", Thread.CurrentThread.ManagedThreadId, docId, r.Count());
                                     Thread.Sleep(searchThreadWait);
                                 }
@@ -789,14 +789,14 @@ namespace Examine.Test.Examine.Lucene.Index
                         try
                         {
                             //reindex a nodes a bunch of times
-                            for (var i = 0; i < indexCountPerThread; i++)
+                            for (int i = 0; i < indexCountPerThread; i++)
                             {
                                 //get next id and put it to the back of the list
                                 if (idQueue.TryDequeue(out int docId))
                                 {
                                     idQueue.Enqueue(docId);
 
-                                    var node = getNode(docId - 1);
+                                    XElement node = getNode(docId - 1);
                                     node.Attribute("id").Value = docId.ToString(CultureInfo.InvariantCulture);
                                     Console.WriteLine("Indexing {0}", docId);
                                     ind.IndexItems(new[] { node.ConvertToValueSet(IndexTypes.Content) });
@@ -812,16 +812,16 @@ namespace Examine.Test.Examine.Lucene.Index
                     }
 
                     //indexing threads
-                    for (var i = 0; i < indexThreadCount; i++)
+                    for (int i = 0; i < indexThreadCount; i++)
                     {
-                        var indexer = customIndexer;
+                        TestIndex indexer = customIndexer;
                         tasks.Add(Task.Run(() => doIndex(indexer)));
                     }
 
                     //searching threads
-                    for (var i = 0; i < searchThreadCount; i++)
+                    for (int i = 0; i < searchThreadCount; i++)
                     {
-                        var searcher = customSearcher;
+                        LuceneSearcher searcher = customSearcher;
                         tasks.Add(Task.Run(() => doSearch(searcher)));
                     }
 
@@ -833,7 +833,7 @@ namespace Examine.Test.Examine.Lucene.Index
                     {
                         var sb = new StringBuilder();
                         sb.Append(e.Message + ": ");
-                        foreach (var v in e.InnerExceptions)
+                        foreach (Exception v in e.InnerExceptions)
                         {
                             sb.Append(v.Message + "; ");
                         }
@@ -845,7 +845,7 @@ namespace Examine.Test.Examine.Lucene.Index
                     // we are using all of the correct NRT implementations.
                     customIndexer.WaitForChanges();
 
-                    var results = customSearcher.CreateQuery().All().Execute();
+                    ISearchResults results = customSearcher.CreateQuery().All().Execute();
                     Assert.AreEqual(20, results.Count());
 
                     //wait until we are done

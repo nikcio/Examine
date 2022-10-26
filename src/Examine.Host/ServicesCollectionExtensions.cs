@@ -155,9 +155,9 @@ namespace Examine
             services.TryAddSingleton<SyncedFileSystemDirectoryFactory>(
                 s =>
                 {
-                    var baseDir = appRootDirectory ?? s.GetRequiredService<IApplicationRoot>().ApplicationRoot;
+                    DirectoryInfo baseDir = appRootDirectory ?? s.GetRequiredService<IApplicationRoot>().ApplicationRoot;
 
-                    var tempDir = TempEnvFileSystemDirectoryFactory.GetTempPath(
+                    string tempDir = TempEnvFileSystemDirectoryFactory.GetTempPath(
                         s.GetRequiredService<IApplicationIdentifier>());
 
                     return ActivatorUtilities.CreateInstance<SyncedFileSystemDirectoryFactory>(

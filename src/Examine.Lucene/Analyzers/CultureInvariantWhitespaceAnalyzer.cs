@@ -59,7 +59,7 @@ namespace Examine.Lucene.Analyzers
 
             private bool IsNumber(int c)
             {
-                var include = char.IsLetterOrDigit((char)c);
+                bool include = char.IsLetterOrDigit((char)c);
                 return include;
             }
         }

@@ -15,7 +15,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new CultureInvariantWhitespaceAnalyzer();
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
             {
                 indexer.IndexItems(new[] {
                     ValueSet.FromObject(1.ToString(), "content",
@@ -26,15 +26,15 @@ namespace Examine.Test.Examine.Lucene.Search
 
                 var searcher = (BaseLuceneSearcher)indexer.Searcher;
 
-                var query1 = searcher
+                global::Examine.Search.IBooleanOperation query1 = searcher
                     .CreateQuery("content")
                     .Field("bodyText", "rod");
-                var results1 = query1.Execute();
+                ISearchResults results1 = query1.Execute();
 
-                var query2 = searcher
+                global::Examine.Search.IBooleanOperation query2 = searcher
                     .CreateQuery("content")
                     .Field("bodyText", "rød");
-                var results2 = query2.Execute();
+                ISearchResults results2 = query2.Execute();
 
                 Assert.AreEqual(2, results1.TotalItemCount);
                 DebugResults(results1);
@@ -49,7 +49,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new CultureInvariantStandardAnalyzer();
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
             {
                 indexer.IndexItems(new[] {
                     ValueSet.FromObject(1.ToString(), "content",
@@ -60,15 +60,15 @@ namespace Examine.Test.Examine.Lucene.Search
 
                 var searcher = (BaseLuceneSearcher)indexer.Searcher;
 
-                var query1 = searcher
+                global::Examine.Search.IBooleanOperation query1 = searcher
                     .CreateQuery("content")
                     .Field("bodyText", "rod");
-                var results1 = query1.Execute();
+                ISearchResults results1 = query1.Execute();
 
-                var query2 = searcher
+                global::Examine.Search.IBooleanOperation query2 = searcher
                     .CreateQuery("content")
                     .Field("bodyText", "rød");
-                var results2 = query2.Execute();
+                ISearchResults results2 = query2.Execute();
 
                 Assert.AreEqual(2, results1.TotalItemCount);
                 DebugResults(results1);
@@ -80,17 +80,17 @@ namespace Examine.Test.Examine.Lucene.Search
 
         private void DebugResults(ISearchResults results)
         {
-            foreach(var r in results)
+            foreach(ISearchResult r in results)
             {
                 var sb = new StringBuilder();
                 sb.Append("Id = ");
                 sb.Append(r.Id);
                 sb.Append(", Values = ");
-                foreach(var vals in r.AllValues)
+                foreach(System.Collections.Generic.KeyValuePair<string, System.Collections.Generic.IReadOnlyList<string>> vals in r.AllValues)
                 {
                     sb.Append(vals.Key);
                     sb.Append(" = ");
-                    foreach(var val in vals.Value)
+                    foreach(string val in vals.Value)
                     {
                         sb.Append(val);
                         sb.Append(", ");

@@ -74,7 +74,7 @@ namespace Examine.Test.Examine.Lucene.Extensions
                 string id3 = 3.ToString();
                 string id4 = 4.ToString();
 
-                using (var indexer = GetTestIndex(luceneDir, analyzer))
+                using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
                 {
                     indexer.DocumentWriting += (sender, args) => Indexer_DocumentWriting(args, ctx, strategy);
 
@@ -104,20 +104,20 @@ namespace Examine.Test.Examine.Lucene.Extensions
             int lng)
         {
             var searcher = (LuceneSearcher)indexer.Searcher;
-            var searchContext = searcher.GetSearchContext();
+            ISearchContext searchContext = searcher.GetSearchContext();
 
             using (ISearcherReference searchRef = searchContext.GetSearcher())
             {
-                GetXYFromCoords(lat, lng, out var x, out var y);
+                GetXYFromCoords(lat, lng, out double x, out double y);
 
                 // Make a circle around the search point
                 var args = new SpatialArgs(
                     SpatialOperation.Intersects,
                     ctx.MakeCircle(x, y, DistanceUtils.Dist2Degrees(searchRadius, DistanceUtils.EarthMeanRadiusKilometers)) );
 
-                var filter = strategy.MakeFilter(args);
+                Filter filter = strategy.MakeFilter(args);
 
-                var query = createQuery(args);
+                Query query = createQuery(args);
 
                 // TODO: It doesn't make a whole lot of sense to sort by score when searching on only geo-coords,
                 // typically you would sort by closest distance
@@ -142,8 +142,8 @@ namespace Examine.Test.Examine.Lucene.Extensions
             string[] gotIds = new string[docs.TotalHits];
             for (int i = 0; i < gotIds.Length; i++)
             {
-                var doc = indexSearcher.Doc(docs.ScoreDocs[i].Doc);
-                var id = doc.GetField(ExamineFieldNames.ItemIdFieldName).GetStringValue();
+                Document doc = indexSearcher.Doc(docs.ScoreDocs[i].Doc);
+                string id = doc.GetField(ExamineFieldNames.ItemIdFieldName).GetStringValue();
                 gotIds[i] = id;
             }
             Assert.AreEqual(1, gotIds.Length);
@@ -162,7 +162,7 @@ namespace Examine.Test.Examine.Lucene.Extensions
             double lat = double.Parse(e.ValueSet.Values["lat"].First().ToString());
             double lng = double.Parse(e.ValueSet.Values["lng"].First().ToString());
 
-            GetXYFromCoords(lat, lng, out var x, out var y);
+            GetXYFromCoords(lat, lng, out double x, out double y);
             IPoint geoPoint = ctx.MakePoint(x, y);
 
             foreach (Field field in strategy.CreateIndexableFields(geoPoint  as IShape))

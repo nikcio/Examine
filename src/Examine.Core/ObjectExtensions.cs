@@ -29,11 +29,11 @@ namespace Examine
                 if (o is IDictionary)
                     throw new InvalidOperationException($"The input object is already of type {typeof(IDictionary)}");
 
-                var props = TypeDescriptor.GetProperties(o);
+                PropertyDescriptorCollection props = TypeDescriptor.GetProperties(o);
                 var d = new Dictionary<string, object>();
-                foreach (var prop in props.Cast<PropertyDescriptor>().Where(x => !ignoreProperties.Contains(x.Name)))
+                foreach (PropertyDescriptor prop in props.Cast<PropertyDescriptor>().Where(x => !ignoreProperties.Contains(x.Name)))
                 {
-                    var val = prop.GetValue(o);
+                    object val = prop.GetValue(o);
                     if (val != null)
                     {
                         d.Add(prop.Name, val);

@@ -52,16 +52,16 @@ namespace Examine
             using (hasher)
             {
                 //convert our string into byte array
-                var byteArray = Encoding.UTF8.GetBytes(str);
+                byte[] byteArray = Encoding.UTF8.GetBytes(str);
 
                 //get the hashed values created by our SHA1CryptoServiceProvider
-                var hashedByteArray = hasher.ComputeHash(byteArray);
+                byte[] hashedByteArray = hasher.ComputeHash(byteArray);
 
                 //create a StringBuilder object
                 var stringBuilder = new StringBuilder();
 
                 //loop to each each byte
-                foreach (var b in hashedByteArray)
+                foreach (byte b in hashedByteArray)
                 {
                     //append it to our StringBuilder
                     stringBuilder.Append(b.ToString("x2").ToLower());
@@ -80,8 +80,8 @@ namespace Examine
         internal static string ReplaceNonAlphanumericChars(this string input, string replacement)
         {
             //any character that is not alphanumeric, convert to a hyphen
-            var mName = input;
-            foreach (var c in mName.ToCharArray().Where(c => !char.IsLetterOrDigit(c)))
+            string mName = input;
+            foreach (char c in mName.ToCharArray().Where(c => !char.IsLetterOrDigit(c)))
             {
                 mName = mName.Replace(c.ToString(CultureInfo.InvariantCulture), replacement);
             }
@@ -112,9 +112,9 @@ namespace Examine
                     {
                         //remove stop words prior to search
                         var innerBuilder = new StringBuilder();
-                        var searchParts = str.Split(' ');
+                        string[] searchParts = str.Split(' ');
 
-	                    foreach (var t in searchParts)
+	                    foreach (string t in searchParts)
 	                    {
 							if (!IsStandardAnalyzerStopWord(t))
 		                    {
@@ -126,10 +126,10 @@ namespace Examine
                     };
 
             var builder = new StringBuilder();
-            var carrat = 0;
+            int carrat = 0;
             while(carrat < searchText.Length)
             {
-                var quoteIndex = searchText.IndexOf("\"", carrat);
+                int quoteIndex = searchText.IndexOf("\"", carrat);
                 if (quoteIndex >= 0 && carrat == quoteIndex)
                 {
                     //move to next quote
@@ -138,7 +138,7 @@ namespace Examine
                     if (carrat > 0)
                     {
                         //add phrase to builder
-                        var phraseWithoutQuotes = searchText.Substring(quoteIndex + 1, carrat - quoteIndex - 2);
+                        string phraseWithoutQuotes = searchText.Substring(quoteIndex + 1, carrat - quoteIndex - 2);
                         builder.Append("\"" + phraseWithoutQuotes.Trim() + "\" ");
                     }
                     else
@@ -150,12 +150,12 @@ namespace Examine
                 else
                 {
                     //move to next quote
-                    var nextCarrat = searchText.IndexOf("\"", carrat);
+                    int nextCarrat = searchText.IndexOf("\"", carrat);
                     if (nextCarrat < 0)
                     {
                         nextCarrat = searchText.Length;
                     }
-                    var terms = searchText.Substring(carrat, nextCarrat - carrat).Trim();
+                    string terms = searchText.Substring(carrat, nextCarrat - carrat).Trim();
                     if (!string.IsNullOrWhiteSpace(terms))
                     {
                         removeWords(terms, builder);    

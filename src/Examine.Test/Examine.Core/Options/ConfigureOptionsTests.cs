@@ -83,7 +83,7 @@ namespace Examine.Test.Examine.Core.Options
                             "locations",
                             new { nodeName = "Zanzibar", bodyText = "Zanzibar is in Africa", lat = 6.1357, lng = 39.3621 }));
 
-                    var results = luceneIndex.Searcher
+                    ISearchResults results = luceneIndex.Searcher
                         .CreateQuery("locations")
                         .RangeQuery<double>(new[] { "lat" }, 6.00, null)
                         .Execute();

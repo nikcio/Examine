@@ -48,7 +48,7 @@ namespace Examine.Lucene.Directories
         {
             lock (Locker)
             {
-                var isChild = false;
+                bool isChild = false;
                 try
                 {
                     //try to release master

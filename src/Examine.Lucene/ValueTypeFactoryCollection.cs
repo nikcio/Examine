@@ -37,7 +37,7 @@ namespace Examine.Lucene
         /// <returns></returns>
         public IFieldValueTypeFactory GetRequiredFactory(string valueTypeName)
         {
-            if (!TryGetFactory(valueTypeName, out var fieldValueTypeFactory))
+            if (!TryGetFactory(valueTypeName, out IFieldValueTypeFactory fieldValueTypeFactory))
                 throw new InvalidOperationException($"The required {typeof(IFieldValueTypeFactory).Name} was not found with name {valueTypeName}");
 
             return fieldValueTypeFactory;

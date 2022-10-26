@@ -52,7 +52,7 @@ namespace Examine.Lucene.Search
             _search.Queries.Push(new BooleanQuery());
 
             //change the default inner op if specified
-            var currentOp = _search.BooleanOperation;
+            BooleanOperation currentOp = _search.BooleanOperation;
             if (defaultInnerOp != null)
             {
                 _search.BooleanOperation = defaultInnerOp.Value;

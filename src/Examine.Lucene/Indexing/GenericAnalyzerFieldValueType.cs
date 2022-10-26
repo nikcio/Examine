@@ -31,7 +31,7 @@ namespace Examine.Lucene.Indexing
 
         protected override void AddSingleValue(Document doc, object value)
         {
-            if (TryConvert<string>(value, out var str))
+            if (TryConvert<string>(value, out string str))
             {
                 doc.Add(new TextField(FieldName, str, Field.Store.YES));
 

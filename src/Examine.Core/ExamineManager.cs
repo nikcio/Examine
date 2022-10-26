@@ -28,11 +28,11 @@ namespace Examine
 
         /// <inheritdoc />
         public bool TryGetSearcher(string searcherName, out ISearcher searcher) => 
-            (searcher = _searchers.TryGetValue(searcherName, out var s) ? s : null) != null;
+            (searcher = _searchers.TryGetValue(searcherName, out ISearcher s) ? s : null) != null;
 
         /// <inheritdoc />
         public bool TryGetIndex(string indexName, out IIndex index) => 
-            (index = _indexers.TryGetValue(indexName, out var i) ? i : null) != null;
+            (index = _indexers.TryGetValue(indexName, out IIndex i) ? i : null) != null;
 
         /// <inheritdoc />
         public IEnumerable<ISearcher> RegisteredSearchers => _searchers.Values;
@@ -101,7 +101,7 @@ namespace Examine
                     // or always use a foreach loop which can't really be forced. The only alternative to using DecRef and IncRef would be to make the results
                     // not lazy which isn't good.
 
-                    foreach (var searcher in RegisteredSearchers.OfType<IDisposable>())
+                    foreach (IDisposable searcher in RegisteredSearchers.OfType<IDisposable>())
                     {
                         searcher.Dispose();
                     }
@@ -116,7 +116,7 @@ namespace Examine
             {
                 try
                 {
-                    foreach (var indexer in Indexes.OfType<IDisposable>())
+                    foreach (IDisposable indexer in Indexes.OfType<IDisposable>())
                     {
                         indexer.Dispose();
                     }

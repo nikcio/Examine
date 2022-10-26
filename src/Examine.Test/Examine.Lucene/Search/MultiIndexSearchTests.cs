@@ -28,8 +28,8 @@ namespace Examine.Test.Examine.Lucene.Search
             using (var luceneDir2 = new RandomIdRAMDirectory())
             // using the StandardAnalyzer on the indexes means that the default stop words
             // will get stripped from the text before being stored in the index.
-            using (var indexer1 = GetTestIndex(luceneDir1, standardAnalyzer))
-            using (var indexer2 = GetTestIndex(luceneDir2, standardAnalyzer))
+            using (TestIndex indexer1 = GetTestIndex(luceneDir1, standardAnalyzer))
+            using (TestIndex indexer2 = GetTestIndex(luceneDir2, standardAnalyzer))
             {
                 indexer1.IndexItem(ValueSet.FromObject(1.ToString(), "content", new { item1 = "value1", item2 = "The agitated zebras will gallop back and forth in short, panicky dashes, then skitter off into the absolute darkness." }));
                 indexer2.IndexItem(ValueSet.FromObject(1.ToString(), "content", new { item1 = "value4", item2 = "Scientists believe the lake will be home to cold-loving microbial life adapted to living in total darkness." }));
@@ -40,7 +40,7 @@ namespace Examine.Test.Examine.Lucene.Search
 
                 // Even though the custom analyzer doesn't have a stop word of 'will'
                 // it will still return nothing because the word has been stripped during indexing.
-                var result = searcher.Search("will");
+                ISearchResults result = searcher.Search("will");
                 Assert.AreEqual(0, result.TotalItemCount);
             }
         }
@@ -55,8 +55,8 @@ namespace Examine.Test.Examine.Lucene.Search
             using (var luceneDir2 = new RandomIdRAMDirectory())
             // using the CustomAnalyzer on the indexes means that the custom stop words
             // will get stripped from the text before being stored in the index.
-            using (var indexer1 = GetTestIndex(luceneDir1, customAnalyzer))
-            using (var indexer2 = GetTestIndex(luceneDir2, customAnalyzer))
+            using (TestIndex indexer1 = GetTestIndex(luceneDir1, customAnalyzer))
+            using (TestIndex indexer2 = GetTestIndex(luceneDir2, customAnalyzer))
             {
                 indexer1.IndexItem(ValueSet.FromObject(1.ToString(), "content", new { item1 = "value1", item2 = "The agitated zebras will gallop back and forth in short, panicky dashes, then skitter off into the absolute darkness." }));
                 indexer2.IndexItem(ValueSet.FromObject(1.ToString(), "content", new { item1 = "value4", item2 = "Scientists believe the lake will be home to cold-loving microbial life adapted to living in total darkness." }));
@@ -71,7 +71,7 @@ namespace Examine.Test.Examine.Lucene.Search
                 // use the analyzer assigned to each field to parse the query
                 // which means in this case the passed in StandardAnalyzer is NOT used
                 // and therefor the 'will' word is not stripped and we still get results.
-                var result = searcher.Search("will");
+                ISearchResults result = searcher.Search("will");
                 Assert.AreEqual(2, result.TotalItemCount);
             }
         }
@@ -86,8 +86,8 @@ namespace Examine.Test.Examine.Lucene.Search
             using (var luceneDir2 = new RandomIdRAMDirectory())
             // using the CustomAnalyzer on the indexes means that the custom stop words
             // will get stripped from the text before being stored in the index.
-            using (var indexer1 = GetTestIndex(luceneDir1, customAnalyzer))
-            using (var indexer2 = GetTestIndex(luceneDir2, customAnalyzer))
+            using (TestIndex indexer1 = GetTestIndex(luceneDir1, customAnalyzer))
+            using (TestIndex indexer2 = GetTestIndex(luceneDir2, customAnalyzer))
             {
                 indexer1.IndexItem(ValueSet.FromObject(1.ToString(), "content", new { item1 = "value1", item2 = "The agitated zebras will gallop back and forth in short, panicky dashes, then skitter off into the absolute darkness." }));
                 indexer2.IndexItem(ValueSet.FromObject(1.ToString(), "content", new { item1 = "value4", item2 = "Scientists believe the lake will be home to cold-loving microbial life adapted to living in total darkness." }));
@@ -98,7 +98,7 @@ namespace Examine.Test.Examine.Lucene.Search
                     // non ManagedQuery queries are executed.
                     standardAnalyzer);
 
-                var result = searcher
+                ISearchResults result = searcher
                         .CreateQuery("content")
                         // This is a non-ManagedQuery, so the searchers Query Parser
                         // will execute and remove stop words
@@ -118,10 +118,10 @@ namespace Examine.Test.Examine.Lucene.Search
             using (var luceneDir2 = new RandomIdRAMDirectory())
             using (var luceneDir3 = new RandomIdRAMDirectory())
             using (var luceneDir4 = new RandomIdRAMDirectory())
-            using (var indexer1 = GetTestIndex(luceneDir1, analyzer))
-            using (var indexer2 = GetTestIndex(luceneDir2, analyzer))
-            using (var indexer3 = GetTestIndex(luceneDir3, analyzer))
-            using (var indexer4 = GetTestIndex(luceneDir4, analyzer))
+            using (TestIndex indexer1 = GetTestIndex(luceneDir1, analyzer))
+            using (TestIndex indexer2 = GetTestIndex(luceneDir2, analyzer))
+            using (TestIndex indexer3 = GetTestIndex(luceneDir3, analyzer))
+            using (TestIndex indexer4 = GetTestIndex(luceneDir4, analyzer))
 
             {
                 indexer1.IndexItem(ValueSet.FromObject(1.ToString(), "content", new { item1 = "value1", item2 = "The agitated zebras gallop back and forth in short, panicky dashes, then skitter off into the absolute darkness." }));
@@ -135,10 +135,10 @@ namespace Examine.Test.Examine.Lucene.Search
                     new[] { indexer1, indexer2, indexer3, indexer4 },
                     analyzer);
 
-                var result = searcher.Search("darkness");
+                ISearchResults result = searcher.Search("darkness");
 
                 Assert.AreEqual(4, result.TotalItemCount);
-                foreach (var r in result)
+                foreach (ISearchResult r in result)
                 {
                     Console.WriteLine("Score = " + r.Score);
                 }
@@ -154,10 +154,10 @@ namespace Examine.Test.Examine.Lucene.Search
             using (var luceneDir2 = new RandomIdRAMDirectory())
             using (var luceneDir3 = new RandomIdRAMDirectory())
             using (var luceneDir4 = new RandomIdRAMDirectory())
-            using (var indexer1 = GetTestIndex(luceneDir1, analyzer))
-            using (var indexer2 = GetTestIndex(luceneDir2, analyzer))
-            using (var indexer3 = GetTestIndex(luceneDir3, analyzer))
-            using (var indexer4 = GetTestIndex(luceneDir4, analyzer))
+            using (TestIndex indexer1 = GetTestIndex(luceneDir1, analyzer))
+            using (TestIndex indexer2 = GetTestIndex(luceneDir2, analyzer))
+            using (TestIndex indexer3 = GetTestIndex(luceneDir3, analyzer))
+            using (TestIndex indexer4 = GetTestIndex(luceneDir4, analyzer))
             {
                 indexer1.IndexItem(ValueSet.FromObject(1.ToString(), "content", new { item1 = "hello", item2 = "The agitated zebras gallop back and forth in short, panicky dashes, then skitter off into the absolute darkness." }));
                 indexer2.IndexItem(ValueSet.FromObject(1.ToString(), "content", new { item1 = "world", item2 = "The festival lasts five days and celebrates the victory of good over evil, light over darkness, and knowledge over ignorance." }));
@@ -171,12 +171,12 @@ namespace Examine.Test.Examine.Lucene.Search
                     new[] { indexer1, indexer2, indexer3, indexer4 },
                     analyzer);
 
-                var searchContext = searcher.GetSearchContext();
-                var result = searchContext.SearchableFields;
+                global::Examine.Lucene.Search.ISearchContext searchContext = searcher.GetSearchContext();
+                string[] result = searchContext.SearchableFields;
 
                 //will be item1 , item2, item3, and item4
                 Assert.AreEqual(4, result.Count());
-                foreach (var s in new[] { "item1", "item2", "item3", "item4" })
+                foreach (string s in new[] { "item1", "item2", "item3", "item4" })
                 {
                     Assert.IsTrue(result.Contains(s));
                 }

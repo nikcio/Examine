@@ -21,9 +21,9 @@ namespace Examine.Lucene.Directories
 
         public static string GetTempPath(IApplicationIdentifier applicationIdentifier)
         {
-            var appDomainHash = applicationIdentifier.GetApplicationUniqueIdentifier().GenerateHash();
-            
-            var cachePath = Path.Combine(
+            string appDomainHash = applicationIdentifier.GetApplicationUniqueIdentifier().GenerateHash();
+
+            string cachePath = Path.Combine(
                 Path.GetTempPath(),
                 "ExamineIndexes",
                 //include the appdomain hash is just a safety check, for example if a website is moved from worker A to worker B and then back

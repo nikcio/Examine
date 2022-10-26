@@ -32,7 +32,7 @@ namespace Examine.Lucene.Analyzers
 
             protected override bool IsTokenChar(int c)
             {
-                var asChar = (char)c;
+                char asChar = (char)c;
 
                 // Make whitespace characters and the @ symbol be indicators of new words.
                 return !(char.IsWhiteSpace(asChar) || asChar == '@');

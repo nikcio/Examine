@@ -114,7 +114,7 @@ namespace Examine
         /// <returns></returns>
         public IEnumerable<object> GetValues(string key)
         {
-            return !Values.TryGetValue(key, out var values) ? Enumerable.Empty<object>() : values;
+            return !Values.TryGetValue(key, out IReadOnlyList<object> values) ? Enumerable.Empty<object>() : values;
         }
 
         /// <summary>
@@ -126,7 +126,7 @@ namespace Examine
         /// </returns>
         public object GetValue(string key)
         {
-            return !Values.TryGetValue(key, out var values) ? null : values.Count > 0 ? values[0] : null;
+            return !Values.TryGetValue(key, out IReadOnlyList<object> values) ? null : values.Count > 0 ? values[0] : null;
         }
 
         /// <summary>

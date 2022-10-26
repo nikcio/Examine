@@ -22,9 +22,9 @@ namespace Examine
                 var result = new OrderedDictionary<string, IReadOnlyList<string>>();
                 var asWritable = (IDictionary<string, IReadOnlyList<string>>)result;
 
-                var fieldVals = lazyFieldVals(); //defer execution of collection to here
+                IDictionary<string, List<string>> fieldVals = lazyFieldVals(); //defer execution of collection to here
 
-                foreach (var fieldValue in fieldVals)
+                foreach (KeyValuePair<string, List<string>> fieldValue in fieldVals)
                 {
                     asWritable[fieldValue.Key] = fieldValue.Value;
                 }
@@ -48,7 +48,7 @@ namespace Examine
                 //initialize from the multi fields
                 _fields = new OrderedDictionary<string, string>();
                 var asWritable = (IDictionary<string, string>) _fields;
-                foreach (var fieldValue in _fieldValues.Value)
+                foreach (KeyValuePair<string, IReadOnlyList<string>> fieldValue in _fieldValues.Value)
                 {
                     if (fieldValue.Value.Count > 0)
                         asWritable[fieldValue.Key] = fieldValue.Value[0];
@@ -74,12 +74,12 @@ namespace Examine
         /// <returns></returns>
         public IEnumerable<string> GetValues(string key)
         {
-            if (AllValues.TryGetValue(key, out var found))
+            if (AllValues.TryGetValue(key, out IReadOnlyList<string> found))
             {
                 return found;
             }
 
-            return Values.TryGetValue(key, out var single) ? new[] { single } : Enumerable.Empty<string>();
+            return Values.TryGetValue(key, out string single) ? new[] { single } : Enumerable.Empty<string>();
         } 
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace Examine
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public string this[string key] => Values.TryGetValue(key, out var single) ? single : null;
+        public string this[string key] => Values.TryGetValue(key, out string single) ? single : null;
 
         /// <summary>
         /// Override this method so that the Distinct() operator works

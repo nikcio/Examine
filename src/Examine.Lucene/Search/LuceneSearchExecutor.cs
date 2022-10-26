@@ -47,7 +47,7 @@ namespace Examine.Lucene.Search
 
         public ISearchResults Execute()
         {
-            var extractTermsSupported = CheckQueryForExtractTerms(_luceneQuery);
+            bool extractTermsSupported = CheckQueryForExtractTerms(_luceneQuery);
 
             if (extractTermsSupported)
             {
@@ -76,7 +76,7 @@ namespace Examine.Lucene.Search
                 }
             }
 
-            var maxResults = Math.Min((_options.Skip + 1) * _options.Take, MaxDoc);
+            int maxResults = Math.Min((_options.Skip + 1) * _options.Take, MaxDoc);
             maxResults = maxResults >= 1 ? maxResults : QueryOptions.DefaultMaxResults;
 
             ICollector topDocsCollector;
@@ -105,12 +105,12 @@ namespace Examine.Lucene.Search
                     topDocs = ((TopScoreDocCollector)topDocsCollector).GetTopDocs(_options.Skip, _options.Take);
                 }
 
-                var totalItemCount = topDocs.TotalHits;
+                int totalItemCount = topDocs.TotalHits;
 
                 var results = new List<ISearchResult>();
                 for (int i = 0; i < topDocs.ScoreDocs.Length; i++)
                 {
-                    var result = GetSearchResult(i, topDocs, searcher.IndexSearcher);
+                    ISearchResult result = GetSearchResult(i, topDocs, searcher.IndexSearcher);
                     results.Add(result);
                 }
 
@@ -128,9 +128,9 @@ namespace Examine.Lucene.Search
                 return null;
             }
 
-            var scoreDoc = topDocs.ScoreDocs[index];
+            ScoreDoc scoreDoc = topDocs.ScoreDocs[index];
 
-            var docId = scoreDoc.Doc;
+            int docId = scoreDoc.Doc;
             Document doc;
             if (_fieldsToLoad != null)
             {
@@ -140,8 +140,8 @@ namespace Examine.Lucene.Search
             {
                 doc = luceneSearcher.Doc(docId);
             }
-            var score = scoreDoc.Score;
-            var result = CreateSearchResult(doc, score);
+            float score = scoreDoc.Score;
+            ISearchResult result = CreateSearchResult(doc, score);
 
             return result;
         }
@@ -154,7 +154,7 @@ namespace Examine.Lucene.Search
         /// <returns>A populated search result object</returns>
         private ISearchResult CreateSearchResult(Document doc, float score)
         {
-            var id = doc.Get("id");
+            string id = doc.Get("id");
 
             if (string.IsNullOrEmpty(id) == true)
             {
@@ -164,18 +164,18 @@ namespace Examine.Lucene.Search
             var searchResult = new SearchResult(id, score, () =>
             {
                 //we can use lucene to find out the fields which have been stored for this particular document
-                var fields = doc.Fields;
+                IList<IIndexableField> fields = doc.Fields;
 
                 var resultVals = new Dictionary<string, List<string>>();
 
-                foreach (var field in fields.Cast<Field>())
+                foreach (Field field in fields.Cast<Field>())
                 {
-                    var fieldName = field.Name;
-                    var values = doc.GetValues(fieldName);
+                    string fieldName = field.Name;
+                    string[] values = doc.GetValues(fieldName);
 
-                    if (resultVals.TryGetValue(fieldName, out var resultFieldVals))
+                    if (resultVals.TryGetValue(fieldName, out List<string> resultFieldVals))
                     {
-                        foreach (var value in values)
+                        foreach (string value in values)
                         {
                             if (!resultFieldVals.Contains(value))
                             {
@@ -202,7 +202,7 @@ namespace Examine.Lucene.Search
                 foreach (BooleanClause clause in bq.Clauses)
                 {
                     //recurse
-                    var check = CheckQueryForExtractTerms(clause.Query);
+                    bool check = CheckQueryForExtractTerms(clause.Query);
                     if (!check)
                     {
                         return false;

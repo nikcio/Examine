@@ -13,10 +13,10 @@ namespace Examine.Test
     {
         private OrderedDictionary<string, string> GetAlphabetDictionary(IEqualityComparer<string> comparer = null)
         {
-            var alphabet = (comparer == null ? new OrderedDictionary<string, string>() : new OrderedDictionary<string, string>(comparer));
-            for (var a = Convert.ToInt32('a'); a <= Convert.ToInt32('z'); a++)
+            OrderedDictionary<string, string> alphabet = (comparer == null ? new OrderedDictionary<string, string>() : new OrderedDictionary<string, string>(comparer));
+            for (int a = Convert.ToInt32('a'); a <= Convert.ToInt32('z'); a++)
             {
-                var c = Convert.ToChar(a);
+                char c = Convert.ToChar(a);
                 alphabet.Add(c.ToString(), c.ToString().ToUpper());
             }
             Assert.AreEqual(26, alphabet.Count);
@@ -26,9 +26,9 @@ namespace Examine.Test
         private List<KeyValuePair<string, string>> GetAlphabetList()
         {
             var alphabet = new List<KeyValuePair<string, string>>();
-            for (var a = Convert.ToInt32('a'); a <= Convert.ToInt32('z'); a++)
+            for (int a = Convert.ToInt32('a'); a <= Convert.ToInt32('z'); a++)
             {
-                var c = Convert.ToChar(a);
+                char c = Convert.ToChar(a);
                 alphabet.Add(new KeyValuePair<string, string>(c.ToString(), c.ToString().ToUpper()));
             }
             Assert.AreEqual(26, alphabet.Count);
@@ -78,7 +78,7 @@ namespace Examine.Test
         [Test]
         public void TestClear()
         {
-            var od = GetAlphabetDictionary();
+            OrderedDictionary<string, string> od = GetAlphabetDictionary();
             Assert.AreEqual(26, od.Count);
             od.Clear();
             Assert.AreEqual(0, od.Count);
@@ -87,20 +87,20 @@ namespace Examine.Test
         [Test]
         public void TestOrderIsPreserved()
         {
-            var alphabetDict = GetAlphabetDictionary();
-            var alphabetList = GetAlphabetList();
+            OrderedDictionary<string, string> alphabetDict = GetAlphabetDictionary();
+            List<KeyValuePair<string, string>> alphabetList = GetAlphabetList();
             Assert.AreEqual(26, alphabetDict.Count);
             Assert.AreEqual(26, alphabetList.Count);
 
             var keys = alphabetDict.Keys.ToList();
             var values = alphabetDict.Values.ToList();
 
-            for (var i = 0; i < 26; i++)
+            for (int i = 0; i < 26; i++)
             {
-                var dictItem = alphabetDict.GetItem(i);
-                var listItem = alphabetList[i];
-                var key = keys[i];
-                var value = values[i];
+                string dictItem = alphabetDict.GetItem(i);
+                KeyValuePair<string, string> listItem = alphabetList[i];
+                string key = keys[i];
+                string value = values[i];
 
                 Assert.AreEqual(dictItem, listItem.Value);
                 Assert.AreEqual(key, listItem.Key);
@@ -111,7 +111,7 @@ namespace Examine.Test
         [Test]
         public void TestTryGetValue()
         {
-            var alphabetDict = GetAlphabetDictionary();
+            OrderedDictionary<string, string> alphabetDict = GetAlphabetDictionary();
             string result = null;
             Assert.IsFalse(alphabetDict.TryGetValue("abc", out result));
             Assert.IsNull(result);
@@ -122,15 +122,15 @@ namespace Examine.Test
         [Test]
         public void TestEnumerator()
         {
-            var alphabetDict = GetAlphabetDictionary();
+            OrderedDictionary<string, string> alphabetDict = GetAlphabetDictionary();
 
             var keys = alphabetDict.Keys.ToList();
             Assert.AreEqual(26, keys.Count);
 
-            var i = 0;
-            foreach (var kvp in alphabetDict)
+            int i = 0;
+            foreach (KeyValuePair<string, string> kvp in alphabetDict)
             {
-                var value = alphabetDict[kvp.Key];
+                KeyValuePair<string, string> value = alphabetDict[kvp.Key];
                 Assert.AreEqual(kvp.Value, value.Value);
                 i++;
             }
@@ -139,11 +139,11 @@ namespace Examine.Test
         [Test]
         public void TestInvalidIndex()
         {
-            var alphabetDict = GetAlphabetDictionary();
+            OrderedDictionary<string, string> alphabetDict = GetAlphabetDictionary();
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                var found = alphabetDict[100];
+                KeyValuePair<string, string> found = alphabetDict[100];
             });
             
         }
@@ -151,11 +151,11 @@ namespace Examine.Test
         [Test]
         public void TestMissingKey()
         {
-            var alphabetDict = GetAlphabetDictionary();
+            OrderedDictionary<string, string> alphabetDict = GetAlphabetDictionary();
 
             Assert.Throws<KeyNotFoundException>(() =>
             {
-                var found = alphabetDict["abc"];
+                KeyValuePair<string, string> found = alphabetDict["abc"];
             });            
         }
 
@@ -175,7 +175,7 @@ namespace Examine.Test
         [Test]
         public void TestInsertValue()
         {
-            var alphabetDict = GetAlphabetDictionary();
+            OrderedDictionary<string, string> alphabetDict = GetAlphabetDictionary();
             Assert.IsTrue(alphabetDict.ContainsKey("c"));
             Assert.AreEqual(2, alphabetDict.IndexOf("c"));
             Assert.AreEqual(alphabetDict[2].Value, "C");
@@ -193,7 +193,7 @@ namespace Examine.Test
         [Test]
         public void TestValueComparer()
         {
-            var alphabetDict = GetAlphabetDictionary();
+            OrderedDictionary<string, string> alphabetDict = GetAlphabetDictionary();
             Assert.IsFalse(alphabetDict.Values.Contains("a"));
             Assert.IsTrue(alphabetDict.Values.Contains("a", StringComparer.OrdinalIgnoreCase));
         }

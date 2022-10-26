@@ -20,7 +20,7 @@ namespace Examine.Lucene.Directories
 
         protected override Directory CreateDirectory(LuceneIndex luceneIndex, bool forceUnlock)
         {
-            var path = Path.Combine(_baseDir.FullName, luceneIndex.Name);
+            string path = Path.Combine(_baseDir.FullName, luceneIndex.Name);
             var luceneIndexFolder = new DirectoryInfo(path);
 
             var dir = new SimpleFSDirectory(luceneIndexFolder, LockFactory.GetLockFactory(luceneIndexFolder));

@@ -23,7 +23,7 @@ namespace Examine.Test
         {
             if (_xDoc == null)
             {
-                var xmlFile = new DirectoryInfo(TestContext.CurrentContext.TestDirectory).GetDirectories("App_Data")
+                FileInfo xmlFile = new DirectoryInfo(TestContext.CurrentContext.TestDirectory).GetDirectories("App_Data")
                     .Single()
                     .GetFiles("umbraco.config")
                     .Single();

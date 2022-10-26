@@ -36,7 +36,7 @@ namespace Examine.Lucene
 
                 foreach (FieldDefinition field in fieldDefinitionCollection)
                 {
-                    if (!string.IsNullOrWhiteSpace(field.Type) && ValueTypeFactories.TryGetFactory(field.Type, out var valueTypeFactory))
+                    if (!string.IsNullOrWhiteSpace(field.Type) && ValueTypeFactories.TryGetFactory(field.Type, out IFieldValueTypeFactory valueTypeFactory))
                     {
                         IIndexFieldValueType valueType = valueTypeFactory.Create(field.Name);
                         fieldAnalyzers.Add(field.Name, valueType.Analyzer);
@@ -45,7 +45,7 @@ namespace Examine.Lucene
                     else
                     {
                         //Define the default!
-                        if (!ValueTypeFactories.TryGetFactory(FieldDefinitionTypes.FullText, out var fullText))
+                        if (!ValueTypeFactories.TryGetFactory(FieldDefinitionTypes.FullText, out IFieldValueTypeFactory fullText))
                         {
                             throw new InvalidOperationException($"The value type factory {FieldDefinitionTypes.FullText} was not found");
                         }

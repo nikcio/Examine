@@ -36,7 +36,7 @@ namespace Examine.Lucene.Search
         protected override Query GetRangeQuery(string field, string part1, string part2, bool startInclusive,bool endInclusive)
         {
             // if the field is IIndexRangeValueType then return it's query, else return the default
-            var fieldType = _searchContext.GetFieldValueType(field);
+            IIndexFieldValueType fieldType = _searchContext.GetFieldValueType(field);
             if (fieldType != null && fieldType is IIndexRangeValueType rangeType)
             {
                 return rangeType.GetQuery(part1, part2, startInclusive, endInclusive);

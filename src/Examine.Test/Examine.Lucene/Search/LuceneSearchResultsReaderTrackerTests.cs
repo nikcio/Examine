@@ -16,7 +16,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
             {
                 indexer.IndexItems(new[] {
                     ValueSet.FromObject(1.ToString(), "content",
@@ -44,14 +44,14 @@ namespace Examine.Test.Examine.Lucene.Search
                     Assert.AreEqual(2, reader.RefCount);
 
                     //Arrange
-                    var sc = searcher.CreateQuery("content").Field("writerName", "administrator");
+                    global::Examine.Search.IBooleanOperation sc = searcher.CreateQuery("content").Field("writerName", "administrator");
 
                     // ensure we are still at 2, the above will have acquired a searcher to read the fields to create the query parser
                     // but will have acquired and released.
                     Assert.AreEqual(2, reader.RefCount);
 
                     //Act
-                    var results = sc.Execute();
+                    ISearchResults results = sc.Execute();
 
                     // we're still at 2, the search has executed and incremented/decremented the counts internally
                     Assert.AreEqual(2, reader.RefCount);

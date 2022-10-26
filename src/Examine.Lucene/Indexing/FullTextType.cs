@@ -49,7 +49,7 @@ namespace Examine.Lucene.Indexing
 
         protected override void AddSingleValue(Document doc, object value)
         {
-            if (TryConvert<string>(value, out var str))
+            if (TryConvert<string>(value, out string str))
             {
                 doc.Add(new TextField(FieldName, str, Field.Store.YES));
 
@@ -89,12 +89,12 @@ namespace Examine.Lucene.Indexing
             phraseQuery.Boost = 20;
             resultQuery.Add(phraseQuery, Occur.SHOULD);
 
-            var tokenStream = analyzer.GetTokenStream("SearchText", new StringReader(query));
-            var termAttribute = tokenStream.AddAttribute<ICharTermAttribute>();
+            TokenStream tokenStream = analyzer.GetTokenStream("SearchText", new StringReader(query));
+            ICharTermAttribute termAttribute = tokenStream.AddAttribute<ICharTermAttribute>();
             tokenStream.Reset();
             while (tokenStream.IncrementToken())
             {
-                var term = termAttribute.ToString();
+                string term = termAttribute.ToString();
 
                 //phraseQueryTerms.Add(new Term(fieldName, term));
                 //phraseQuery.Add(new[] { new Term(fieldName, term) });

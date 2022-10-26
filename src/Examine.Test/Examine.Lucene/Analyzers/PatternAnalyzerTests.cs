@@ -56,7 +56,7 @@ namespace Examine.Test.Examine.Lucene.Analyzers
 
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(
+            using (TestIndex indexer = GetTestIndex(
                 luceneDir,
                 analyzer,
                 new FieldDefinitionCollection(new FieldDefinition("phone", "phone")),
@@ -71,21 +71,21 @@ namespace Examine.Test.Examine.Lucene.Analyzers
                         new { phone = "", bodyText = "Sydney is the capital of NSW in Australia"})
                     });
 
-                var reader = indexer.IndexWriter.IndexWriter.GetReader(false);
-                var doc1 = reader.Document(0);
-                var phoneField = doc1.GetField("phone");
+                global::Lucene.Net.Index.DirectoryReader reader = indexer.IndexWriter.IndexWriter.GetReader(false);
+                global::Lucene.Net.Documents.Document doc1 = reader.Document(0);
+                global::Lucene.Net.Index.IIndexableField phoneField = doc1.GetField("phone");
                 Console.Write(phoneField);
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var query = searcher.CreateQuery("content")
+                global::Examine.Search.IBooleanOperation query = searcher.CreateQuery("content")
                     .Field("phone", "403 222 1234");
 
                 Console.Write(query);
 
-                var results = query.Execute();
+                ISearchResults results = query.Execute();
 
-                var results2 = searcher.CreateQuery("content")
+                ISearchResults results2 = searcher.CreateQuery("content")
                     .Field("phone", "1234 123 1234")
                     .Execute();
 

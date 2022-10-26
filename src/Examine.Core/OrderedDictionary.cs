@@ -24,7 +24,7 @@ namespace Examine
         {
             if (index >= Count) throw new IndexOutOfRangeException();
 
-            var found = base[index];
+            KeyValuePair<TKey, TVal> found = base[index];
 
             return base[found.Key].Value;
         }
@@ -96,7 +96,7 @@ namespace Examine
                 if (base.Dictionary != null && 
                     base.Dictionary.TryGetValue(key, out KeyValuePair<TKey, TVal> found))
                 {
-                    var index = base.Items.IndexOf(found);
+                    int index = base.Items.IndexOf(found);
                     base.SetItem(index, new KeyValuePair<TKey, TVal>(key, value));
                 }
                 else

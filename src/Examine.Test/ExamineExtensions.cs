@@ -18,7 +18,7 @@ namespace Examine
         /// <returns></returns>
         internal static bool IsExamineElement(this XElement x)
         {
-            var id = (string) x.Attribute("id");
+            string id = (string) x.Attribute("id");
             if (string.IsNullOrEmpty(id))
             {
                 return false;
@@ -78,7 +78,7 @@ namespace Examine
             }
 
             //it has sub elements so serialize them
-            var reader = nodeData.CreateReader();
+            System.Xml.XmlReader reader = nodeData.CreateReader();
             reader.MoveToContent();
             return reader.ReadInnerXml();
         }
@@ -91,10 +91,10 @@ namespace Examine
                 throw new InvalidOperationException("Not a supported Examine XML structure");
             }
 
-            var id = (string)xml.Attribute("id");
+            string id = (string)xml.Attribute("id");
             //we will use this as the item type, but we also need to add this as the 'nodeTypeAlias' as part of the properties
             //since this is what Umbraco expects
-            var nodeTypeAlias = xml.ExamineNodeTypeAlias();
+            string nodeTypeAlias = xml.ExamineNodeTypeAlias();
             Dictionary<string, object> allVals = xml.SelectExamineAllValues();
             allVals["nodeTypeAlias"] = nodeTypeAlias;
 
@@ -105,8 +105,8 @@ namespace Examine
         internal static Dictionary<string, object> SelectExamineAllValues(this XElement xml)
         {
             var attributeValues = xml.Attributes().ToDictionary(x => x.Name.LocalName, x => x.Value);
-            var dataValues = xml.SelectExamineDataValues();
-            foreach (var v in attributeValues)
+            Dictionary<string, object> dataValues = xml.SelectExamineDataValues();
+            foreach (KeyValuePair<string, string> v in attributeValues)
             {
                 //override the data values with attribute values if they do match, otherwise add
                 dataValues[v.Key] = v.Value;
@@ -119,7 +119,7 @@ namespace Examine
             //resolve all element data at once since it is much faster to do this than to relookup all of the XML data
             //using Linq and the node.Elements() methods re-gets all of them.
             var elementValues = new Dictionary<string, object>();
-            foreach (var x in xml.Elements())
+            foreach (XElement x in xml.Elements())
             {
                 if (x.Attribute("id") != null)
                 {
@@ -147,7 +147,7 @@ namespace Examine
                 else
                 {
                     //it has sub elements so serialize them
-                    using (var reader = x.CreateReader())
+                    using (System.Xml.XmlReader reader = x.CreateReader())
                     {
                         reader.MoveToContent();
                         elementValues[key] = reader.ReadInnerXml();

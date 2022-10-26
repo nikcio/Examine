@@ -54,7 +54,7 @@ namespace Examine.Lucene.Providers
         /// <inheritdoc />
         public override ISearchResults Search(string searchText, QueryOptions options = null)
         {
-            var sc = CreateQuery().ManagedQuery(searchText);
+            IBooleanOperation sc = CreateQuery().ManagedQuery(searchText);
             return sc.Execute(options);
         }
 

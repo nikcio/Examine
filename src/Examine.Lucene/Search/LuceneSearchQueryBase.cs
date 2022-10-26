@@ -52,7 +52,7 @@ namespace Examine.Lucene.Search
         /// <inheritdoc />
         public IBooleanOperation Group(Func<INestedQuery, INestedBooleanOperation> inner, BooleanOperation defaultOp = BooleanOperation.Or)
         {
-            var bo = CreateOp();
+            LuceneBooleanOperationBase bo = CreateOp();
             bo.Op(inner, BooleanOperation, defaultOp);
             return bo;
         }
@@ -235,10 +235,10 @@ namespace Examine.Lucene.Search
             // It needs to be:              -id:1 -id:2 -id:3
 
             // So we get all clauses 
-            var subQueries = GetMultiFieldQuery(fields, fieldVals, Occur.MUST_NOT, true);
+            BooleanQuery subQueries = GetMultiFieldQuery(fields, fieldVals, Occur.MUST_NOT, true);
 
             // then add each individual one directly to the query
-            foreach (var c in subQueries.Clauses)
+            foreach (BooleanClause c in subQueries.Clauses)
             {
                 Query.Add(c);
             }
@@ -303,14 +303,14 @@ namespace Examine.Lucene.Search
                     else
                     {
                         //REFERENCE: http://lucene.apache.org/java/2_4_0/queryparsersyntax.html#Fuzzy%20Searches
-                        var proxQuery = fieldName + ":" + fieldValue.Value + "~" + Convert.ToInt32(fieldValue.Level);
+                        string proxQuery = fieldName + ":" + fieldValue.Value + "~" + Convert.ToInt32(fieldValue.Level);
                         queryToAdd = ParseRawQuery(proxQuery);
                     }
                     break;
                 case Examineness.SimpleWildcard:
                 case Examineness.ComplexWildcard:
 
-                    var searchValue = fieldValue.Value + (fieldValue.Examineness == Examineness.ComplexWildcard ? "*" : "?");
+                    string searchValue = fieldValue.Value + (fieldValue.Examineness == Examineness.ComplexWildcard ? "*" : "?");
 
                     if (useQueryParser)
                     {
@@ -319,7 +319,7 @@ namespace Examine.Lucene.Search
                     else
                     {
                         //REFERENCE: http://lucene.apache.org/java/2_4_0/queryparsersyntax.html#Wildcard%20Searches
-                        var proxQuery = fieldName + ":" + searchValue;
+                        string proxQuery = fieldName + ":" + searchValue;
                         queryToAdd = ParseRawQuery(proxQuery);
                     }
                     break;
@@ -335,7 +335,7 @@ namespace Examine.Lucene.Search
                     else
                     {
                         //REFERENCE: http://lucene.apache.org/java/2_4_0/queryparsersyntax.html#Boosting%20a%20Term
-                        var proxQuery = fieldName + ":\"" + fieldValue.Value + "\"^" + Convert.ToInt32(fieldValue.Level).ToString();
+                        string proxQuery = fieldName + ":\"" + fieldValue.Value + "\"^" + Convert.ToInt32(fieldValue.Level).ToString();
                         queryToAdd = ParseRawQuery(proxQuery);
                     }
                     break;
@@ -347,7 +347,7 @@ namespace Examine.Lucene.Search
                     }
                     else
                     {
-                        var qry = fieldName + ":\"" + fieldValue.Value + "\"~" + proximity;
+                        string qry = fieldName + ":\"" + fieldValue.Value + "\"~" + proximity;
                         queryToAdd = ParseRawQuery(qry);
                     }
                     break;
@@ -372,7 +372,7 @@ namespace Examine.Lucene.Search
                     else
                     {
                         //standard query 
-                        var proxQuery = fieldName + ":" + fieldValue.Value;
+                        string proxQuery = fieldName + ":" + fieldValue.Value;
                         queryToAdd = ParseRawQuery(proxQuery);
                     }
                     break;
@@ -408,7 +408,7 @@ namespace Examine.Lucene.Search
         private static Query CreatePhraseQuery(string field, string txt)
         {
             var phraseQuery = new PhraseQuery { Slop = 0 };
-            foreach (var val in txt.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
+            foreach (string val in txt.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
             {
                 phraseQuery.Add(new Term(field, val));
             }
@@ -466,11 +466,11 @@ namespace Examine.Lucene.Search
             //we will have to match all combinations
             if (fields.Count == 1 || matchAllCombinations || fieldVals.Count < fields.Count)
             {
-                foreach (var f in fields)
+                foreach (string f in fields)
                 {
-                    foreach (var val in fieldVals)
+                    foreach (IExamineValue val in fieldVals)
                     {
-                        var q = GetFieldInternalQuery(f, val, true);
+                        Query q = GetFieldInternalQuery(f, val, true);
                         if (q != null)
                         {
                             qry.Add(q, occurance);
@@ -483,8 +483,8 @@ namespace Examine.Lucene.Search
             //This will align the key value pairs:            
             for (int i = 0; i < fields.Count; i++)
             {
-                var queryVal = fieldVals[i];
-                var q = GetFieldInternalQuery(fields[i], queryVal, true);
+                IExamineValue queryVal = fieldVals[i];
+                Query q = GetFieldInternalQuery(fields[i], queryVal, true);
                 if (q != null)
                 {
                     qry.Add(q, occurance);

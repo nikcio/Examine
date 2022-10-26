@@ -13,11 +13,11 @@ namespace Examine.Test.Examine.Lucene.Index
         public void Underscores()
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
-            var ts = analyzer.GetTokenStream("myField", "This is Warren's book");
+            global::Lucene.Net.Analysis.TokenStream ts = analyzer.GetTokenStream("myField", "This is Warren's book");
             ts.Reset();
             while (ts.IncrementToken())
             {
-                var termAtt = ts.GetAttribute<ICharTermAttribute>();
+                ICharTermAttribute termAtt = ts.GetAttribute<ICharTermAttribute>();
                 Console.WriteLine(termAtt);
             }
         }

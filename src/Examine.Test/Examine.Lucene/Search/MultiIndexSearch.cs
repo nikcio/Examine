@@ -19,10 +19,10 @@ namespace Examine.Test.Examine.Lucene.Search
             using (var luceneDir2 = new RandomIdRAMDirectory())
             using (var luceneDir3 = new RandomIdRAMDirectory())
             using (var luceneDir4 = new RandomIdRAMDirectory())
-            using (var indexer1 = GetTestIndex(luceneDir1, analyzer))
-            using (var indexer2 = GetTestIndex(luceneDir2, analyzer))
-            using (var indexer3 = GetTestIndex(luceneDir3, analyzer))
-            using (var indexer4 = GetTestIndex(luceneDir4, analyzer))
+            using (TestIndex indexer1 = GetTestIndex(luceneDir1, analyzer))
+            using (TestIndex indexer2 = GetTestIndex(luceneDir2, analyzer))
+            using (TestIndex indexer3 = GetTestIndex(luceneDir3, analyzer))
+            using (TestIndex indexer4 = GetTestIndex(luceneDir4, analyzer))
 
             {
                 indexer1.IndexItem(ValueSet.FromObject(1.ToString(), "content", new { item1 = "value1", item2 = "The agitated zebras gallop back and forth in short, panicky dashes, then skitter off into the absolute darkness." }));
@@ -36,10 +36,10 @@ namespace Examine.Test.Examine.Lucene.Search
                     new[] { indexer1, indexer2, indexer3, indexer4 },
                     analyzer);
 
-                var result = searcher.Search("darkness");
+                ISearchResults result = searcher.Search("darkness");
 
                 Assert.AreEqual(4, result.TotalItemCount);
-                foreach (var r in result)
+                foreach (ISearchResult r in result)
                 {
                     Console.WriteLine("Score = " + r.Score);
                 }
@@ -55,10 +55,10 @@ namespace Examine.Test.Examine.Lucene.Search
             using (var luceneDir2 = new RandomIdRAMDirectory())
             using (var luceneDir3 = new RandomIdRAMDirectory())
             using (var luceneDir4 = new RandomIdRAMDirectory())
-            using (var indexer1 = GetTestIndex(luceneDir1, analyzer))
-            using (var indexer2 = GetTestIndex(luceneDir2, analyzer))
-            using (var indexer3 = GetTestIndex(luceneDir3, analyzer))
-            using (var indexer4 = GetTestIndex(luceneDir4, analyzer))
+            using (TestIndex indexer1 = GetTestIndex(luceneDir1, analyzer))
+            using (TestIndex indexer2 = GetTestIndex(luceneDir2, analyzer))
+            using (TestIndex indexer3 = GetTestIndex(luceneDir3, analyzer))
+            using (TestIndex indexer4 = GetTestIndex(luceneDir4, analyzer))
             {
                 indexer1.IndexItem(ValueSet.FromObject(1.ToString(), "content", new { item1 = "hello", item2 = "The agitated zebras gallop back and forth in short, panicky dashes, then skitter off into the absolute darkness." }));
                 indexer2.IndexItem(ValueSet.FromObject(1.ToString(), "content", new { item1 = "world", item2 = "The festival lasts five days and celebrates the victory of good over evil, light over darkness, and knowledge over ignorance." }));
@@ -71,10 +71,10 @@ namespace Examine.Test.Examine.Lucene.Search
                     new[] { indexer1, indexer2, indexer3, indexer4 },
                     analyzer);
 
-                var result = searcher.GetSearchContext().SearchableFields;
+                string[] result = searcher.GetSearchContext().SearchableFields;
                 //will be item1 , item2, item3, and item4
                 Assert.AreEqual(4, result.Count());
-                foreach (var s in new[] { "item1", "item2", "item3", "item4" })
+                foreach (string s in new[] { "item1", "item2", "item3", "item4" })
                 {
                     Assert.IsTrue(result.Contains(s));
                 }

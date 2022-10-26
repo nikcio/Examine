@@ -30,7 +30,7 @@ namespace Examine.Lucene
         
         internal static void CopyTo(this IndexInput indexInput, IndexOutput indexOutput, string name)
         {
-            var buffer = new byte[32768];
+            byte[] buffer = new byte[32768];
 
             long length = indexInput.Length;
             long remainder = length;

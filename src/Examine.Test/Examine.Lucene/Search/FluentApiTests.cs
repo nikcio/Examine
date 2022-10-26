@@ -23,7 +23,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
             {
                 indexer.IndexItems(new[] {
                     ValueSet.FromObject(1.ToString(), "content",
@@ -36,7 +36,7 @@ namespace Examine.Test.Examine.Lucene.Search
 
                 var searcher = (BaseLuceneSearcher)indexer.Searcher;
 
-                var query1 = searcher.CreateQuery(
+                IBooleanOperation query1 = searcher.CreateQuery(
                     "content",
                     BooleanOperation.And,
                     searcher.LuceneAnalyzer,
@@ -55,7 +55,7 @@ namespace Examine.Test.Examine.Lucene.Search
                             AllowLeadingWildcard = false
                         }).NativeQuery("*dney"));
 
-                var results1 = query1.Execute();
+                ISearchResults results1 = query1.Execute();
                                
                 Assert.AreEqual(2, results1.TotalItemCount);               
             }
@@ -66,7 +66,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(
+            using (TestIndex indexer = GetTestIndex(
                 luceneDir,
                 analyzer,
                 new FieldDefinitionCollection(new FieldDefinition("parentID", FieldDefinitionTypes.Integer))))
@@ -80,13 +80,13 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { nodeName = "location 3", bodyText = "Sydney is the capital of NSW in Australia"})
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var query = searcher.CreateQuery("content").NativeQuery("sydney");
+                IBooleanOperation query = searcher.CreateQuery("content").NativeQuery("sydney");
 
                 Console.WriteLine(query);
 
-                var results = query.Execute();
+                ISearchResults results = query.Execute();
 
                 Assert.AreEqual(2, results.TotalItemCount);
             }
@@ -97,7 +97,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(
+            using (TestIndex indexer = GetTestIndex(
                 luceneDir,
                 analyzer,
                 new FieldDefinitionCollection(new FieldDefinition("parentID", FieldDefinitionTypes.Integer))))
@@ -111,14 +111,14 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { nodeName = "location 3", bodyText = "In Australia there is a town called Bateau Bay in NSW"})
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var query = searcher.CreateQuery("content").NativeQuery("\"town called\"");
+                IBooleanOperation query = searcher.CreateQuery("content").NativeQuery("\"town called\"");
 
                 Console.WriteLine(query);
                 Assert.AreEqual("{ Category: content, LuceneQuery: +(nodeName:\"town called\" bodyText:\"town called\") }", query.ToString());
 
-                var results = query.Execute();
+                ISearchResults results = query.Execute();
 
                 Assert.AreEqual(2, results.TotalItemCount);
             }
@@ -129,7 +129,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(
+            using (TestIndex indexer = GetTestIndex(
                 luceneDir,
                 analyzer,
                 new FieldDefinitionCollection(new FieldDefinition("created", "datetime"))))
@@ -162,12 +162,12 @@ namespace Examine.Test.Examine.Lucene.Search
                 });
 
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var numberSortedCriteria = searcher.CreateQuery()
+                IBooleanOperation numberSortedCriteria = searcher.CreateQuery()
                     .RangeQuery<DateTime>(new[] { "created" }, new DateTime(2000, 01, 02), new DateTime(2000, 01, 05), maxInclusive: false);
 
-                var numberSortedResult = numberSortedCriteria.Execute();
+                ISearchResults numberSortedResult = numberSortedCriteria.Execute();
 
                 Assert.AreEqual(2, numberSortedResult.TotalItemCount);
             }
@@ -179,7 +179,7 @@ namespace Examine.Test.Examine.Lucene.Search
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
 
             using (var luceneDir1 = new RandomIdRAMDirectory())
-            using (var indexer1 = GetTestIndex(luceneDir1, analyzer))
+            using (TestIndex indexer1 = GetTestIndex(luceneDir1, analyzer))
             {
                 indexer1.IndexItem(ValueSet.FromObject("1", "content", new { item1 = "value1", item2 = "The agitated zebras gallop back and forth in short, panicky dashes, then skitter off into the total absolute darkness." }));
                 indexer1.IndexItem(ValueSet.FromObject("2", "content", new { item1 = "value2", item2 = "The festival lasts five days and celebrates the victory of good over evil, light over darkness, and knowledge over ignorance." }));
@@ -189,13 +189,13 @@ namespace Examine.Test.Examine.Lucene.Search
                 indexer1.IndexItem(ValueSet.FromObject("6", "content", new { item1 = "value4", item2 = "60% of the time, it works everytime" }));
                 indexer1.IndexItem(ValueSet.FromObject("7", "content", new { SomeField = "value5", AnotherField = "another value" }));
 
-                var searcher = indexer1.Searcher;
+                ISearcher searcher = indexer1.Searcher;
 
-                var result = searcher.Search("darkness");
+                ISearchResults result = searcher.Search("darkness");
 
                 Assert.AreEqual(4, result.TotalItemCount);
                 Console.WriteLine("Search 1:");
-                foreach (var r in result)
+                foreach (ISearchResult r in result)
                 {
                     Console.WriteLine($"Id = {r.Id}, Score = {r.Score}");
                 }
@@ -203,7 +203,7 @@ namespace Examine.Test.Examine.Lucene.Search
                 result = searcher.Search("total darkness");
                 Assert.AreEqual(2, result.TotalItemCount);
                 Console.WriteLine("Search 2:");
-                foreach (var r in result)
+                foreach (ISearchResult r in result)
                 {
                     Console.WriteLine($"Id = {r.Id}, Score = {r.Score}");
                 }
@@ -216,7 +216,7 @@ namespace Examine.Test.Examine.Lucene.Search
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
 
             using (var luceneDir1 = new RandomIdRAMDirectory())
-            using (var indexer1 = GetTestIndex(luceneDir1, analyzer))
+            using (TestIndex indexer1 = GetTestIndex(luceneDir1, analyzer))
             {
                 indexer1.IndexItem(ValueSet.FromObject("1", "content", new { item1 = "value1", item2 = "The agitated zebras gallop back and forth in short, panicky dashes, then skitter off into the total absolute darkness." }));
                 indexer1.IndexItem(ValueSet.FromObject("2", "content", new { item1 = "value2", item2 = "The festival lasts five days and celebrates the victory of good over evil, light over darkness, and knowledge over ignorance." }));
@@ -225,15 +225,15 @@ namespace Examine.Test.Examine.Lucene.Search
                 indexer1.IndexItem(ValueSet.FromObject("5", "content", new { item1 = "value3", item2 = "Scotch scotch scotch, i love scotch" }));
                 indexer1.IndexItem(ValueSet.FromObject("6", "content", new { item1 = "value4", item2 = "60% of the time, it works everytime" }));
 
-                var searcher = indexer1.Searcher;
+                ISearcher searcher = indexer1.Searcher;
 
-                var qry = searcher.CreateQuery().ManagedQuery("darkness").And().Field("item1", "value1");
+                IBooleanOperation qry = searcher.CreateQuery().ManagedQuery("darkness").And().Field("item1", "value1");
                 Console.WriteLine(qry);
-                var result = qry.Execute();
+                ISearchResults result = qry.Execute();
 
                 Assert.AreEqual(1, result.TotalItemCount);
                 Console.WriteLine("Search 1:");
-                foreach (var r in result)
+                foreach (ISearchResult r in result)
                 {
                     Console.WriteLine($"Id = {r.Id}, Score = {r.Score}");
                 }
@@ -245,7 +245,7 @@ namespace Examine.Test.Examine.Lucene.Search
 
                 Assert.AreEqual(2, result.TotalItemCount);
                 Console.WriteLine("Search 2:");
-                foreach (var r in result)
+                foreach (ISearchResult r in result)
                 {
                     Console.WriteLine($"Id = {r.Id}, Score = {r.Score}");
                 }
@@ -258,7 +258,7 @@ namespace Examine.Test.Examine.Lucene.Search
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
 
             using (var luceneDir1 = new RandomIdRAMDirectory())
-            using (var indexer1 = GetTestIndex(luceneDir1, analyzer))
+            using (TestIndex indexer1 = GetTestIndex(luceneDir1, analyzer))
             {
                 indexer1.IndexItem(ValueSet.FromObject("1", "content", new { item1 = "value1", item2 = "The agitated zebras gallop back and forth in short, panicky dashes, then skitter off into the total absolute chaos." }));
                 indexer1.IndexItem(ValueSet.FromObject("2", "content", new { item1 = "value1", item2 = "The festival lasts five days and celebrates the victory of good over evil, light over darkness, and knowledge over ignorance." }));
@@ -267,20 +267,20 @@ namespace Examine.Test.Examine.Lucene.Search
                 indexer1.IndexItem(ValueSet.FromObject("5", "content", new { item1 = "value3", item2 = "Scotch scotch scotch, i love scotch" }));
                 indexer1.IndexItem(ValueSet.FromObject("6", "content", new { item1 = "value4", item2 = "60% of the time, it works everytime" }));
 
-                var searcher = indexer1.Searcher;
+                ISearcher searcher = indexer1.Searcher;
 
-                var qry = searcher.CreateQuery()
+                IBooleanOperation qry = searcher.CreateQuery()
                     .Field("item1", "value1")
                     .Not().ManagedQuery("darkness");
 
                 Console.WriteLine(qry);
-                var result = qry.Execute();
+                ISearchResults result = qry.Execute();
 
                 Assert.AreEqual(1, result.TotalItemCount);
                 Assert.AreEqual("1", result.ElementAt(0).Id);
 
                 Console.WriteLine("Search 1:");
-                foreach (var r in result)
+                foreach (ISearchResult r in result)
                 {
                     Console.WriteLine($"Id = {r.Id}, Score = {r.Score}");
                 }
@@ -292,7 +292,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(
+            using (TestIndex indexer = GetTestIndex(
                 luceneDir,
                 analyzer,
                 new FieldDefinitionCollection(new FieldDefinition("parentID", FieldDefinitionTypes.Integer))))
@@ -324,12 +324,12 @@ namespace Examine.Test.Examine.Lucene.Search
                         })
                 });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var numberSortedCriteria = searcher.CreateQuery()
+                IBooleanOperation numberSortedCriteria = searcher.CreateQuery()
                     .RangeQuery<int>(new[] { "parentID" }, 122, 124);
 
-                var numberSortedResult = numberSortedCriteria.Execute();
+                ISearchResults numberSortedResult = numberSortedCriteria.Execute();
 
                 Assert.AreEqual(2, numberSortedResult.TotalItemCount);
             }
@@ -340,7 +340,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(
+            using (TestIndex indexer = GetTestIndex(
                 luceneDir,
                 analyzer,
                 new FieldDefinitionCollection(new FieldDefinition("parentID", FieldDefinitionTypes.Integer))))
@@ -372,13 +372,13 @@ namespace Examine.Test.Examine.Lucene.Search
                         })
                 });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var numberSortedCriteria = searcher.CreateQuery()
+                IOrdering numberSortedCriteria = searcher.CreateQuery()
                     .Field("parentID", 123)
                     .OrderBy(new SortableField("sortOrder", SortType.Int));
 
-                var numberSortedResult = numberSortedCriteria.Execute();
+                ISearchResults numberSortedResult = numberSortedCriteria.Execute();
 
                 Assert.AreEqual(2, numberSortedResult.TotalItemCount);
             }
@@ -391,7 +391,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
             {
                 indexer.IndexItems(new[]
                 {
@@ -418,21 +418,21 @@ namespace Examine.Test.Examine.Lucene.Search
                         })
                 });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
                 //paths contain punctuation, we'll escape it and ensure an exact match
-                var criteria = searcher.CreateQuery("content");
+                IQuery criteria = searcher.CreateQuery("content");
 
                 //get all node type aliases starting with CWS_Home OR and all nodees starting with "About"
-                var filter = criteria.GroupedOr(
+                IBooleanOperation filter = criteria.GroupedOr(
                     new[] { "nodeTypeAlias", "nodeName" },
                     new[] { "CWS_Home".Boost(10), "About".MultipleCharacterWildcard() });
 
                 Console.WriteLine(filter);
 
-                var results = filter.Execute();
+                ISearchResults results = filter.Execute();
 
-                foreach (var r in results)
+                foreach (ISearchResult r in results)
                 {
                     Console.WriteLine($"Id = {r.Id}");
                 }
@@ -447,10 +447,10 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
 
             {
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
                 Console.WriteLine("GROUPED OR - SINGLE FIELD, MULTI VAL");
                 var criteria = (LuceneSearchQuery)searcher.CreateQuery();
@@ -497,10 +497,10 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
 
             {
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
                 //new LuceneSearcher("testSearcher", luceneDir, analyzer);
 
                 Console.WriteLine("GROUPED AND - SINGLE FIELD, MULTI VAL");
@@ -552,10 +552,10 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
 
             {
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
                 Console.WriteLine("GROUPED NOT - SINGLE FIELD, MULTI VAL");
                 var criteria = (LuceneSearchQuery)searcher.CreateQuery();
@@ -599,7 +599,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(
+            using (TestIndex indexer = GetTestIndex(
                 luceneDir, analyzer))
             {
 
@@ -610,12 +610,12 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { nodeName = "my name 2", bodyText = "lorem ficus", headerText = "header 2", umbracoNaviHide = "0" })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
                 var query = (LuceneSearchQuery)searcher.CreateQuery("content");
                 query.GroupedNot(new[] { "umbracoNaviHide" }, 1.ToString());
                 Console.WriteLine(query.Query);
-                var results = query.Execute();
+                ISearchResults results = query.Execute();
                 Assert.AreEqual(1, results.TotalItemCount);
             }
         }
@@ -625,7 +625,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(
+            using (TestIndex indexer = GetTestIndex(
                 luceneDir, analyzer))
             {
 
@@ -640,11 +640,11 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { nodeName = "my name 4", bodyText = "lorem ficus", show = "0", umbracoNaviHide = "1" })
                 });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var query = searcher.CreateQuery("content").GroupedNot(new[] { "umbracoNaviHide", "show" }, 1.ToString());
+                IBooleanOperation query = searcher.CreateQuery("content").GroupedNot(new[] { "umbracoNaviHide", "show" }, 1.ToString());
                 Console.WriteLine(query);
-                var results = query.Execute();
+                ISearchResults results = query.Execute();
                 Assert.AreEqual(1, results.TotalItemCount);
             }
         }
@@ -654,7 +654,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(
+            using (TestIndex indexer = GetTestIndex(
 
                 //TODO: Making this a number makes the query fail - i wonder how to make it work correctly?
                 // It's because the searching is NOT using a managed search
@@ -671,12 +671,12 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { nodeName = "my name 2", bodyText = "lorem ipsum", headerText = "header 2", umbracoNaviHide = "0" })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
                 //paths contain punctuation, we'll escape it and ensure an exact match
-                var criteria = searcher.CreateQuery("content");
-                var filter = criteria.GroupedOr(new[] { "nodeName", "bodyText", "headerText" }, "ipsum").Not().Field("umbracoNaviHide", "1");
-                var results = filter.Execute();
+                IQuery criteria = searcher.CreateQuery("content");
+                IBooleanOperation filter = criteria.GroupedOr(new[] { "nodeName", "bodyText", "headerText" }, "ipsum").Not().Field("umbracoNaviHide", "1");
+                ISearchResults results = filter.Execute();
                 Assert.AreEqual(1, results.TotalItemCount);
             }
         }
@@ -686,7 +686,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
             {
                 indexer.IndexItems(new[] {
                     ValueSet.FromObject(1.ToString(), "content",
@@ -695,15 +695,15 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { nodeName = "my name 2", bodyText = "lorem ipsum", headerText = "header 2", umbracoNaviHide = "0" })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var query = searcher.CreateQuery("content")
+                IBooleanOperation query = searcher.CreateQuery("content")
                     .Field("nodeName", "name")
                     .And().GroupedOr(new[] { "bodyText" }, new[] { "ficus", "ipsum" })
                     .And().GroupedNot(new[] { "umbracoNaviHide" }, new[] { 1.ToString() });
 
                 Console.WriteLine(query);
-                var results = query.Execute();
+                ISearchResults results = query.Execute();
                 Assert.AreEqual(1, results.TotalItemCount);
             }
         }
@@ -713,7 +713,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
             {
                 indexer.IndexItems(new[] {
                     ValueSet.FromObject(1.ToString(), "content",
@@ -722,15 +722,15 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { nodeName = "my name 2", bodyText = "lorem ipsum", headerText = "header 2", umbracoNaviHide = "0" })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var query = searcher.CreateQuery("content")
+                IBooleanOperation query = searcher.CreateQuery("content")
                     .Field("nodeName", "name")
                     .And().GroupedOr(new[] { "bodyText" }, new[] { "ficus", "ipsum" })
                     .And().GroupedNot(new[] { "umbracoNaviHide" }, new[] { 1.ToString(), 2.ToString() });
 
                 Console.WriteLine(query);
-                var results = query.Execute();
+                ISearchResults results = query.Execute();
                 Assert.AreEqual(1, results.TotalItemCount);
             }
         }
@@ -740,7 +740,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
             {
                 indexer.IndexItems(new[] {
                     ValueSet.FromObject(1.ToString(), "content",
@@ -749,15 +749,15 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { nodeName = "my name 2", bodyText = "lorem ipsum", headerText = "header 2", umbracoNaviHide = "0" })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var query = searcher.CreateQuery("content")
+                IBooleanOperation query = searcher.CreateQuery("content")
                     .Field("nodeName", "name")
                     .And().GroupedOr(new[] { "bodyText" }, new[] { "ficus", "ipsum" })
                     .Not().Field("umbracoNaviHide", 1.ToString());
 
                 Console.WriteLine(query);
-                var results = query.Execute();
+                ISearchResults results = query.Execute();
                 Assert.AreEqual(1, results.TotalItemCount);
             }
         }
@@ -767,7 +767,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
             {
                 indexer.IndexItems(new[] {
                     ValueSet.FromObject(1.ToString(), "content",
@@ -776,9 +776,9 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { nodeName = "my name 2", bodyText = "lorem ipsum", headerText = "header 2", umbracoNaviHide = "0" })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var query = searcher.CreateQuery("content")
+                IBooleanOperation query = searcher.CreateQuery("content")
                     .Field("nodeName", "name")
                     .And().GroupedOr(new[] { "bodyText" }, new[] { "ficus", "ipsum" })
                     .AndNot(x => x.Field("umbracoNaviHide", 1.ToString()));
@@ -787,7 +787,7 @@ namespace Examine.Test.Examine.Lucene.Search
                 // Which I don't think is right with the -(+ syntax but it still seems to work.
 
                 Console.WriteLine(query);
-                var results = query.Execute();
+                ISearchResults results = query.Execute();
                 Assert.AreEqual(1, results.TotalItemCount);
             }
         }
@@ -797,7 +797,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
             {
                 indexer.IndexItems(new[] {
                     ValueSet.FromObject(1.ToString(), "content",
@@ -806,9 +806,9 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { nodeName = "my name 2", bodyText = "lorem ipsum", headerText = "header 2", umbracoNaviHide = "0" })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var query = searcher.CreateQuery("content")
+                IBooleanOperation query = searcher.CreateQuery("content")
                     .Field("nodeName", "name");
 
                 query = query
@@ -817,7 +817,7 @@ namespace Examine.Test.Examine.Lucene.Search
                 // Results in { Category: content, LuceneQuery: +nodeName:name -umbracoNaviHide:1 -umbracoNaviHide:2 }
 
                 Console.WriteLine(query);
-                var results = query.Execute();
+                ISearchResults results = query.Execute();
                 Assert.AreEqual(1, results.TotalItemCount);
             }
         }
@@ -827,7 +827,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer, new FieldDefinitionCollection(new FieldDefinition("start", FieldDefinitionTypes.Integer))))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer, new FieldDefinitionCollection(new FieldDefinition("start", FieldDefinitionTypes.Integer))))
             {
                 indexer.IndexItems(new[] {
                     ValueSet.FromObject(1.ToString(), "content",
@@ -836,14 +836,14 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { nodeName = "my name 2", bodyText = "lorem ipsum", headerText = "header 2", start = 200 })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var query = searcher.CreateQuery("content")
+                IBooleanOperation query = searcher.CreateQuery("content")
                     .Field("nodeName", "name")
                     .Not().Field("start", 200);
 
                 Console.WriteLine(query);
-                var results = query.Execute();
+                ISearchResults results = query.Execute();
                 Assert.AreEqual(1, results.TotalItemCount);
                 Assert.AreEqual(results.First().Id, 1.ToString());
             }
@@ -855,7 +855,7 @@ namespace Examine.Test.Examine.Lucene.Search
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
 
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(
+            using (TestIndex indexer = GetTestIndex(
                 luceneDir,
                 analyzer,
                 new FieldDefinitionCollection(new FieldDefinition("__Path", "raw"))))
@@ -881,31 +881,31 @@ namespace Examine.Test.Examine.Lucene.Search
 
 
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
                 //paths contain punctuation, we'll escape it and ensure an exact match
-                var criteria = searcher.CreateQuery("content");
-                var filter = criteria.Field("__Path", "-1,123,456,789");
-                var results1 = filter.Execute();
+                IQuery criteria = searcher.CreateQuery("content");
+                IBooleanOperation filter = criteria.Field("__Path", "-1,123,456,789");
+                ISearchResults results1 = filter.Execute();
                 Assert.AreEqual(1, results1.TotalItemCount);
 
                 //now escape it
-                var exactcriteria = searcher.CreateQuery("content");
-                var exactfilter = exactcriteria.Field("__Path", "-1,123,456,789".Escape());
-                var results2 = exactfilter.Execute();
+                IQuery exactcriteria = searcher.CreateQuery("content");
+                IBooleanOperation exactfilter = exactcriteria.Field("__Path", "-1,123,456,789".Escape());
+                ISearchResults results2 = exactfilter.Execute();
                 Assert.AreEqual(1, results2.TotalItemCount);
 
                 //now try with native
-                var nativeCriteria = searcher.CreateQuery();
-                var nativeFilter = nativeCriteria.NativeQuery("__Path:\\-1,123,456,789");
+                IQuery nativeCriteria = searcher.CreateQuery();
+                IBooleanOperation nativeFilter = nativeCriteria.NativeQuery("__Path:\\-1,123,456,789");
                 Console.WriteLine(nativeFilter);
-                var results5 = nativeFilter.Execute();
+                ISearchResults results5 = nativeFilter.Execute();
                 Assert.AreEqual(1, results5.TotalItemCount);
 
                 //now try wildcards
-                var wildcardcriteria = searcher.CreateQuery("content");
-                var wildcardfilter = wildcardcriteria.Field("__Path", "-1,123,456,".MultipleCharacterWildcard());
-                var results3 = wildcardfilter.Execute();
+                IQuery wildcardcriteria = searcher.CreateQuery("content");
+                IBooleanOperation wildcardfilter = wildcardcriteria.Field("__Path", "-1,123,456,".MultipleCharacterWildcard());
+                ISearchResults results3 = wildcardfilter.Execute();
                 Assert.AreEqual(2, results3.TotalItemCount);
                 //not found
                 wildcardcriteria = searcher.CreateQuery("content");
@@ -922,7 +922,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(
+            using (TestIndex indexer = GetTestIndex(
                 luceneDir,
                 analyzer,
                 new FieldDefinitionCollection(new FieldDefinition("parentID", FieldDefinitionTypes.Integer))))
@@ -936,12 +936,12 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { nodeName = "my name 3", bodyText = "lorem ipsum", parentID = "1139" })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var criteria = searcher.CreateQuery("content");
-                var filter = criteria.Field("parentID", 1139);
+                IQuery criteria = searcher.CreateQuery("content");
+                IBooleanOperation filter = criteria.Field("parentID", 1139);
 
-                var results = filter.Execute();
+                ISearchResults results = filter.Execute();
 
                 Assert.AreEqual(2, results.TotalItemCount);
             }
@@ -952,7 +952,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(
+            using (TestIndex indexer = GetTestIndex(
                 luceneDir,
                 analyzer,
                 new FieldDefinitionCollection(new FieldDefinition("parentID", FieldDefinitionTypes.Integer))))
@@ -966,23 +966,23 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { nodeName = "my name 3", bodyText = "lorem ipsum", parentID = "1139" })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var criteria = searcher.CreateQuery("content");
+                IQuery criteria = searcher.CreateQuery("content");
 
                 //NOTE: This will not work :/ 
                 // It seems that this answer is along the lines of why: https://stackoverflow.com/questions/45516870/apache-lucene-6-queryparser-range-query-is-not-working-with-intpoint
                 // because the field is numeric, this range query will generate a TermRangeQuery which isn't compatible with numerics and what is annoying
                 // is the query parser docs uses a numerical figure as examples: https://lucene.apache.org/core/2_9_4/queryparsersyntax.html#Range%20Searches
                 // BUT looking closely, those numeric figures are actually dates stored in a specific way that this will work.
-                var filter = criteria.NativeQuery("parentID:[1139 TO 1139]");
+                IBooleanOperation filter = criteria.NativeQuery("parentID:[1139 TO 1139]");
 
                 //This thread says we could potentially make this work by overriding the query parser: https://stackoverflow.com/questions/5026185/how-do-i-make-the-queryparser-in-lucene-handle-numeric-ranges
 
                 //We can use a Lucene query directly instead:
                 //((LuceneSearchQuery)criteria).LuceneQuery(NumericRangeQuery)
 
-                var results = filter.Execute();
+                ISearchResults results = filter.Execute();
 
                 Assert.AreEqual(2, results.TotalItemCount);
             }
@@ -993,7 +993,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(
+            using (TestIndex indexer = GetTestIndex(
                 luceneDir,
                 analyzer,
                 new FieldDefinitionCollection(new FieldDefinition("nodeTypeAlias", "raw"))))
@@ -1026,12 +1026,12 @@ namespace Examine.Test.Examine.Lucene.Search
 
 
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var criteria = searcher.CreateQuery("content");
-                var filter = criteria.Field("nodeTypeAlias", "CWS_Home".Escape());
+                IQuery criteria = searcher.CreateQuery("content");
+                IBooleanOperation filter = criteria.Field("nodeTypeAlias", "CWS_Home".Escape());
 
-                var results = filter.Execute();
+                ISearchResults results = filter.Execute();
 
 
                 Assert.AreEqual(2, results.TotalItemCount);
@@ -1043,7 +1043,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
 
 
             {
@@ -1056,19 +1056,19 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { nodeName = "my name 3", bodyText = "Slowly carrying the full cups into the living room, she handed one to Alex." })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var criteria = searcher.CreateQuery();
+                IQuery criteria = searcher.CreateQuery();
 
                 // TODO: This isn't testing correctly because the search parser is actually removing stop words to generate the search so we actually
                 // end up with an empty search and then by fluke this test passes.
 
-                var filter = criteria.Field("bodyText", "into")
+                IBooleanOperation filter = criteria.Field("bodyText", "into")
                     .Or().Field("nodeName", "into");
 
                 Console.WriteLine(filter);
 
-                var results = filter.Execute();
+                ISearchResults results = filter.Execute();
 
                 Assert.AreEqual(0, results.TotalItemCount);
             }
@@ -1079,7 +1079,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
 
 
             {
@@ -1109,11 +1109,11 @@ namespace Examine.Test.Examine.Lucene.Search
                         })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var criteria = searcher.CreateQuery("content");
+                IQuery criteria = searcher.CreateQuery("content");
 
-                var results = criteria.NativeQuery("nodeTypeAlias:CWS_Home").Execute();
+                ISearchResults results = criteria.NativeQuery("nodeTypeAlias:CWS_Home").Execute();
 
                 Assert.AreEqual(2, results.TotalItemCount);
             }
@@ -1126,7 +1126,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
 
 
             {
@@ -1141,12 +1141,12 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { nodeName = "my name 3", bodyText = "lorem ipsum", nodeTypeAlias = "file" })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var criteria = searcher.CreateQuery("media");
-                var filter = criteria.Field("nodeTypeAlias", "image");
+                IQuery criteria = searcher.CreateQuery("media");
+                IBooleanOperation filter = criteria.Field("nodeTypeAlias", "image");
 
-                var results = filter.Execute();
+                ISearchResults results = filter.Execute();
 
                 Assert.AreEqual(2, results.TotalItemCount);
             }
@@ -1157,7 +1157,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
             {
                 indexer.IndexItems(new[] {
                     ValueSet.FromObject(1.ToString(), "media",
@@ -1170,15 +1170,15 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { nodeName = "my name 4", bodyText = "lorem ipsum", nodeTypeAlias = "file" })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var criteria = searcher.CreateQuery(defaultOperation: BooleanOperation.Or);
-                var filter = criteria
+                IQuery criteria = searcher.CreateQuery(defaultOperation: BooleanOperation.Or);
+                IBooleanOperation filter = criteria
                     .Field(ExamineFieldNames.CategoryFieldName, "media")
                     .Or()
                     .Field(ExamineFieldNames.CategoryFieldName, "content");
 
-                var results = filter.Execute();
+                ISearchResults results = filter.Execute();
 
                 Assert.AreEqual(3, results.TotalItemCount);
             }
@@ -1189,7 +1189,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(
+            using (TestIndex indexer = GetTestIndex(
                 luceneDir,
                 analyzer,
                 //Ensure it's set to a number, otherwise it's not sortable
@@ -1206,17 +1206,17 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { nodeName = "my name 4", bodyText = "lorem ipsum", parentID = "2222" })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var sc = searcher.CreateQuery("content");
-                var sc1 = sc.Field("parentID", 1143).OrderBy(new SortableField("sortOrder", SortType.Int));
+                IQuery sc = searcher.CreateQuery("content");
+                IOrdering sc1 = sc.Field("parentID", 1143).OrderBy(new SortableField("sortOrder", SortType.Int));
 
-                var results1 = sc1.Execute().ToArray();
+                ISearchResult[] results1 = sc1.Execute().ToArray();
 
                 Assert.AreEqual(3, results1.Length);
 
-                var currSort = 0;
-                for (var i = 0; i < results1.Length; i++)
+                int currSort = 0;
+                for (int i = 0; i < results1.Length; i++)
                 {
                     Assert.GreaterOrEqual(int.Parse(results1[i].Values["sortOrder"]), currSort);
                     currSort = int.Parse(results1[i].Values["sortOrder"]);
@@ -1229,7 +1229,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(
+            using (TestIndex indexer = GetTestIndex(
                 luceneDir,
                 analyzer,
                 //Ensure it's set to a date, otherwise it's not sortable
@@ -1237,7 +1237,7 @@ namespace Examine.Test.Examine.Lucene.Search
             {
 
 
-                var now = DateTime.Now;
+                DateTime now = DateTime.Now;
 
                 indexer.IndexItems(new[] {
                     ValueSet.FromObject(1.ToString(), "content",
@@ -1250,18 +1250,18 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { nodeName = "my name 4", updateDate = now, parentID = "2222" })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var sc = searcher.CreateQuery("content");
+                IQuery sc = searcher.CreateQuery("content");
                 //note: dates internally are stored as Long, see DateTimeType
-                var sc1 = sc.Field("parentID", 1143).OrderBy(new SortableField("updateDate", SortType.Long));
+                IOrdering sc1 = sc.Field("parentID", 1143).OrderBy(new SortableField("updateDate", SortType.Long));
 
-                var results1 = sc1.Execute().ToArray();
+                ISearchResult[] results1 = sc1.Execute().ToArray();
 
                 Assert.AreEqual(3, results1.Length);
 
                 double currSort = 0;
-                for (var i = 0; i < results1.Length; i++)
+                for (int i = 0; i < results1.Length; i++)
                 {
                     Assert.GreaterOrEqual(double.Parse(results1[i].Values["updateDate"]), currSort);
                     currSort = double.Parse(results1[i].Values["updateDate"]);
@@ -1274,7 +1274,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(
+            using (TestIndex indexer = GetTestIndex(
                 luceneDir,
                 analyzer,
                 //Ensure it's set to a fulltextsortable, otherwise it's not sortable
@@ -1291,18 +1291,18 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { nodeName = "my name 4", writerName = "writer", parentID = "2222" })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var sc = searcher.CreateQuery("content");
-                var sc1 = sc.Field("writerName", "administrator")
+                IQuery sc = searcher.CreateQuery("content");
+                IOrdering sc1 = sc.Field("writerName", "administrator")
                     .OrderBy(new SortableField("nodeName", SortType.String));
 
                 sc = searcher.CreateQuery("content");
-                var sc2 = sc.Field("writerName", "administrator")
+                IOrdering sc2 = sc.Field("writerName", "administrator")
                     .OrderByDescending(new SortableField("nodeName", SortType.String));
 
-                var results1 = sc1.Execute();
-                var results2 = sc2.Execute();
+                ISearchResults results1 = sc1.Execute();
+                ISearchResults results2 = sc2.Execute();
 
                 Assert.AreNotEqual(results1.First().Id, results2.First().Id);
             }
@@ -1322,7 +1322,7 @@ namespace Examine.Test.Examine.Lucene.Search
 
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(
+            using (TestIndex indexer = GetTestIndex(
                 luceneDir,
                 analyzer,
                 new FieldDefinitionCollection(
@@ -1338,14 +1338,14 @@ namespace Examine.Test.Examine.Lucene.Search
                     ValueSet.FromObject(6.ToString(), "content", new { field1 = 2.6 }),
                 });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var sc = searcher.CreateQuery("content");
-                var sc1 = sc.All()
+                IQuery sc = searcher.CreateQuery("content");
+                IOrdering sc1 = sc.All()
                     .OrderBy(new SortableField("field1", sortType));
 
                 sc = searcher.CreateQuery("content");
-                var sc2 = sc.All()
+                IOrdering sc2 = sc.All()
                     .OrderByDescending(new SortableField("field1", sortType));
 
                 var results1 = sc1.Execute().ToList();
@@ -1373,7 +1373,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(
+            using (TestIndex indexer = GetTestIndex(
                 luceneDir,
                 analyzer,
                 new FieldDefinitionCollection(
@@ -1390,10 +1390,10 @@ namespace Examine.Test.Examine.Lucene.Search
                     ValueSet.FromObject(6.ToString(), "content", new { field1 = 2.6, field2 = 1 }),
                 });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var sc = searcher.CreateQuery("content");
-                var sc1 = sc.All()
+                IQuery sc = searcher.CreateQuery("content");
+                IOrdering sc1 = sc.All()
                     .OrderByDescending(new SortableField("field2", SortType.Int))
                     .OrderBy(new SortableField("field1", SortType.Double));
 
@@ -1413,7 +1413,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
             {
                 indexer.IndexItems(new[] {
                     ValueSet.FromObject(1.ToString(), "content",
@@ -1426,18 +1426,18 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { nodeName = "hello", headerText = "world", bodyText = "blah" })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var sc = searcher.CreateQuery("content", BooleanOperation.Or);
-                var sc1 = sc.Field("nodeName", "umbraco").Or().Field("headerText", "umbraco").Or().Field("bodyText", "umbraco");
+                IQuery sc = searcher.CreateQuery("content", BooleanOperation.Or);
+                IBooleanOperation sc1 = sc.Field("nodeName", "umbraco").Or().Field("headerText", "umbraco").Or().Field("bodyText", "umbraco");
 
-                var results = sc1.Execute();
+                ISearchResults results = sc1.Execute();
 
                 //Assert
                 for (int i = 0; i < results.TotalItemCount - 1; i++)
                 {
-                    var curr = results.ElementAt(i);
-                    var next = results.ElementAtOrDefault(i + 1);
+                    ISearchResult curr = results.ElementAt(i);
+                    ISearchResult next = results.ElementAtOrDefault(i + 1);
 
                     if (next == null)
                         break;
@@ -1453,7 +1453,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
             {
                 indexer.IndexItems(new[] {
                     ValueSet.FromObject(1.ToString(), "content",
@@ -1466,13 +1466,13 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { nodeName = "hello", headerText = "world", writerName = "blah" })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
                 //Arrange
-                var sc = searcher.CreateQuery("content").Field("writerName", "administrator");
+                IBooleanOperation sc = searcher.CreateQuery("content").Field("writerName", "administrator");
 
                 //Act
-                var results = sc.Execute();
+                ISearchResults results = sc.Execute();
 
                 //Assert
                 Assert.AreNotEqual(results.First(), results.Skip(2).First(), "Third result should be different");
@@ -1484,7 +1484,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
             {
                 indexer.IndexItems(new[] {
                     ValueSet.FromObject(1.ToString(), "content",
@@ -1497,15 +1497,15 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { nodeName = "codegarden 090", headerText = "world", writerName = "blah" })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
                 //Arrange
-                var sc = searcher.CreateQuery("content").Field("nodeName", "codegarden 09".Escape());
+                IBooleanOperation sc = searcher.CreateQuery("content").Field("nodeName", "codegarden 09".Escape());
 
                 Console.WriteLine(sc.ToString());
 
                 //Act
-                var results = sc.Execute();
+                ISearchResults results = sc.Execute();
 
                 //Assert
                 //NOTE: The result is 2 because the double space is removed with the analyzer
@@ -1520,7 +1520,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
             {
                 indexer.IndexItems(new[] {
                     ValueSet.FromObject(1.ToString(), "content",
@@ -1533,19 +1533,19 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { nodeName = "Always consider this", nodeTypeAlias = "CWS_World" })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
                 //Arrange
-                var criteria = searcher.CreateQuery("content");
+                IQuery criteria = searcher.CreateQuery("content");
 
                 //get all node type aliases starting with CWS and all nodees starting with "A"
-                var filter = criteria.GroupedAnd(
+                IBooleanOperation filter = criteria.GroupedAnd(
                     new[] { "nodeTypeAlias", "nodeName" },
                     new[] { "CWS".MultipleCharacterWildcard(), "A".MultipleCharacterWildcard() });
 
 
                 //Act
-                var results = filter.Execute();
+                ISearchResults results = filter.Execute();
 
                 //Assert
                 Assert.AreEqual(2, results.TotalItemCount);
@@ -1557,7 +1557,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
             {
                 indexer.IndexItems(new[] {
                     ValueSet.FromObject(1.ToString(), "content",
@@ -1570,18 +1570,18 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { nodeName = "Always consider this", metaKeywords = "Warren is a very talented individual and quite creative" })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
                 //Arrange
-                var criteria = searcher.CreateQuery("content");
+                IQuery criteria = searcher.CreateQuery("content");
 
                 //get all nodes that contain the words warren and creative within 5 words of each other
-                var filter = criteria.Field("metaKeywords", "Warren creative".Proximity(5));
+                IBooleanOperation filter = criteria.Field("metaKeywords", "Warren creative".Proximity(5));
 
                 //Act
-                var results = filter.Execute();
+                ISearchResults results = filter.Execute();
 
-                foreach (var r in results)
+                foreach (ISearchResult r in results)
                 {
                     Console.WriteLine($"Id = {r.Id}");
                 }
@@ -1600,7 +1600,7 @@ namespace Examine.Test.Examine.Lucene.Search
 
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(
+            using (TestIndex indexer = GetTestIndex(
                 luceneDir,
                 analyzer,
                 //Ensure it's set to a float
@@ -1619,18 +1619,18 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { nodeName = "Always consider this", SomeFloat = 25 })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
                 //all numbers should be between 0 and 100 based on the data source
-                var criteria1 = searcher.CreateQuery();
-                var filter1 = criteria1.RangeQuery<float>(new[] { "SomeFloat" }, 0f, 100f, true, true);
+                IQuery criteria1 = searcher.CreateQuery();
+                IBooleanOperation filter1 = criteria1.RangeQuery<float>(new[] { "SomeFloat" }, 0f, 100f, true, true);
 
-                var criteria2 = searcher.CreateQuery();
-                var filter2 = criteria2.RangeQuery<float>(new[] { "SomeFloat" }, 101f, 200f, true, true);
+                IQuery criteria2 = searcher.CreateQuery();
+                IBooleanOperation filter2 = criteria2.RangeQuery<float>(new[] { "SomeFloat" }, 101f, 200f, true, true);
 
                 //Act
-                var results1 = filter1.Execute();
-                var results2 = filter2.Execute();
+                ISearchResults results1 = filter1.Execute();
+                ISearchResults results2 = filter2.Execute();
 
                 //Assert
                 Assert.AreEqual(3, results1.TotalItemCount);
@@ -1648,7 +1648,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(
+            using (TestIndex indexer = GetTestIndex(
                 luceneDir,
                 analyzer,
                 //Ensure it's set to a float
@@ -1667,18 +1667,18 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { nodeName = "Always consider this", SomeNumber = 25 })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
                 //all numbers should be between 0 and 100 based on the data source
-                var criteria1 = searcher.CreateQuery();
-                var filter1 = criteria1.RangeQuery<int>(new[] { "SomeNumber" }, 0, 100, true, true);
+                IQuery criteria1 = searcher.CreateQuery();
+                IBooleanOperation filter1 = criteria1.RangeQuery<int>(new[] { "SomeNumber" }, 0, 100, true, true);
 
-                var criteria2 = searcher.CreateQuery();
-                var filter2 = criteria2.RangeQuery<int>(new[] { "SomeNumber" }, 101, 200, true, true);
+                IQuery criteria2 = searcher.CreateQuery();
+                IBooleanOperation filter2 = criteria2.RangeQuery<int>(new[] { "SomeNumber" }, 101, 200, true, true);
 
                 //Act
-                var results1 = filter1.Execute();
-                var results2 = filter2.Execute();
+                ISearchResults results1 = filter1.Execute();
+                ISearchResults results2 = filter2.Execute();
 
                 //Assert
                 Assert.AreEqual(3, results1.TotalItemCount);
@@ -1694,7 +1694,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(
+            using (TestIndex indexer = GetTestIndex(
                 luceneDir,
                 analyzer,
                 //Ensure it's set to a float
@@ -1713,18 +1713,18 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { nodeName = "Always consider this", SomeDouble = 25d })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
                 //all numbers should be between 0 and 100 based on the data source
-                var criteria1 = searcher.CreateQuery();
-                var filter1 = criteria1.RangeQuery<double>(new[] { "SomeDouble" }, 0d, 100d, true, true);
+                IQuery criteria1 = searcher.CreateQuery();
+                IBooleanOperation filter1 = criteria1.RangeQuery<double>(new[] { "SomeDouble" }, 0d, 100d, true, true);
 
-                var criteria2 = searcher.CreateQuery("content");
-                var filter2 = criteria2.RangeQuery<double>(new[] { "SomeDouble" }, 101d, 200d, true, true);
+                IQuery criteria2 = searcher.CreateQuery("content");
+                IBooleanOperation filter2 = criteria2.RangeQuery<double>(new[] { "SomeDouble" }, 101d, 200d, true, true);
 
                 //Act
-                var results1 = filter1.Execute();
-                var results2 = filter2.Execute();
+                ISearchResults results1 = filter1.Execute();
+                ISearchResults results2 = filter2.Execute();
 
                 //Assert
                 Assert.AreEqual(3, results1.TotalItemCount);
@@ -1740,7 +1740,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(
+            using (TestIndex indexer = GetTestIndex(
                 luceneDir,
                 analyzer,
                 //Ensure it's set to a float
@@ -1757,18 +1757,18 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { nodeName = "Always consider this", SomeLong = 25L })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
                 //all numbers should be between 0 and 100 based on the data source
-                var criteria1 = searcher.CreateQuery();
-                var filter1 = criteria1.RangeQuery<long>(new[] { "SomeLong" }, 0L, 100L, true, true);
+                IQuery criteria1 = searcher.CreateQuery();
+                IBooleanOperation filter1 = criteria1.RangeQuery<long>(new[] { "SomeLong" }, 0L, 100L, true, true);
 
-                var criteria2 = searcher.CreateQuery();
-                var filter2 = criteria2.RangeQuery<long>(new[] { "SomeLong" }, 101L, 200L, true, true);
+                IQuery criteria2 = searcher.CreateQuery();
+                IBooleanOperation filter2 = criteria2.RangeQuery<long>(new[] { "SomeLong" }, 101L, 200L, true, true);
 
                 //Act
-                var results1 = filter1.Execute();
-                var results2 = filter2.Execute();
+                ISearchResults results1 = filter1.Execute();
+                ISearchResults results2 = filter2.Execute();
 
                 //Assert
                 Assert.AreEqual(3, results1.TotalItemCount);
@@ -1784,11 +1784,11 @@ namespace Examine.Test.Examine.Lucene.Search
         [Test]
         public void Date_Range_SimpleIndexSet()
         {
-            var reIndexDateTime = DateTime.Now;
+            DateTime reIndexDateTime = DateTime.Now;
 
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(
+            using (TestIndex indexer = GetTestIndex(
                 luceneDir,
                 analyzer,
                 new FieldDefinitionCollection(new FieldDefinition("DateCreated", "datetime"))))
@@ -1804,17 +1804,17 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { DateCreated = reIndexDateTime })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var criteria = searcher.CreateQuery();
-                var filter = criteria.RangeQuery<DateTime>(new[] { "DateCreated" }, reIndexDateTime, DateTime.Now, true, true);
+                IQuery criteria = searcher.CreateQuery();
+                IBooleanOperation filter = criteria.RangeQuery<DateTime>(new[] { "DateCreated" }, reIndexDateTime, DateTime.Now, true, true);
 
-                var criteria2 = searcher.CreateQuery();
-                var filter2 = criteria2.RangeQuery<DateTime>(new[] { "DateCreated" }, reIndexDateTime.AddDays(-1), reIndexDateTime.AddSeconds(-1), true, true);
+                IQuery criteria2 = searcher.CreateQuery();
+                IBooleanOperation filter2 = criteria2.RangeQuery<DateTime>(new[] { "DateCreated" }, reIndexDateTime.AddDays(-1), reIndexDateTime.AddSeconds(-1), true, true);
 
                 ////Act
-                var results = filter.Execute();
-                var results2 = filter2.Execute();
+                ISearchResults results = filter.Execute();
+                ISearchResults results2 = filter2.Execute();
 
                 ////Assert
                 Assert.IsTrue(results.TotalItemCount > 0);
@@ -1829,7 +1829,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new EnglishAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
             {
                 indexer.IndexItems(new[] {
                     ValueSet.FromObject(1.ToString(), "content",
@@ -1842,27 +1842,27 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { Content = "I thought you were cool" })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var criteria = searcher.CreateQuery();
-                var filter = criteria.Field("Content", "think".Fuzzy(0.1F));
+                IQuery criteria = searcher.CreateQuery();
+                IBooleanOperation filter = criteria.Field("Content", "think".Fuzzy(0.1F));
 
-                var criteria2 = searcher.CreateQuery();
-                var filter2 = criteria2.Field("Content", "thought".Fuzzy());
+                IQuery criteria2 = searcher.CreateQuery();
+                IBooleanOperation filter2 = criteria2.Field("Content", "thought".Fuzzy());
 
                 Console.WriteLine(filter);
                 Console.WriteLine(filter2);
 
                 ////Act
-                var results = filter.Execute();
-                var results2 = filter2.Execute();
+                ISearchResults results = filter.Execute();
+                ISearchResults results2 = filter2.Execute();
 
-                foreach (var r in results)
+                foreach (ISearchResult r in results)
                 {
                     Console.WriteLine($"Result Id: {r.Id}");
                 }
 
-                foreach (var r in results2)
+                foreach (ISearchResult r in results2)
                 {
                     Console.WriteLine($"Result2 Id: {r.Id}");
                 }
@@ -1879,7 +1879,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
             {
                 indexer.IndexItems(new[] {
                     ValueSet.FromObject(1.ToString(), "content",
@@ -1892,13 +1892,13 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { Content = "hi there, hello world" })
                 });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var criteria = searcher.CreateQuery();
-                var filter = criteria.Field("Content", "hello");
+                IQuery criteria = searcher.CreateQuery();
+                IBooleanOperation filter = criteria.Field("Content", "hello");
 
                 //Act
-                var results = filter.Execute(QueryOptions.SkipTake(0, 3));
+                ISearchResults results = filter.Execute(QueryOptions.SkipTake(0, 3));
 
                 //Assert
 
@@ -1914,7 +1914,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
             {
                 for (int i = 0; i < 1000; i++)
                 {
@@ -1923,13 +1923,13 @@ namespace Examine.Test.Examine.Lucene.Search
 
                 indexer.IndexItems(new[] { ValueSet.FromObject(2000.ToString(), "content", new { Content = "donotfind" }) });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var criteria = searcher.CreateQuery();
-                var filter = criteria.Field("Content", "hello");
+                IQuery criteria = searcher.CreateQuery();
+                IBooleanOperation filter = criteria.Field("Content", "hello");
 
                 //Act
-                var results = filter.Execute(QueryOptions.SkipTake(0, int.MaxValue));
+                ISearchResults results = filter.Execute(QueryOptions.SkipTake(0, int.MaxValue));
 
                 //Assert
 
@@ -1943,7 +1943,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
 
 
             {
@@ -1960,18 +1960,18 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { Content = "hi there, hello world", Type = "type2" })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var criteria = searcher.CreateQuery();
+                IQuery criteria = searcher.CreateQuery();
 
                 //Query = 
                 //  +Type:type1 +(Content:world Content:something)
 
-                var filter = criteria.Field("Type", "type1")
+                IBooleanOperation filter = criteria.Field("Type", "type1")
                     .And(query => query.Field("Content", "world").Or().Field("Content", "something"), BooleanOperation.Or);
 
                 //Act
-                var results = filter.Execute();
+                ISearchResults results = filter.Execute();
 
                 //Assert
                 Assert.AreEqual(2, results.TotalItemCount);
@@ -1983,7 +1983,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
 
 
             {
@@ -2002,18 +2002,18 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { Content = "hi there, hello world", Type = "type2" })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var criteria = searcher.CreateQuery();
+                IQuery criteria = searcher.CreateQuery();
 
                 //Query = 
                 //  +Type:type1 +(+Content:world +Content:hello)
 
-                var filter = criteria.Field("Type", "type1")
+                IBooleanOperation filter = criteria.Field("Type", "type1")
                     .And(query => query.Field("Content", "world").And().Field("Content", "hello"));
 
                 //Act
-                var results = filter.Execute();
+                ISearchResults results = filter.Execute();
 
                 //Assert
                 Assert.AreEqual(2, results.TotalItemCount);
@@ -2025,7 +2025,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
 
 
             {
@@ -2044,18 +2044,18 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { Content = "hi there, hello world", Type = "type2" })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var criteria = searcher.CreateQuery();
+                IQuery criteria = searcher.CreateQuery();
 
                 //Query = 
                 //  +Type:type1 +(+Content:world -Content:something)
 
-                var filter = criteria.Field("Type", "type1")
+                IBooleanOperation filter = criteria.Field("Type", "type1")
                     .And(query => query.Field("Content", "world").Not().Field("Content", "something"));
 
                 //Act
-                var results = filter.Execute();
+                ISearchResults results = filter.Execute();
 
                 //Assert
                 Assert.AreEqual(1, results.TotalItemCount);
@@ -2067,7 +2067,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
             {
                 indexer.IndexItems(new[] {
                     ValueSet.FromObject(1.ToString(), "content",
@@ -2082,14 +2082,14 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { Content = "hi there, hello world", Type = "type2" })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var criteria = searcher.CreateQuery(defaultOperation: BooleanOperation.Or);
+                IQuery criteria = searcher.CreateQuery(defaultOperation: BooleanOperation.Or);
 
                 //Query = 
                 //  (+Type:type1 +(Content:world Content:something)) (+Type:type2 +(+Content:world +Content:cruel))
 
-                var filter = criteria
+                IBooleanOperation filter = criteria
                     .Group(group => group.Field("Type", "type1")
                         .And(query => query.Field("Content", "world").Or().Field("Content", "something"), BooleanOperation.Or),
                         // required so that the type1 query is required
@@ -2103,10 +2103,10 @@ namespace Examine.Test.Examine.Lucene.Search
                 Console.WriteLine(filter);
 
                 //Act
-                var results = filter.Execute();
+                ISearchResults results = filter.Execute();
 
                 //Assert
-                foreach (var r in results)
+                foreach (ISearchResult r in results)
                 {
                     Console.WriteLine($"Result Id: {r.Id}");
                 }
@@ -2120,13 +2120,13 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
             {
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
                 var criteria = (LuceneSearchQuery)searcher.CreateQuery();
 
                 //combine a custom lucene query with raw lucene query
-                var op = criteria.NativeQuery("hello:world").And();
+                IQuery op = criteria.NativeQuery("hello:world").And();
 
                 criteria.LuceneQuery(NumericRangeQuery.NewInt64Range("numTest", 4, 5, true, true));
 
@@ -2140,7 +2140,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
             {
                 indexer.IndexItems(new[] {
                     ValueSet.FromObject(1.ToString(), "content",
@@ -2155,12 +2155,12 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { Content = "hi there, hello world", Type = "type2" })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
-                var query = searcher.CreateQuery("content").ManagedQuery("hello");
+                IBooleanOperation query = searcher.CreateQuery("content").ManagedQuery("hello");
                 Console.WriteLine(query);
 
-                var results = query.Execute();
+                ISearchResults results = query.Execute();
 
                 //Assert
                 Assert.AreEqual(3, results.TotalItemCount);
@@ -2237,7 +2237,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
 
             {
                 indexer.IndexItems(new[] {
@@ -2259,13 +2259,13 @@ namespace Examine.Test.Examine.Lucene.Search
                         })
                     });
 
-                var searcher = indexer.Searcher;
-                var sc = searcher.CreateQuery("content");
-                var sc1 = sc.Field("nodeName", "my name 1").SelectField("__Path");
+                ISearcher searcher = indexer.Searcher;
+                IQuery sc = searcher.CreateQuery("content");
+                IOrdering sc1 = sc.Field("nodeName", "my name 1").SelectField("__Path");
 
-                var results = sc1.Execute();
-                var expectedLoadedFields = new string[] { "__Path" };
-                var keys = results.First().Values.Keys.ToArray();
+                ISearchResults results = sc1.Execute();
+                string[] expectedLoadedFields = new string[] { "__Path" };
+                string[] keys = results.First().Values.Keys.ToArray();
                 Assert.True(keys.All(x => expectedLoadedFields.Contains(x)));
                 Assert.True(expectedLoadedFields.All(x => keys.Contains(x)));
             }
@@ -2276,7 +2276,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
 
             {
                 indexer.IndexItems(new[] {
@@ -2298,13 +2298,13 @@ namespace Examine.Test.Examine.Lucene.Search
                         })
                     });
 
-                var searcher = indexer.Searcher;
-                var sc = searcher.CreateQuery("content");
-                var sc1 = sc.Field("nodeName", "my name 1").SelectFields(new HashSet<string>(new[] { "nodeName", "bodyText", "id", "__NodeId" }));
+                ISearcher searcher = indexer.Searcher;
+                IQuery sc = searcher.CreateQuery("content");
+                IOrdering sc1 = sc.Field("nodeName", "my name 1").SelectFields(new HashSet<string>(new[] { "nodeName", "bodyText", "id", "__NodeId" }));
 
-                var results = sc1.Execute();
-                var expectedLoadedFields = new string[] { "nodeName", "bodyText", "id", "__NodeId" };
-                var keys = results.First().Values.Keys.ToArray();
+                ISearchResults results = sc1.Execute();
+                string[] expectedLoadedFields = new string[] { "nodeName", "bodyText", "id", "__NodeId" };
+                string[] keys = results.First().Values.Keys.ToArray();
                 Assert.True(keys.All(x => expectedLoadedFields.Contains(x)));
                 Assert.True(expectedLoadedFields.All(x => keys.Contains(x)));
             }
@@ -2316,7 +2316,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
 
             {
                 indexer.IndexItems(new[] {
@@ -2338,13 +2338,13 @@ namespace Examine.Test.Examine.Lucene.Search
                         })
                     });
 
-                var searcher = indexer.Searcher;
-                var sc = searcher.CreateQuery("content");
-                var sc1 = sc.Field("nodeName", "my name 1").SelectFields(new HashSet<string>(new string[] { "nodeName", "bodyText" }));
+                ISearcher searcher = indexer.Searcher;
+                IQuery sc = searcher.CreateQuery("content");
+                IOrdering sc1 = sc.Field("nodeName", "my name 1").SelectFields(new HashSet<string>(new string[] { "nodeName", "bodyText" }));
 
-                var results = sc1.Execute();
-                var expectedLoadedFields = new string[] { "nodeName", "bodyText" };
-                var keys = results.First().Values.Keys.ToArray();
+                ISearchResults results = sc1.Execute();
+                string[] expectedLoadedFields = new string[] { "nodeName", "bodyText" };
+                string[] keys = results.First().Values.Keys.ToArray();
                 Assert.True(keys.All(x => expectedLoadedFields.Contains(x)));
                 Assert.True(expectedLoadedFields.All(x => keys.Contains(x)));
             }
@@ -2355,7 +2355,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
 
             {
                 indexer.IndexItems(new[] {
@@ -2377,13 +2377,13 @@ namespace Examine.Test.Examine.Lucene.Search
                         })
                     });
 
-                var searcher = indexer.Searcher;
-                var sc = searcher.CreateQuery().NativeQuery("nodeName:'my name 1'");
-                var sc1 = sc.SelectFields(new HashSet<string>(new[] { "bodyText", "id", "__NodeId" }));
+                ISearcher searcher = indexer.Searcher;
+                IBooleanOperation sc = searcher.CreateQuery().NativeQuery("nodeName:'my name 1'");
+                IOrdering sc1 = sc.SelectFields(new HashSet<string>(new[] { "bodyText", "id", "__NodeId" }));
 
-                var results = sc1.Execute();
-                var expectedLoadedFields = new string[] { "bodyText", "id", "__NodeId" };
-                var keys = results.First().Values.Keys.ToArray();
+                ISearchResults results = sc1.Execute();
+                string[] expectedLoadedFields = new string[] { "bodyText", "id", "__NodeId" };
+                string[] keys = results.First().Values.Keys.ToArray();
                 Assert.True(keys.All(x => expectedLoadedFields.Contains(x)));
                 Assert.True(expectedLoadedFields.All(x => keys.Contains(x)));
             }
@@ -2393,7 +2393,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
             {
                 indexer.IndexItems(new[] {
                     ValueSet.FromObject(1.ToString(), "content",
@@ -2406,11 +2406,11 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { nodeName = "hello", headerText = "world", writerName = "blah" })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
                 //Arrange
 
-                var sc = searcher.CreateQuery("content").Field("writerName", "administrator");
+                IBooleanOperation sc = searcher.CreateQuery("content").Field("writerName", "administrator");
 
                 //Act
 
@@ -2430,7 +2430,7 @@ namespace Examine.Test.Examine.Lucene.Search
         {
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
             {
                 indexer.IndexItems(new[] {
                     ValueSet.FromObject(1.ToString(), "content",
@@ -2447,11 +2447,11 @@ namespace Examine.Test.Examine.Lucene.Search
                         new { nodeName = "umbraco", headerText = "umbraco", writerName = "administrator" })
                     });
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
                 //Arrange
 
-                var sc = searcher.CreateQuery("content").Field("writerName", "administrator");
+                IBooleanOperation sc = searcher.CreateQuery("content").Field("writerName", "administrator");
                 int pageIndex = 0;
                 int pageSize = 2;
 
@@ -2503,22 +2503,22 @@ namespace Examine.Test.Examine.Lucene.Search
             const int indexSize = 5;
             var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
             using (var luceneDir = new RandomIdRAMDirectory())
-            using (var indexer = GetTestIndex(luceneDir, analyzer))
+            using (TestIndex indexer = GetTestIndex(luceneDir, analyzer))
             {
-                var items = Enumerable.Range(0, indexSize).Select(x => ValueSet.FromObject(x.ToString(), "content",
+                IEnumerable<ValueSet> items = Enumerable.Range(0, indexSize).Select(x => ValueSet.FromObject(x.ToString(), "content",
                     new { nodeName = "umbraco", headerText = "world", writerName = "administrator" }));
 
                 indexer.IndexItems(items);
 
-                var searcher = indexer.Searcher;
+                ISearcher searcher = indexer.Searcher;
 
                 //Arrange
 
-                var sc = searcher.CreateQuery("content").Field("writerName", "administrator");
+                IBooleanOperation sc = searcher.CreateQuery("content").Field("writerName", "administrator");
 
                 //Act
 
-                var results = sc.Execute(QueryOptions.SkipTake(skip, take));
+                ISearchResults results = sc.Execute(QueryOptions.SkipTake(skip, take));
 
                 Assert.AreEqual(indexSize, results.TotalItemCount);
                 Assert.AreEqual(expectedResults, results.Count());

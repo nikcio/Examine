@@ -199,7 +199,7 @@ namespace Examine.Lucene.Providers
 
             if (!RunAsync)
             {
-                var msg = "Indexing Error Occurred: " + e.Message;
+                string msg = "Indexing Error Occurred: " + e.Message;
                 throw new Exception(msg, e.Exception);
             }
 
@@ -217,7 +217,7 @@ namespace Examine.Lucene.Providers
             // need to lock, we don't want to issue any node writing if there's an index rebuild occuring
             lock (_writerLocker)
             {
-                var currentToken = _cancellationToken;
+                CancellationToken currentToken = _cancellationToken;
 
                 if (RunAsync)
                 {
@@ -225,7 +225,7 @@ namespace Examine.Lucene.Providers
                 }
                 else
                 {
-                    var count = 0;
+                    int count = 0;
                     try
                     {
                         count = PerformIndexItemsInternal(values, currentToken);
@@ -248,13 +248,13 @@ namespace Examine.Lucene.Providers
             }
 
             //track all of the nodes indexed
-            var indexedNodes = 0;
+            int indexedNodes = 0;
 
             Interlocked.Increment(ref _activeWrites);
 
             try
             {
-                foreach (var valueSet in valueSets)
+                foreach (ValueSet valueSet in valueSets)
                 {
                     if (cancellationToken.IsCancellationRequested)
                     {
@@ -307,7 +307,7 @@ namespace Examine.Lucene.Providers
                 return;
             }
 
-            var indexExists = IndexExists();
+            bool indexExists = IndexExists();
             if (!indexExists || forceOverwrite)
             {
                 //if we can't acquire the lock exit - this will happen if this method is called multiple times but we don't want this 
@@ -316,7 +316,7 @@ namespace Examine.Lucene.Providers
                 {
                     try
                     {
-                        var dir = GetLuceneDirectory();
+                        Directory dir = GetLuceneDirectory();
 
                         if (!indexExists)
                         {
@@ -454,7 +454,7 @@ namespace Examine.Lucene.Providers
             // need to lock, we don't want to issue any node writing if there's an index rebuild occuring
             lock (_writerLocker)
             {
-                var currentToken = _cancellationToken;
+                CancellationToken currentToken = _cancellationToken;
 
                 if (RunAsync)
                 {
@@ -462,7 +462,7 @@ namespace Examine.Lucene.Providers
                 }
                 else
                 {
-                    var count = 0;
+                    int count = 0;
                     try
                     {
                         count = PerformDeleteFromIndexInternal(itemIds, currentToken);
@@ -485,13 +485,13 @@ namespace Examine.Lucene.Providers
             }
 
             //track all of the nodes indexed
-            var indexedNodes = 0;
+            int indexedNodes = 0;
 
             Interlocked.Increment(ref _activeWrites);
 
             try
             {
-                foreach (var id in itemIds)
+                foreach (string id in itemIds)
                 {
                     if (cancellationToken.IsCancellationRequested)
                         break;
@@ -544,14 +544,14 @@ namespace Examine.Lucene.Providers
         {
             //copy to writable dictionary
             var defaults = new Dictionary<string, IFieldValueTypeFactory>();
-            foreach (var defaultIndexValueType in ValueTypeFactoryCollection.GetDefaultValueTypes(LoggerFactory, DefaultAnalyzer))
+            foreach (KeyValuePair<string, IFieldValueTypeFactory> defaultIndexValueType in ValueTypeFactoryCollection.GetDefaultValueTypes(LoggerFactory, DefaultAnalyzer))
             {
                 defaults[defaultIndexValueType.Key] = defaultIndexValueType.Value;
             }
             //copy the factory over the defaults
             if (indexValueTypesFactory != null)
             {
-                foreach (var value in indexValueTypesFactory)
+                foreach (KeyValuePair<string, IFieldValueTypeFactory> value in indexValueTypesFactory)
                 {
                     defaults[value.Key] = value.Value;
                 }
@@ -712,11 +712,11 @@ namespace Examine.Lucene.Providers
                 {
                     IIndexFieldValueType valueType = FieldValueTypeCollection.GetValueType(
                         definedFieldDefinition.Name,
-                        FieldValueTypeCollection.ValueTypeFactories.TryGetFactory(definedFieldDefinition.Type, out var valTypeFactory)
+                        FieldValueTypeCollection.ValueTypeFactories.TryGetFactory(definedFieldDefinition.Type, out IFieldValueTypeFactory valTypeFactory)
                             ? valTypeFactory
                             : FieldValueTypeCollection.ValueTypeFactories.GetRequiredFactory(FieldDefinitionTypes.FullText));
 
-                    foreach (var o in field.Value)
+                    foreach (object o in field.Value)
                     {
                         valueType.AddValue(doc, o);
                     }
@@ -726,7 +726,7 @@ namespace Examine.Lucene.Providers
                     //Check for the special field prefix, if this is the case it's indexed as an invariant culture value
 
                     IIndexFieldValueType valueType = FieldValueTypeCollection.GetValueType(field.Key, FieldValueTypeCollection.ValueTypeFactories.GetRequiredFactory(FieldDefinitionTypes.InvariantCultureIgnoreCase));
-                    foreach (var o in field.Value)
+                    foreach (object o in field.Value)
                     {
                         valueType.AddValue(doc, o);
                     }
@@ -739,7 +739,7 @@ namespace Examine.Lucene.Providers
                         field.Key,
                         FieldValueTypeCollection.ValueTypeFactories.GetRequiredFactory(FieldDefinitionTypes.FullText));
 
-                    foreach (var o in field.Value)
+                    foreach (object o in field.Value)
                     {
                         valueType.AddValue(doc, o);
                     }
@@ -879,7 +879,7 @@ namespace Examine.Lucene.Providers
             {
                 case IndexOperationType.Add:
 
-                    var added = ProcessIndexQueueItem(item);
+                    bool added = ProcessIndexQueueItem(item);
                     return added;
                 case IndexOperationType.Delete:
                     ProcessDeleteQueueItem(item, false);
@@ -1023,9 +1023,9 @@ namespace Examine.Lucene.Providers
 
         private LuceneSearcher CreateSearcher()
         {
-            var possibleSuffixes = new[] { "Index", "Indexer" };
-            var name = Name;
-            foreach (var suffix in possibleSuffixes)
+            string[] possibleSuffixes = new[] { "Index", "Indexer" };
+            string name = Name;
+            foreach (string suffix in possibleSuffixes)
             {
                 //trim the "Indexer" / "Index" suffix if it exists
                 if (!name.EndsWith(suffix))
@@ -1120,7 +1120,7 @@ namespace Examine.Lucene.Providers
                         Task t = _asyncTask.ContinueWith(
                             x =>
                             {
-                                var indexedCount = 0;
+                                int indexedCount = 0;
                                 try
                                 {
                                     // execute the callback
@@ -1180,7 +1180,7 @@ namespace Examine.Lucene.Providers
         {
             if (_latestGen.HasValue && !_disposedValue && !_cancellationToken.IsCancellationRequested)
             {
-                var found = _nrtReopenThread?.WaitForGeneration(_latestGen.Value, 5000);
+                bool? found = _nrtReopenThread?.WaitForGeneration(_latestGen.Value, 5000);
                 if (_logger.IsEnabled(LogLevel.Debug))
                 {
                     _logger.LogDebug("{IndexName} WaitForChanges returned {GenerationFound}", Name, found);
@@ -1218,7 +1218,7 @@ namespace Examine.Lucene.Providers
 
         public IEnumerable<string> GetFieldNames()
         {
-            var writer = IndexWriter;
+            TrackingIndexWriter writer = IndexWriter;
             using (DirectoryReader reader = writer.IndexWriter.GetReader(false))
             {
                 IEnumerable<string> fieldInfos = MultiFields.GetMergedFieldInfos(reader).Select(x => x.Name);

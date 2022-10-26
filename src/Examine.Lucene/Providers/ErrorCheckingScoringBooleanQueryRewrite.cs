@@ -37,10 +37,10 @@ namespace Examine.Lucene.Providers
             //another option would be to use the commented out code below and catch `booleanQuery.Add` and exit the loop when the
             //max terms are surpassed - but that might mean odd results.
 
-            var baseClass = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
+            MultiTermQuery.RewriteMethod baseClass = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
             try
             {
-                var result = baseClass.Rewrite(reader, query);
+                Query result = baseClass.Rewrite(reader, query);
                 return result;
             }
             catch (BooleanQuery.TooManyClausesException)
@@ -49,8 +49,8 @@ namespace Examine.Lucene.Providers
                 //TODO: We could add a cache for known terms that will cause this so that we don't spend too much CPU rewriting and recatching the exception each time
 
                 //we cannot perform this rewrite so we need to use the default for this query
-                var defaultRewriter = MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
-                var result = defaultRewriter.Rewrite(reader, query);
+                MultiTermQuery.RewriteMethod defaultRewriter = MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
+                Query result = defaultRewriter.Rewrite(reader, query);
                 return result;
             }
 

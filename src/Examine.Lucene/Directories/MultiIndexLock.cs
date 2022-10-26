@@ -31,9 +31,9 @@ namespace Examine.Lucene.Directories
         
         public override bool Obtain()
         {
-            var master = _dirMaster.Obtain();
+            bool master = _dirMaster.Obtain();
             if (!master) return false;
-            var child = _dirChild.Obtain();
+            bool child = _dirChild.Obtain();
             return child;
         }
 
@@ -44,7 +44,7 @@ namespace Examine.Lucene.Directories
             {
                 if (!_isDisposed)
                 {
-                    var isChild = false;
+                    bool isChild = false;
                     try
                     {
                         //try to release master

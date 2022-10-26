@@ -36,7 +36,7 @@ namespace Examine.Lucene.Indexing
                     doc.Add(new TextField(FieldName, ts));
                     break;
                 default:
-                    if (TryConvert<string>(value, out var str))
+                    if (TryConvert<string>(value, out string str))
                     {
                         doc.Add(new StringField(
                             FieldName,

@@ -80,12 +80,12 @@ namespace Examine.Lucene.Indexing
                 return true;
             }
 
-            var inputConverter = TypeDescriptor.GetConverter(val);
+            TypeConverter inputConverter = TypeDescriptor.GetConverter(val);
             if (inputConverter.CanConvertTo(typeof(T)))
             {
                 try
                 {
-                    var converted = inputConverter.ConvertTo(val, typeof(T));
+                    object converted = inputConverter.ConvertTo(val, typeof(T));
                     parsedVal = (T) converted;
                     return true;
                 }
@@ -100,12 +100,12 @@ namespace Examine.Lucene.Indexing
                 }
             }
 
-            var outputConverter = TypeDescriptor.GetConverter(typeof(T));
+            TypeConverter outputConverter = TypeDescriptor.GetConverter(typeof(T));
             if (outputConverter.CanConvertFrom(val.GetType()))
             {
                 try
                 {
-                    var converted = outputConverter.ConvertFrom(val);
+                    object converted = outputConverter.ConvertFrom(val);
                     parsedVal = (T)converted;
                     return true;
                 }
@@ -122,7 +122,7 @@ namespace Examine.Lucene.Indexing
 
             try
             {
-                var casted = Convert.ChangeType(val, typeof(T));
+                object casted = Convert.ChangeType(val, typeof(T));
                 parsedVal = (T)casted;
                 return true;
             }
