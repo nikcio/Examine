@@ -31,7 +31,7 @@ namespace Examine.Test.Examine.Lucene.Analyzers
             string @out = stream.GetString();
 
             Assert.AreEqual("403 222 1234", @out);
-            
+
             stream = new PatternTokenizer(
                 new StringReader("1234 123 1234"),
                 pattern,

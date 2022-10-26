@@ -20,11 +20,11 @@ namespace Examine.Lucene.Providers
     /// ]]>
     /// </example>
     /// </remarks>
-    
+
     [Serializable]
     public class ErrorCheckingScoringBooleanQueryRewrite : MultiTermQuery.RewriteMethod
     {
-        
+
         public override Query Rewrite(IndexReader reader, MultiTermQuery query)
         {
             //we'll try to use the SCORING_BOOLEAN_QUERY_REWRITE but this can result in TooManyClauses

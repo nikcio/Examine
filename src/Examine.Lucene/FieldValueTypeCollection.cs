@@ -103,7 +103,7 @@ namespace Examine.Lucene
             }
 
             return valueType;
-        } 
+        }
 
         /// <summary>
         /// Returns the resolved collection of <see cref="IIndexFieldValueType"/> for this index

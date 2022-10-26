@@ -145,7 +145,7 @@ namespace Examine.Test
             {
                 KeyValuePair<string, string> found = alphabetDict[100];
             });
-            
+
         }
 
         [Test]
@@ -156,7 +156,7 @@ namespace Examine.Test
             Assert.Throws<KeyNotFoundException>(() =>
             {
                 KeyValuePair<string, string> found = alphabetDict["abc"];
-            });            
+            });
         }
 
         //[Test]

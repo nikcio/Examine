@@ -27,7 +27,7 @@ namespace Examine.Lucene
         /// https://github.com/kimchy/compass/blob/master/src/main/src/org/apache/lucene/index/LuceneUtils.java
         /// 
         /// </remarks>
-        
+
         internal static void CopyTo(this IndexInput indexInput, IndexOutput indexOutput, string name)
         {
             byte[] buffer = new byte[32768];

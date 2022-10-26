@@ -25,7 +25,7 @@ namespace Examine.Lucene.Indexing
         Analyzer Analyzer { get; }
 
         void AddValue(Document doc, object value);
-        
+
         Query GetQuery(string query);
 
         //IHighlighter GetHighlighter(Query query, Searcher searcher, FacetsLoader facetsLoader);

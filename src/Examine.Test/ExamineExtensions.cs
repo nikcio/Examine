@@ -18,7 +18,7 @@ namespace Examine
         /// <returns></returns>
         internal static bool IsExamineElement(this XElement x)
         {
-            string id = (string) x.Attribute("id");
+            string id = (string)x.Attribute("id");
             if (string.IsNullOrEmpty(id))
             {
                 return false;
@@ -57,7 +57,7 @@ namespace Examine
             //if there is data children with attributes, we're on the old
             if (xml.Elements("data").Any(x => x.HasAttributes))
             {
-                nodeData = xml.Elements("data").SingleOrDefault(x => string.Equals(((string) x.Attribute("alias")), alias, StringComparison.InvariantCultureIgnoreCase));
+                nodeData = xml.Elements("data").SingleOrDefault(x => string.Equals(((string)x.Attribute("alias")), alias, StringComparison.InvariantCultureIgnoreCase));
             }
             else
             {
@@ -121,7 +121,7 @@ namespace Examine
                 if (x.Attribute("id") != null)
                 {
                     continue;
-                }   
+                }
 
                 string key;
                 if (x.Name.LocalName == "data")

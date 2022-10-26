@@ -25,6 +25,6 @@
         public const string ItemTypeFieldName = "__NodeTypeAlias";
     }
 
-    
+
 }
 

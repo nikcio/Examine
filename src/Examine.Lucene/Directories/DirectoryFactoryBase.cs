@@ -21,7 +21,7 @@ namespace Examine.Lucene.Directories
             if (!_disposedValue)
             {
                 if (disposing)
-                {                    
+                {
                     foreach (Directory d in _createdDirectories.Values)
                     {
                         d.Dispose();

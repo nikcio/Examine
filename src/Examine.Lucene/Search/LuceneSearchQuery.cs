@@ -212,7 +212,7 @@ namespace Examine.Lucene.Search
             ISearchResults pagesResults = executor.Execute();
 
             return pagesResults;
-        }        
+        }
 
         /// <summary>
         /// Internal operation for adding the ordered results
@@ -222,13 +222,14 @@ namespace Examine.Lucene.Search
         /// <returns>A new <see cref="IBooleanOperation"/> with the clause appended</returns>
         private LuceneBooleanOperationBase OrderByInternal(bool descending, params SortableField[] fields)
         {
-            if (fields == null) throw new ArgumentNullException(nameof(fields));
+            if (fields == null)
+                throw new ArgumentNullException(nameof(fields));
 
             foreach (SortableField f in fields)
             {
                 string fieldName = f.FieldName;
 
-                SortFieldType defaultSort =  SortFieldType.STRING;
+                SortFieldType defaultSort = SortFieldType.STRING;
 
                 switch (f.SortType)
                 {
@@ -252,7 +253,7 @@ namespace Examine.Lucene.Search
                         break;
                     case SortType.Double:
                         defaultSort = SortFieldType.DOUBLE;
-                        break;                   
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }

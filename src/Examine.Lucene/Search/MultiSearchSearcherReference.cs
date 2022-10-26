@@ -35,7 +35,7 @@ namespace Examine.Lucene.Search
             {
                 if (disposing)
                 {
-                    foreach(ISearcherReference i in _inner)
+                    foreach (ISearcherReference i in _inner)
                     {
                         i.Dispose();
                     }

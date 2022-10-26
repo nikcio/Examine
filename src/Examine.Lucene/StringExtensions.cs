@@ -39,7 +39,8 @@ namespace Examine
         private static string GenerateHash(this string str, string hashType)
         {
             var hasher = HashAlgorithm.Create(hashType);
-            if (hasher == null) throw new InvalidOperationException("No hashing type found by name " + hashType);
+            if (hasher == null)
+                throw new InvalidOperationException("No hashing type found by name " + hashType);
             using (hasher)
             {
                 //convert our string into byte array
@@ -76,24 +77,24 @@ namespace Examine
             return mName;
         }
 
-		//NOTE: The reason this code is in a separate method is because the Code Analysis barks at us with security concerns for medium trust
-		// when it is inline in the RemoveStopWords method like it used to be.
-		
-		private static bool IsStandardAnalyzerStopWord(string stringToCheck)
-		{
-			if (StandardAnalyzer.STOP_WORDS_SET.Contains(stringToCheck.ToLower()))
-			{
-				return true;
-			}
-			return false;
-		}
+        //NOTE: The reason this code is in a separate method is because the Code Analysis barks at us with security concerns for medium trust
+        // when it is inline in the RemoveStopWords method like it used to be.
+
+        private static bool IsStandardAnalyzerStopWord(string stringToCheck)
+        {
+            if (StandardAnalyzer.STOP_WORDS_SET.Contains(stringToCheck.ToLower()))
+            {
+                return true;
+            }
+            return false;
+        }
 
         ///<summary>
         /// Removes stop words from the text if not contained within a phrase
         ///</summary>
         ///<param name="searchText"></param>
         ///<returns></returns>
-		
+
         public static string RemoveStopWords(this string searchText)
         {
             Action<string, StringBuilder> removeWords = (str, b) =>
@@ -102,20 +103,20 @@ namespace Examine
                         var innerBuilder = new StringBuilder();
                         string[] searchParts = str.Split(' ');
 
-	                    foreach (string t in searchParts)
-	                    {
-							if (!IsStandardAnalyzerStopWord(t))
-		                    {
-			                    innerBuilder.Append(t);
+                        foreach (string t in searchParts)
+                        {
+                            if (!IsStandardAnalyzerStopWord(t))
+                            {
+                                innerBuilder.Append(t);
                                 innerBuilder.Append(" ");
-		                    }
-	                    }
-	                    b.Append(innerBuilder.ToString());
+                            }
+                        }
+                        b.Append(innerBuilder.ToString());
                     };
 
             var builder = new StringBuilder();
             int carrat = 0;
-            while(carrat < searchText.Length)
+            while (carrat < searchText.Length)
             {
                 int quoteIndex = searchText.IndexOf("\"", carrat);
                 if (quoteIndex >= 0 && carrat == quoteIndex)
@@ -146,7 +147,7 @@ namespace Examine
                     string terms = searchText.Substring(carrat, nextCarrat - carrat).Trim();
                     if (!string.IsNullOrWhiteSpace(terms))
                     {
-                        removeWords(terms, builder);    
+                        removeWords(terms, builder);
                     }
                     carrat = nextCarrat;
                 }

@@ -7,7 +7,7 @@ namespace Examine.Lucene.Directories
     /// <summary>
     /// Lock that wraps multiple locks
     /// </summary>
-    
+
     internal class MultiIndexLock : Lock
     {
         private readonly Lock _dirMaster;
@@ -28,11 +28,12 @@ namespace Examine.Lucene.Directories
         /// <returns>
         /// true iff exclusive access is obtained
         /// </returns>
-        
+
         public override bool Obtain()
         {
             bool master = _dirMaster.Obtain();
-            if (!master) return false;
+            if (!master)
+                return false;
             bool child = _dirChild.Obtain();
             return child;
         }
@@ -63,7 +64,7 @@ namespace Examine.Lucene.Directories
                         throw;
                     }
 
-                  //  this.Dispose(true);
+                    //  this.Dispose(true);
                 }
             }
         }

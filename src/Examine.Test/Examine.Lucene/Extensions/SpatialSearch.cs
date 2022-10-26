@@ -113,7 +113,7 @@ namespace Examine.Test.Examine.Lucene.Extensions
                 // Make a circle around the search point
                 var args = new SpatialArgs(
                     SpatialOperation.Intersects,
-                    ctx.MakeCircle(x, y, DistanceUtils.Dist2Degrees(searchRadius, DistanceUtils.EarthMeanRadiusKilometers)) );
+                    ctx.MakeCircle(x, y, DistanceUtils.Dist2Degrees(searchRadius, DistanceUtils.EarthMeanRadiusKilometers)));
 
                 Filter filter = strategy.MakeFilter(args);
 
@@ -165,7 +165,7 @@ namespace Examine.Test.Examine.Lucene.Extensions
             GetXYFromCoords(lat, lng, out double x, out double y);
             IPoint geoPoint = ctx.MakePoint(x, y);
 
-            foreach (Field field in strategy.CreateIndexableFields(geoPoint  as IShape))
+            foreach (Field field in strategy.CreateIndexableFields(geoPoint as IShape))
             {
                 e.Document.Add(field);
             }

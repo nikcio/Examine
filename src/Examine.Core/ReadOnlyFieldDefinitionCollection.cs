@@ -13,18 +13,19 @@ namespace Examine
     {
         public ReadOnlyFieldDefinitionCollection()
             : this(Enumerable.Empty<FieldDefinition>())
-        {   
+        {
         }
 
         public ReadOnlyFieldDefinitionCollection(params FieldDefinition[] definitions)
             : this((IEnumerable<FieldDefinition>)definitions)
         {
-            
+
         }
 
         public ReadOnlyFieldDefinitionCollection(IEnumerable<FieldDefinition> definitions)
         {
-            if (definitions == null) return;
+            if (definitions == null)
+                return;
 
             foreach (IGrouping<string, FieldDefinition> f in definitions.GroupBy(x => x.Name))
             {

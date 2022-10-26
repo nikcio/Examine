@@ -7,7 +7,7 @@ namespace Examine.Lucene.Indexing
 {
     public class DoubleType : IndexFieldRangeValueType<double>
     {
-        public DoubleType(string fieldName, ILoggerFactory logger, bool store= true)
+        public DoubleType(string fieldName, ILoggerFactory logger, bool store = true)
             : base(fieldName, logger, store)
         {
         }
@@ -22,7 +22,7 @@ namespace Examine.Lucene.Indexing
             if (!TryConvert(value, out double parsedVal))
                 return;
 
-            doc.Add(new DoubleField(FieldName,parsedVal, Store ? Field.Store.YES : Field.Store.NO));
+            doc.Add(new DoubleField(FieldName, parsedVal, Store ? Field.Store.YES : Field.Store.NO));
         }
 
         public override Query GetQuery(string query) => !TryConvert(query, out double parsedVal) ? null : GetQuery(parsedVal, parsedVal);

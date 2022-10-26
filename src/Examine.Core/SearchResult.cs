@@ -33,7 +33,7 @@ namespace Examine
             });
         }
 
-        public string Id { get;  }
+        public string Id { get; }
         public float Score { get; }
 
         /// <summary>
@@ -43,11 +43,12 @@ namespace Examine
         {
             get
             {
-                if (_fields != null) return _fields;
+                if (_fields != null)
+                    return _fields;
 
                 //initialize from the multi fields
                 _fields = new OrderedDictionary<string, string>();
-                var asWritable = (IDictionary<string, string>) _fields;
+                var asWritable = (IDictionary<string, string>)_fields;
                 foreach (KeyValuePair<string, IReadOnlyList<string>> fieldValue in _fieldValues.Value)
                 {
                     if (fieldValue.Value.Count > 0)
@@ -80,7 +81,7 @@ namespace Examine
             }
 
             return Values.TryGetValue(key, out string single) ? new[] { single } : Enumerable.Empty<string>();
-        } 
+        }
 
         /// <summary>
         /// Returns the key value pair for the index specified

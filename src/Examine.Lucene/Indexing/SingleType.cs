@@ -22,7 +22,7 @@ namespace Examine.Lucene.Indexing
             if (!TryConvert(value, out float parsedVal))
                 return;
 
-            doc.Add(new DoubleField(FieldName,parsedVal, Store ? Field.Store.YES : Field.Store.NO));
+            doc.Add(new DoubleField(FieldName, parsedVal, Store ? Field.Store.YES : Field.Store.NO));
         }
 
         public override Query GetQuery(string query) => !TryConvert(query, out float parsedVal) ? null : GetQuery(parsedVal, parsedVal);

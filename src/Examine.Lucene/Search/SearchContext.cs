@@ -16,7 +16,7 @@ namespace Examine.Lucene.Search
 
         public SearchContext(SearcherManager searcherManager, FieldValueTypeCollection fieldValueTypeCollection)
         {
-            _searcherManager = searcherManager;            
+            _searcherManager = searcherManager;
             _fieldValueTypeCollection = fieldValueTypeCollection ?? throw new ArgumentNullException(nameof(fieldValueTypeCollection));
         }
 
@@ -33,7 +33,7 @@ namespace Examine.Lucene.Search
                     // performing a 'search'. We must ensure that the underlying reader has the correct reference counts.
                     IndexSearcher searcher = _searcherManager.Acquire();
                     try
-                    {                        
+                    {
                         var fields = MultiFields.GetMergedFieldInfos(searcher.IndexReader)
                                     .Select(x => x.Name)
                                     .ToList();

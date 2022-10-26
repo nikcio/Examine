@@ -43,7 +43,7 @@ namespace Examine.Lucene.Indexing
                         str,
                         Field.Store.YES));
                 }
-            }   
+            }
         }
     }
 }

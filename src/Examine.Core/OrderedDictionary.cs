@@ -19,10 +19,11 @@ namespace Examine
         public OrderedDictionary(IEqualityComparer<TKey> comparer) : base(comparer)
         {
         }
-        
+
         public TVal GetItem(int index)
         {
-            if (index >= Count) throw new IndexOutOfRangeException();
+            if (index >= Count)
+                throw new IndexOutOfRangeException();
 
             KeyValuePair<TKey, TVal> found = base[index];
 
@@ -31,7 +32,8 @@ namespace Examine
 
         public int IndexOf(TKey key)
         {
-            if (base.Dictionary == null) return -1;
+            if (base.Dictionary == null)
+                return -1;
             if (base.Dictionary.TryGetValue(key, out KeyValuePair<TKey, TVal> found))
             {
                 return base.Items.IndexOf(found);
@@ -45,7 +47,8 @@ namespace Examine
 
         public void Add(TKey key, TVal value)
         {
-            if (base.Contains(key)) throw new ArgumentException("The key " + key + " already exists in this collection");
+            if (base.Contains(key))
+                throw new ArgumentException("The key " + key + " already exists in this collection");
 
             base.Add(new KeyValuePair<TKey, TVal>(key, value));
         }
@@ -78,7 +81,7 @@ namespace Examine
         {
             get
             {
-                if (base.Dictionary != null && 
+                if (base.Dictionary != null &&
                     base.Dictionary.TryGetValue(key, out KeyValuePair<TKey, TVal> found))
                 {
                     return found.Value;
@@ -87,7 +90,7 @@ namespace Examine
             }
             set
             {
-                if (base.Dictionary != null && 
+                if (base.Dictionary != null &&
                     base.Dictionary.TryGetValue(key, out KeyValuePair<TKey, TVal> found))
                 {
                     int index = base.Items.IndexOf(found);

@@ -22,18 +22,18 @@ namespace Examine
         /// </summary>
         /// <param name="values"></param>
         void IndexItems(IEnumerable<ValueSet> values);
-        
+
         /// <summary>
         /// Deletes a node from the index
         /// </summary>
         /// <param name="itemIds">Node to delete</param>
         void DeleteFromIndex(IEnumerable<string> itemIds);
-        
+
         /// <summary>
         /// Creates a new index, any existing index will be deleted
         /// </summary>
         void CreateIndex();
-        
+
         /// <summary>
         /// Returns the field definitions for the index
         /// </summary>

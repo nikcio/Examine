@@ -70,7 +70,7 @@ namespace Examine.Lucene.Indexing
 
             if (val is T)
             {
-                parsedVal = (T) val;
+                parsedVal = (T)val;
                 return true;
             }
 
@@ -86,7 +86,7 @@ namespace Examine.Lucene.Indexing
                 try
                 {
                     object converted = inputConverter.ConvertTo(val, typeof(T));
-                    parsedVal = (T) converted;
+                    parsedVal = (T)converted;
                     return true;
                 }
                 catch (Exception ex)

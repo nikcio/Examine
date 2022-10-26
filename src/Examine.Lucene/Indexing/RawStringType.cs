@@ -42,7 +42,7 @@ namespace Examine.Lucene.Indexing
                             FieldName,
                             str,
                             Store ? Field.Store.YES : Field.Store.NO));
-                    }   
+                    }
                     break;
             }
         }

@@ -12,7 +12,8 @@ namespace Examine.Web.Demo.Data
         private readonly IExamineManager _examineManager;
         private readonly BogusDataService _bogusDataService;
 
-        public IndexService(IExamineManager examineManager, BogusDataService bogusDataService) {
+        public IndexService(IExamineManager examineManager, BogusDataService bogusDataService)
+        {
             _examineManager = examineManager;
             _bogusDataService = bogusDataService;
         }

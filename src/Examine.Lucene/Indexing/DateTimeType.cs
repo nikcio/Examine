@@ -26,7 +26,7 @@ namespace Examine.Lucene.Indexing
 
             long val = DateToLong(parsedVal);
 
-            doc.Add(new Int64Field(FieldName,val, Store ? Field.Store.YES : Field.Store.NO));
+            doc.Add(new Int64Field(FieldName, val, Store ? Field.Store.YES : Field.Store.NO));
         }
 
         /// <summary>

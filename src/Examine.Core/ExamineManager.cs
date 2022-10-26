@@ -12,12 +12,12 @@ namespace Examine
     {
         public ExamineManager(IEnumerable<IIndex> indexes, IEnumerable<ISearcher> searchers)
         {
-            foreach(IIndex i in indexes)
+            foreach (IIndex i in indexes)
             {
                 AddIndex(i);
             }
 
-            foreach(ISearcher s in searchers)
+            foreach (ISearcher s in searchers)
             {
                 AddSearcher(s);
             }
@@ -27,11 +27,11 @@ namespace Examine
         private readonly ConcurrentDictionary<string, ISearcher> _searchers = new ConcurrentDictionary<string, ISearcher>(StringComparer.InvariantCultureIgnoreCase);
 
         /// <inheritdoc />
-        public bool TryGetSearcher(string searcherName, out ISearcher searcher) => 
+        public bool TryGetSearcher(string searcherName, out ISearcher searcher) =>
             (searcher = _searchers.TryGetValue(searcherName, out ISearcher s) ? s : null) != null;
 
         /// <inheritdoc />
-        public bool TryGetIndex(string indexName, out IIndex index) => 
+        public bool TryGetIndex(string indexName, out IIndex index) =>
             (index = _indexers.TryGetValue(indexName, out IIndex i) ? i : null) != null;
 
         /// <inheritdoc />
@@ -39,7 +39,7 @@ namespace Examine
 
         /// <inheritdoc />
         public IEnumerable<IIndex> Indexes => _indexers.Values;
-       
+
         private IIndex AddIndex(IIndex index)
         {
             //make sure this name doesn't exist in
@@ -110,7 +110,7 @@ namespace Examine
                 {
                     // we don't want to kill the app or anything, even though it is terminating, best to just ensure that 
                     // no strange lucene background thread stuff causes issues here.
-                }                
+                }
             }
             else
             {

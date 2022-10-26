@@ -22,7 +22,7 @@ namespace Examine.Lucene.Indexing
             if (!TryConvert(value, out long parsedVal))
                 return;
 
-            doc.Add(new Int64Field(FieldName,parsedVal, Store ? Field.Store.YES : Field.Store.NO));
+            doc.Add(new Int64Field(FieldName, parsedVal, Store ? Field.Store.YES : Field.Store.NO));
         }
 
         public override Query GetQuery(string query) => !TryConvert(query, out long parsedVal) ? null : GetQuery(parsedVal, parsedVal);

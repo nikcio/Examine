@@ -56,8 +56,8 @@ namespace Examine.Test.Examine.Lucene.Search
                         }).NativeQuery("*dney"));
 
                 ISearchResults results1 = query1.Execute();
-                               
-                Assert.AreEqual(2, results1.TotalItemCount);               
+
+                Assert.AreEqual(2, results1.TotalItemCount);
             }
         }
 
@@ -1918,7 +1918,7 @@ namespace Examine.Test.Examine.Lucene.Search
             {
                 for (int i = 0; i < 1000; i++)
                 {
-                    indexer.IndexItems(new[] {ValueSet.FromObject(i.ToString(), "content", new { Content = "hello world" })});
+                    indexer.IndexItems(new[] { ValueSet.FromObject(i.ToString(), "content", new { Content = "hello world" }) });
                 }
 
                 indexer.IndexItems(new[] { ValueSet.FromObject(2000.ToString(), "content", new { Content = "donotfind" }) });
@@ -2459,7 +2459,7 @@ namespace Examine.Test.Examine.Lucene.Search
 
                 var results = sc
                     .Execute(QueryOptions.SkipTake(pageIndex * pageSize, pageSize))
-                    .ToList();                    
+                    .ToList();
                 Assert.AreEqual(2, results.Count);
 
                 pageIndex++;

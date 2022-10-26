@@ -16,7 +16,7 @@ namespace Examine.Lucene.Providers
             IndexName = indexName;
             _logger = logger;
         }
-        
+
         public string IndexName { get; }
 
         protected override void HandleMergeException(System.Exception exc)
@@ -32,6 +32,6 @@ namespace Examine.Lucene.Providers
         }
     }
 
-    
+
 }
 

@@ -21,7 +21,7 @@ namespace Examine.Lucene.Analyzers
         public CultureInvariantStandardAnalyzer(CharArraySet stopWords)
             : this(stopWords, true, true)
         {
-            
+
         }
 
         public CultureInvariantStandardAnalyzer()

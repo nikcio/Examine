@@ -1,7 +1,7 @@
 ﻿using System;
 
 namespace Examine
-{   
+{
 
     /// <summary>
     /// This should not be use if there are unmanaged resources to be disposed, use DisposableObject instead
@@ -21,7 +21,8 @@ namespace Examine
         {
             lock (_locko)
             {
-                if (Disposed) return;
+                if (Disposed)
+                    return;
                 Disposed = true;
             }
 

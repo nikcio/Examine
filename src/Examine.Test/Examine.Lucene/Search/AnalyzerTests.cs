@@ -80,21 +80,21 @@ namespace Examine.Test.Examine.Lucene.Search
 
         private void DebugResults(ISearchResults results)
         {
-            foreach(ISearchResult r in results)
+            foreach (ISearchResult r in results)
             {
                 var sb = new StringBuilder();
                 sb.Append("Id = ");
                 sb.Append(r.Id);
                 sb.Append(", Values = ");
-                foreach(System.Collections.Generic.KeyValuePair<string, System.Collections.Generic.IReadOnlyList<string>> vals in r.AllValues)
+                foreach (System.Collections.Generic.KeyValuePair<string, System.Collections.Generic.IReadOnlyList<string>> vals in r.AllValues)
                 {
                     sb.Append(vals.Key);
                     sb.Append(" = ");
-                    foreach(string val in vals.Value)
+                    foreach (string val in vals.Value)
                     {
                         sb.Append(val);
                         sb.Append(", ");
-                    }                    
+                    }
                 }
                 Console.WriteLine(sb.ToString());
             }

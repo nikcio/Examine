@@ -4,13 +4,13 @@ using System.Linq;
 
 namespace Examine
 {
-	public sealed class EmptySearchResults : ISearchResults
-	{
+    public sealed class EmptySearchResults : ISearchResults
+    {
         private EmptySearchResults()
-        {   
+        {
         }
 
-	    public static ISearchResults Instance { get; } = new EmptySearchResults();
+        public static ISearchResults Instance { get; } = new EmptySearchResults();
 
         public IEnumerator<ISearchResult> GetEnumerator() => Enumerable.Empty<ISearchResult>().GetEnumerator();
 

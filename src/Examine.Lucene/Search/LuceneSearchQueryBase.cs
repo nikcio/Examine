@@ -328,7 +328,7 @@ namespace Examine.Lucene.Search
                     {
                         queryToAdd = _queryParser.GetFieldQueryInternal(fieldName, fieldValue.Value);
                         if (queryToAdd != null)
-                        { 
+                        {
                             queryToAdd.Boost = fieldValue.Level;
                         }
                     }
@@ -340,7 +340,7 @@ namespace Examine.Lucene.Search
                     }
                     break;
                 case Examineness.Proximity:
-                    int proximity = Convert.ToInt32(fieldValue.Level);                    
+                    int proximity = Convert.ToInt32(fieldValue.Level);
                     if (useQueryParser)
                     {
                         queryToAdd = _queryParser.GetProximityQueryInternal(fieldName, fieldValue.Value, proximity);

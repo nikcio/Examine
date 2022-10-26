@@ -15,13 +15,13 @@ namespace Examine.Lucene.Search
         public abstract IQuery Or();
         public abstract IQuery Not();
 
-        public IBooleanOperation And(Func<INestedQuery, INestedBooleanOperation> inner, BooleanOperation defaultOp = BooleanOperation.And) 
+        public IBooleanOperation And(Func<INestedQuery, INestedBooleanOperation> inner, BooleanOperation defaultOp = BooleanOperation.And)
             => Op(inner, BooleanOperation.And, defaultOp);
 
-        public IBooleanOperation Or(Func<INestedQuery, INestedBooleanOperation> inner, BooleanOperation defaultOp = BooleanOperation.And) 
+        public IBooleanOperation Or(Func<INestedQuery, INestedBooleanOperation> inner, BooleanOperation defaultOp = BooleanOperation.And)
             => Op(inner, BooleanOperation.Or, defaultOp);
 
-        public IBooleanOperation AndNot(Func<INestedQuery, INestedBooleanOperation> inner, BooleanOperation defaultOp = BooleanOperation.And) 
+        public IBooleanOperation AndNot(Func<INestedQuery, INestedBooleanOperation> inner, BooleanOperation defaultOp = BooleanOperation.And)
             => Op(inner, BooleanOperation.Not, defaultOp);
 
         protected abstract INestedQuery AndNested();
@@ -32,7 +32,7 @@ namespace Examine.Lucene.Search
         INestedQuery INestedBooleanOperation.Or() => OrNested();
         INestedQuery INestedBooleanOperation.Not() => NotNested();
 
-        INestedBooleanOperation INestedBooleanOperation.And(Func<INestedQuery, INestedBooleanOperation> inner, BooleanOperation defaultOp) 
+        INestedBooleanOperation INestedBooleanOperation.And(Func<INestedQuery, INestedBooleanOperation> inner, BooleanOperation defaultOp)
             => Op(inner, BooleanOperation.And, defaultOp);
 
         INestedBooleanOperation INestedBooleanOperation.Or(Func<INestedQuery, INestedBooleanOperation> inner, BooleanOperation defaultOp)

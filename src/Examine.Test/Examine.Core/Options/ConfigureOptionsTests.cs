@@ -100,7 +100,7 @@ namespace Examine.Test.Examine.Core.Options
                     Assert.AreEqual(FieldDefinitionTypes.Double, def2.Type);
 
                     return Task.CompletedTask;
-                }  
+                }
             }
 
             public Task StopAsync(CancellationToken cancellationToken)

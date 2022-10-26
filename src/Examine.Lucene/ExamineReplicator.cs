@@ -59,7 +59,7 @@ namespace Examine.Lucene
                                     destDir?.Directory.ToString() ?? "InMemory");
                             }
                         }
-                  
+
                     }),
                 new PerSessionDirectoryFactory(tempStorage.FullName));
         }

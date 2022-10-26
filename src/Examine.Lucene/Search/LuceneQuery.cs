@@ -53,7 +53,7 @@ namespace Examine.Lucene.Search
 
         public IOrdering All() => _search.All();
 
-        public IBooleanOperation ManagedQuery(string query, string[] fields = null) 
+        public IBooleanOperation ManagedQuery(string query, string[] fields = null)
             => _search.ManagedQueryInternal(query, fields, _occurrence);
 
         public IBooleanOperation RangeQuery<T>(string[] fields, T? min, T? max, bool minInclusive = true, bool maxInclusive = true) where T : struct
@@ -100,7 +100,7 @@ namespace Examine.Lucene.Search
         INestedBooleanOperation INestedQuery.GroupedNot(IEnumerable<string> fields, params IExamineValue[] query)
             => _search.GroupedNotInternal(fields.ToArray(), query);
 
-        INestedBooleanOperation INestedQuery.ManagedQuery(string query, string[] fields) 
+        INestedBooleanOperation INestedQuery.ManagedQuery(string query, string[] fields)
             => _search.ManagedQueryInternal(query, fields, _occurrence);
 
         INestedBooleanOperation INestedQuery.RangeQuery<T>(string[] fields, T? min, T? max, bool minInclusive, bool maxInclusive)

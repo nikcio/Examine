@@ -30,7 +30,7 @@ namespace Examine.Lucene.Search
         /// In previous releases people were complaining that this wouldn't work and this is why. The answer came from here https://stackoverflow.com/questions/5026185/how-do-i-make-the-queryparser-in-lucene-handle-numeric-ranges
         /// </remarks>
         ///    protected override Query GetRangeQuery(string field, string part1, string part2, bool startInclusive,bool endInclusive)
-        protected override Query GetRangeQuery(string field, string part1, string part2, bool startInclusive,bool endInclusive)
+        protected override Query GetRangeQuery(string field, string part1, string part2, bool startInclusive, bool endInclusive)
         {
             // if the field is IIndexRangeValueType then return it's query, else return the default
             IIndexFieldValueType fieldType = _searchContext.GetFieldValueType(field);

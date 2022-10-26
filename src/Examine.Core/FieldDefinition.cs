@@ -14,8 +14,10 @@ namespace Examine
         /// <param name="type"></param>
         public FieldDefinition(string name, string type)
         {
-            if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(name));
-            if (string.IsNullOrWhiteSpace(type)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(type));
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Value cannot be null or whitespace.", nameof(name));
+            if (string.IsNullOrWhiteSpace(type))
+                throw new ArgumentException("Value cannot be null or whitespace.", nameof(type));
             Name = name;
             Type = type;
         }
@@ -34,7 +36,8 @@ namespace Examine
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(null, obj))
+                return false;
             return obj is FieldDefinition definition && Equals(definition);
         }
 

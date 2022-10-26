@@ -32,7 +32,7 @@ namespace Examine.Lucene.Search
                     if (_searcher != null)
                     {
                         _searcherManager.Release(_searcher);
-                    } 
+                    }
                 }
 
                 _disposedValue = true;

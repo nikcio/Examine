@@ -23,7 +23,7 @@ namespace Examine.Lucene
         /// Fields of the indexer
         /// </summary>
         public ValueSet ValueSet { get; }
-        
+
 
         /// <summary>
         /// 

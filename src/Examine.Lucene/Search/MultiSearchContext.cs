@@ -8,9 +8,9 @@ namespace Examine.Lucene.Search
     public class MultiSearchContext : ISearchContext
     {
         private readonly ISearchContext[] _inner;
-        
+
         private string[] _fields;
-        
+
         public MultiSearchContext(ISearchContext[] inner) => _inner = inner;
 
         public ISearcherReference GetSearcher()

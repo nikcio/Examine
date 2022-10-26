@@ -10,7 +10,8 @@ namespace Examine
     {
         protected BaseSearchProvider(string name)
         {
-            if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(name));
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Value cannot be null or whitespace.", nameof(name));
             Name = name;
         }
 
@@ -26,6 +27,6 @@ namespace Examine
 
         /// <inheritdoc />
 		public abstract IQuery CreateQuery(string category = null, BooleanOperation defaultOperation = BooleanOperation.And);
-        
+
     }
 }
