@@ -69,10 +69,10 @@ namespace Examine
 
             return serviceCollection.AddSingleton<IIndex>(services =>
             {
-                IOptionsMonitor<LuceneDirectoryIndexOptions> options
+                var options
                         = services.GetRequiredService<IOptionsMonitor<LuceneDirectoryIndexOptions>>();
 
-                TIndex index = ActivatorUtilities.CreateInstance<TIndex>(
+                var index = ActivatorUtilities.CreateInstance<TIndex>(
                     services,
                     new object[] { name, options });
 
@@ -97,10 +97,10 @@ namespace Examine
             where TSearcher : ISearcher
            => serviceCollection.AddTransient<ISearcher>(services =>
            {
-               IList<object> parameters = parameterFactory(services);
+               var parameters = parameterFactory(services);
                parameters.Insert(0, name);
 
-               TSearcher searcher = ActivatorUtilities.CreateInstance<TSearcher>(
+               var searcher = ActivatorUtilities.CreateInstance<TSearcher>(
                    services,
                    parameters.ToArray());
 
@@ -117,7 +117,7 @@ namespace Examine
             Analyzer analyzer = null)
             => serviceCollection.AddExamineSearcher<MultiIndexSearcher>(name, s =>
             {
-                IEnumerable<IIndex> matchedIndexes = s.GetServices<IIndex>()
+                var matchedIndexes = s.GetServices<IIndex>()
                      .Where(x => indexNames.Contains(x.Name));
 
                 var parameters = new List<object>

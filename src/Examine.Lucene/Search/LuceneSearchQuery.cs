@@ -188,7 +188,7 @@ namespace Examine.Lucene.Search
             if (!string.IsNullOrEmpty(Category))
             {
                 // rebuild the query
-                IList<BooleanClause> existingClauses = query.Clauses;
+                var existingClauses = query.Clauses;
 
                 if (existingClauses.Count == 0)
                 {

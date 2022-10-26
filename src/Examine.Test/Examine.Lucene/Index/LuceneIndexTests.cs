@@ -92,7 +92,7 @@ namespace Examine.Test.Examine.Lucene.Index
                 using (indexer.WithThreadingMode(IndexThreadingMode.Asynchronous))
                 {
                     var tasks = new List<Task>();
-                    for (int i = 0; i < 10; i++)
+                    for (var i = 0; i < 10; i++)
                     {
                         tasks.Add(Task.Run(() => indexer.IndexItem(new ValueSet(i.ToString(), "content",
                             new Dictionary<string, IEnumerable<object>>
@@ -546,7 +546,7 @@ namespace Examine.Test.Examine.Lucene.Index
                     for (var i = 0; i < ThreadCount; i++)
                     {
                         var indexer = customIndexer;
-                        int docId = i + 1;
+                        var docId = i + 1;
                         tasks.Add(Task.Run(() =>
                         {
                             // mimic a slower machine
@@ -642,7 +642,7 @@ namespace Examine.Test.Examine.Lucene.Index
                     for (var i = 0; i < idQueue.Count * 20; i++)
                     {
                         //get next id and put it to the back of the list
-                        if (idQueue.TryDequeue(out int docId))
+                        if (idQueue.TryDequeue(out var docId))
                         {
                             idQueue.Enqueue(docId);
 
@@ -768,7 +768,7 @@ namespace Examine.Test.Examine.Lucene.Index
                             for (var counter = 0; counter < searchCountPerThread; counter++)
                             {
                                 //get next id and put it to the back of the list
-                                if (idQueue.TryDequeue(out int docId))
+                                if (idQueue.TryDequeue(out var docId))
                                 {
                                     idQueue.Enqueue(docId);
                                     var r = s.CreateQuery().Id(docId.ToString()).Execute();
@@ -792,7 +792,7 @@ namespace Examine.Test.Examine.Lucene.Index
                             for (var i = 0; i < indexCountPerThread; i++)
                             {
                                 //get next id and put it to the back of the list
-                                if (idQueue.TryDequeue(out int docId))
+                                if (idQueue.TryDequeue(out var docId))
                                 {
                                     idQueue.Enqueue(docId);
 

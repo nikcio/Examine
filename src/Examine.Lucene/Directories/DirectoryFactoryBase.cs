@@ -22,7 +22,7 @@ namespace Examine.Lucene.Directories
             {
                 if (disposing)
                 {                    
-                    foreach (Directory d in _createdDirectories.Values)
+                    foreach (var d in _createdDirectories.Values)
                     {
                         d.Dispose();
                     }

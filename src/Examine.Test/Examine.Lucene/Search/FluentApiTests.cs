@@ -1434,7 +1434,7 @@ namespace Examine.Test.Examine.Lucene.Search
                 var results = sc1.Execute();
 
                 //Assert
-                for (int i = 0; i < results.TotalItemCount - 1; i++)
+                for (var i = 0; i < results.TotalItemCount - 1; i++)
                 {
                     var curr = results.ElementAt(i);
                     var next = results.ElementAtOrDefault(i + 1);
@@ -1916,7 +1916,7 @@ namespace Examine.Test.Examine.Lucene.Search
             using (var luceneDir = new RandomIdRAMDirectory())
             using (var indexer = GetTestIndex(luceneDir, analyzer))
             {
-                for (int i = 0; i < 1000; i++)
+                for (var i = 0; i < 1000; i++)
                 {
                     indexer.IndexItems(new[] {ValueSet.FromObject(i.ToString(), "content", new { Content = "hello world" })});
                 }
@@ -2452,8 +2452,8 @@ namespace Examine.Test.Examine.Lucene.Search
                 //Arrange
 
                 var sc = searcher.CreateQuery("content").Field("writerName", "administrator");
-                int pageIndex = 0;
-                int pageSize = 2;
+                var pageIndex = 0;
+                var pageSize = 2;
 
                 //Act
 

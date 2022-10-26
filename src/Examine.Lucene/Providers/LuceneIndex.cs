@@ -60,7 +60,7 @@ namespace Examine.Lucene.Providers
             IOptionsMonitor<LuceneDirectoryIndexOptions> indexOptions)
            : this(loggerFactory, name, (IOptionsMonitor<LuceneIndexOptions>)indexOptions)
         {
-            LuceneDirectoryIndexOptions directoryOptions = indexOptions.GetNamedOptions(name);
+            var directoryOptions = indexOptions.GetNamedOptions(name);
             
             if (directoryOptions.DirectoryFactory == null)
             {
@@ -694,23 +694,23 @@ namespace Examine.Lucene.Providers
             }
 
             //add node id
-            IIndexFieldValueType nodeIdValueType = FieldValueTypeCollection.GetValueType(ExamineFieldNames.ItemIdFieldName, FieldValueTypeCollection.ValueTypeFactories.GetRequiredFactory(FieldDefinitionTypes.Raw));
+            var nodeIdValueType = FieldValueTypeCollection.GetValueType(ExamineFieldNames.ItemIdFieldName, FieldValueTypeCollection.ValueTypeFactories.GetRequiredFactory(FieldDefinitionTypes.Raw));
             nodeIdValueType.AddValue(doc, valueSet.Id);
 
             //add the category
-            IIndexFieldValueType categoryValueType = FieldValueTypeCollection.GetValueType(ExamineFieldNames.CategoryFieldName, FieldValueTypeCollection.ValueTypeFactories.GetRequiredFactory(FieldDefinitionTypes.InvariantCultureIgnoreCase));
+            var categoryValueType = FieldValueTypeCollection.GetValueType(ExamineFieldNames.CategoryFieldName, FieldValueTypeCollection.ValueTypeFactories.GetRequiredFactory(FieldDefinitionTypes.InvariantCultureIgnoreCase));
             categoryValueType.AddValue(doc, valueSet.Category);
 
             //add the item type
-            IIndexFieldValueType indexTypeValueType = FieldValueTypeCollection.GetValueType(ExamineFieldNames.ItemTypeFieldName, FieldValueTypeCollection.ValueTypeFactories.GetRequiredFactory(FieldDefinitionTypes.InvariantCultureIgnoreCase));
+            var indexTypeValueType = FieldValueTypeCollection.GetValueType(ExamineFieldNames.ItemTypeFieldName, FieldValueTypeCollection.ValueTypeFactories.GetRequiredFactory(FieldDefinitionTypes.InvariantCultureIgnoreCase));
             indexTypeValueType.AddValue(doc, valueSet.ItemType);
 
-            foreach (KeyValuePair<string, IReadOnlyList<object>> field in valueSet.Values)
+            foreach (var field in valueSet.Values)
             {
                 //check if we have a defined one
-                if (FieldDefinitions.TryGetValue(field.Key, out FieldDefinition definedFieldDefinition))
+                if (FieldDefinitions.TryGetValue(field.Key, out var definedFieldDefinition))
                 {
-                    IIndexFieldValueType valueType = FieldValueTypeCollection.GetValueType(
+                    var valueType = FieldValueTypeCollection.GetValueType(
                         definedFieldDefinition.Name,
                         FieldValueTypeCollection.ValueTypeFactories.TryGetFactory(definedFieldDefinition.Type, out var valTypeFactory)
                             ? valTypeFactory
@@ -725,7 +725,7 @@ namespace Examine.Lucene.Providers
                 {
                     //Check for the special field prefix, if this is the case it's indexed as an invariant culture value
 
-                    IIndexFieldValueType valueType = FieldValueTypeCollection.GetValueType(field.Key, FieldValueTypeCollection.ValueTypeFactories.GetRequiredFactory(FieldDefinitionTypes.InvariantCultureIgnoreCase));
+                    var valueType = FieldValueTypeCollection.GetValueType(field.Key, FieldValueTypeCollection.ValueTypeFactories.GetRequiredFactory(FieldDefinitionTypes.InvariantCultureIgnoreCase));
                     foreach (var o in field.Value)
                     {
                         valueType.AddValue(doc, o);
@@ -735,7 +735,7 @@ namespace Examine.Lucene.Providers
                 {
                     // wasn't specifically defined, use FullText as the default
 
-                    IIndexFieldValueType valueType = FieldValueTypeCollection.GetValueType(
+                    var valueType = FieldValueTypeCollection.GetValueType(
                         field.Key,
                         FieldValueTypeCollection.ValueTypeFactories.GetRequiredFactory(FieldDefinitionTypes.FullText));
 
@@ -901,7 +901,7 @@ namespace Examine.Lucene.Providers
         /// <returns></returns>
         private TrackingIndexWriter CreateIndexWriterInternal()
         {
-            Directory dir = GetLuceneDirectory();
+            var dir = GetLuceneDirectory();
 
             // Unfortunatley if the appdomain is taken down this will remain locked, so we can 
             // ensure that it's unlocked here in that case.
@@ -923,7 +923,7 @@ namespace Examine.Lucene.Providers
                 return null;
             }
 
-            IndexWriter writer = CreateIndexWriter(dir);
+            var writer = CreateIndexWriter(dir);
 
             var trackingIndexWriter = new TrackingIndexWriter(writer);
 
@@ -1033,7 +1033,7 @@ namespace Examine.Lucene.Providers
                 name = name.Substring(0, name.LastIndexOf(suffix, StringComparison.Ordinal));
             }
 
-            TrackingIndexWriter writer = IndexWriter;
+            var writer = IndexWriter;
             var searcherManager = new SearcherManager(writer.IndexWriter, true, new SearcherFactory());
             searcherManager.AddListener(this);
 
@@ -1117,7 +1117,7 @@ namespace Examine.Lucene.Providers
 
                         // The task is initialized to completed so just continue with
                         // and return the new task so that any new appended tasks are the current
-                        Task t = _asyncTask.ContinueWith(
+                        var t = _asyncTask.ContinueWith(
                             x =>
                             {
                                 var indexedCount = 0;
@@ -1219,9 +1219,9 @@ namespace Examine.Lucene.Providers
         public IEnumerable<string> GetFieldNames()
         {
             var writer = IndexWriter;
-            using (DirectoryReader reader = writer.IndexWriter.GetReader(false))
+            using (var reader = writer.IndexWriter.GetReader(false))
             {
-                IEnumerable<string> fieldInfos = MultiFields.GetMergedFieldInfos(reader).Select(x => x.Name);
+                var fieldInfos = MultiFields.GetMergedFieldInfos(reader).Select(x => x.Name);
                 return fieldInfos;
             }
         }

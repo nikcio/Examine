@@ -18,7 +18,7 @@ namespace Examine.Lucene.Search
                 if (_searcher == null)
                 {
                     var searchables = new IndexReader[_inner.Length];
-                    for (int i = 0; i < _inner.Length; i++)
+                    for (var i = 0; i < _inner.Length; i++)
                     {
                         searchables[i] = _inner[i].IndexSearcher.IndexReader;
                     }
@@ -35,7 +35,7 @@ namespace Examine.Lucene.Search
             {
                 if (disposing)
                 {
-                    foreach(ISearcherReference i in _inner)
+                    foreach(var i in _inner)
                     {
                         i.Dispose();
                     }

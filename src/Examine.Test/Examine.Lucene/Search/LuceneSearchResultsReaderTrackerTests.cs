@@ -32,10 +32,10 @@ namespace Examine.Test.Examine.Lucene.Search
                 var searcher = (LuceneSearcher)indexer.Searcher;
                 IndexReader reader;
 
-                ISearchContext searchContext = searcher.GetSearchContext();
-                using (ISearcherReference searchRef = searchContext.GetSearcher())
+                var searchContext = searcher.GetSearchContext();
+                using (var searchRef = searchContext.GetSearcher())
                 {
-                    IndexSearcher luceneSearcher = searchRef.IndexSearcher;
+                    var luceneSearcher = searchRef.IndexSearcher;
 
                     reader = luceneSearcher.IndexReader;
 

@@ -95,7 +95,7 @@ namespace Examine
             //we will use this as the item type, but we also need to add this as the 'nodeTypeAlias' as part of the properties
             //since this is what Umbraco expects
             var nodeTypeAlias = xml.ExamineNodeTypeAlias();
-            Dictionary<string, object> allVals = xml.SelectExamineAllValues();
+            var allVals = xml.SelectExamineAllValues();
             allVals["nodeTypeAlias"] = nodeTypeAlias;
 
             var set = new ValueSet(id, indexCategory, nodeTypeAlias, allVals);

@@ -32,13 +32,13 @@ namespace Examine.Lucene
         {
             var buffer = new byte[32768];
 
-            long length = indexInput.Length;
-            long remainder = length;
-            int chunk = buffer.Length;
+            var length = indexInput.Length;
+            var remainder = length;
+            var chunk = buffer.Length;
 
             while (remainder > 0)
             {
-                int len = (int)Math.Min(chunk, remainder);
+                var len = (int)Math.Min(chunk, remainder);
                 indexInput.ReadBytes(buffer, 0, len);
                 indexOutput.WriteBytes(buffer, len);
                 remainder -= len;

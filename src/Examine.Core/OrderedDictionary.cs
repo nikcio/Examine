@@ -32,7 +32,7 @@ namespace Examine
         public int IndexOf(TKey key)
         {
             if (base.Dictionary == null) return -1;
-            if (base.Dictionary.TryGetValue(key, out KeyValuePair<TKey, TVal> found))
+            if (base.Dictionary.TryGetValue(key, out var found))
             {
                 return base.Items.IndexOf(found);
             }
@@ -64,7 +64,7 @@ namespace Examine
                 return false;
             }
 
-            if (base.Dictionary.TryGetValue(key, out KeyValuePair<TKey, TVal> found))
+            if (base.Dictionary.TryGetValue(key, out var found))
             {
                 value = found.Value;
                 return true;
@@ -85,7 +85,7 @@ namespace Examine
             get
             {
                 if (base.Dictionary != null && 
-                    base.Dictionary.TryGetValue(key, out KeyValuePair<TKey, TVal> found))
+                    base.Dictionary.TryGetValue(key, out var found))
                 {
                     return found.Value;
                 }
@@ -94,7 +94,7 @@ namespace Examine
             set
             {
                 if (base.Dictionary != null && 
-                    base.Dictionary.TryGetValue(key, out KeyValuePair<TKey, TVal> found))
+                    base.Dictionary.TryGetValue(key, out var found))
                 {
                     var index = base.Items.IndexOf(found);
                     base.SetItem(index, new KeyValuePair<TKey, TVal>(key, value));

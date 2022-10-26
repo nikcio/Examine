@@ -36,7 +36,7 @@ namespace Examine.Lucene.Search
             {
                 if (_maxDoc == null)
                 {
-                    using (ISearcherReference searcher = _searchContext.GetSearcher())
+                    using (var searcher = _searchContext.GetSearcher())
                     {
                         _maxDoc = searcher.IndexSearcher.IndexReader.MaxDoc;
                     }
@@ -80,7 +80,7 @@ namespace Examine.Lucene.Search
             maxResults = maxResults >= 1 ? maxResults : QueryOptions.DefaultMaxResults;
 
             ICollector topDocsCollector;
-            SortField[] sortFields = _sortField as SortField[] ?? _sortField.ToArray();
+            var sortFields = _sortField as SortField[] ?? _sortField.ToArray();
             if (sortFields.Length > 0)
             {
                 topDocsCollector = TopFieldCollector.Create(
@@ -91,7 +91,7 @@ namespace Examine.Lucene.Search
                 topDocsCollector = TopScoreDocCollector.Create(maxResults, true);
             }
 
-            using (ISearcherReference searcher = _searchContext.GetSearcher())
+            using (var searcher = _searchContext.GetSearcher())
             {
                 searcher.IndexSearcher.Search(_luceneQuery, topDocsCollector);
 
@@ -108,7 +108,7 @@ namespace Examine.Lucene.Search
                 var totalItemCount = topDocs.TotalHits;
 
                 var results = new List<ISearchResult>();
-                for (int i = 0; i < topDocs.ScoreDocs.Length; i++)
+                for (var i = 0; i < topDocs.ScoreDocs.Length; i++)
                 {
                     var result = GetSearchResult(i, topDocs, searcher.IndexSearcher);
                     results.Add(result);
@@ -199,7 +199,7 @@ namespace Examine.Lucene.Search
         {
             if (query is BooleanQuery bq)
             {
-                foreach (BooleanClause clause in bq.Clauses)
+                foreach (var clause in bq.Clauses)
                 {
                     //recurse
                     var check = CheckQueryForExtractTerms(clause.Query);
@@ -215,7 +215,7 @@ namespace Examine.Lucene.Search
                 return CheckQueryForExtractTerms(lbq.Wrapped);
             }
 
-            Type queryType = query.GetType();
+            var queryType = query.GetType();
 
             if (typeof(TermRangeQuery).IsAssignableFrom(queryType)
                 || typeof(WildcardQuery).IsAssignableFrom(queryType)

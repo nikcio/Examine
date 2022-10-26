@@ -9,7 +9,7 @@ namespace Examine.Test.Examine.Lucene.Analyzers
         public static string GetString(this TokenStream @in)
         {
             var @out = new StringBuilder();
-            ICharTermAttribute termAtt = @in.AddAttribute<ICharTermAttribute>();
+            var termAtt = @in.AddAttribute<ICharTermAttribute>();
             // extra safety to enforce, that the state is not preserved and also
             // assign bogus values
             @in.ClearAttributes();

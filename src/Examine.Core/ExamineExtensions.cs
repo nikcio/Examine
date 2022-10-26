@@ -11,7 +11,7 @@ namespace Examine
         public static T GetNamedOptions<T>(this IOptionsMonitor<T> optionsMonitor, string name)
             where T : class
         {
-            T options = optionsMonitor.Get(name);
+            var options = optionsMonitor.Get(name);
 
             if (options == null)
             {
@@ -29,7 +29,7 @@ namespace Examine
         /// <returns></returns>
         public static IIndex GetIndex(this IExamineManager examineManager, string indexName)
         {
-            if (examineManager.TryGetIndex(indexName, out IIndex index))
+            if (examineManager.TryGetIndex(indexName, out var index))
             {
                 return index;
             }

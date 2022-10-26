@@ -28,7 +28,7 @@ namespace Examine.Test.Examine.Lucene.Analyzers
                 new StringReader("403 222 1234"),
                 pattern,
                 1);
-            string @out = stream.GetString();
+            var @out = stream.GetString();
 
             Assert.AreEqual("403 222 1234", @out);
             

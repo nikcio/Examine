@@ -34,11 +34,11 @@ namespace Examine.Lucene
             {
                 var result = new ConcurrentDictionary<string, IIndexFieldValueType>();
 
-                foreach (FieldDefinition field in fieldDefinitionCollection)
+                foreach (var field in fieldDefinitionCollection)
                 {
                     if (!string.IsNullOrWhiteSpace(field.Type) && ValueTypeFactories.TryGetFactory(field.Type, out var valueTypeFactory))
                     {
-                        IIndexFieldValueType valueType = valueTypeFactory.Create(field.Name);
+                        var valueType = valueTypeFactory.Create(field.Name);
                         fieldAnalyzers.Add(field.Name, valueType.Analyzer);
                         result.TryAdd(valueType.FieldName, valueType);
                     }
@@ -50,7 +50,7 @@ namespace Examine.Lucene
                             throw new InvalidOperationException($"The value type factory {FieldDefinitionTypes.FullText} was not found");
                         }
 
-                        IIndexFieldValueType valueType = fullText.Create(field.Name);
+                        var valueType = fullText.Create(field.Name);
                         fieldAnalyzers.Add(field.Name, valueType.Analyzer);
                         result.TryAdd(valueType.FieldName, valueType);
                     }
@@ -83,7 +83,7 @@ namespace Examine.Lucene
         public IIndexFieldValueType GetValueType(string fieldName, IFieldValueTypeFactory fieldValueTypeFactory)
             => _resolvedValueTypes.Value.GetOrAdd(fieldName, n =>
                 {
-                    IIndexFieldValueType t = fieldValueTypeFactory.Create(n);
+                    var t = fieldValueTypeFactory.Create(n);
                     return t;
                 });
 
@@ -97,7 +97,7 @@ namespace Examine.Lucene
         /// </exception>
         public IIndexFieldValueType GetValueType(string fieldName)
         {
-            if (!_resolvedValueTypes.Value.TryGetValue(fieldName, out IIndexFieldValueType valueType))
+            if (!_resolvedValueTypes.Value.TryGetValue(fieldName, out var valueType))
             {
                 throw new InvalidOperationException($"No {nameof(IIndexFieldValueType)} was found for field name {fieldName}");
             }

@@ -26,7 +26,7 @@ namespace Examine.Test
         public IEnumerable<ValueSet> AllData()
         {
             var data = new List<ValueSet>();
-            for (int i = 0; i < 100; i++)
+            for (var i = 0; i < 100; i++)
             {
                 data.Add(ValueSet.FromObject(i.ToString(), "category" + (i % 2), new { item1 = "value" + i, item2 = "value" + i }));
             }

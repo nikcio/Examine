@@ -31,7 +31,7 @@ namespace Examine.Lucene.Search
                     // IMPORTANT! Do not resolve the IndexSearcher from the `IndexSearcher` property above since this
                     // will not release it from the searcher manager. When we are collecting fields, we are essentially
                     // performing a 'search'. We must ensure that the underlying reader has the correct reference counts.
-                    IndexSearcher searcher = _searcherManager.Acquire();
+                    var searcher = _searcherManager.Acquire();
                     try
                     {                        
                         var fields = MultiFields.GetMergedFieldInfos(searcher.IndexReader)

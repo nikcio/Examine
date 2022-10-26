@@ -13,7 +13,7 @@ namespace Examine.Lucene.Directories
 
         protected override Directory CreateDirectory(LuceneIndex luceneIndex, bool forceUnlock)
         {
-            Directory dir = _factory(luceneIndex.Name);
+            var dir = _factory(luceneIndex.Name);
             if (forceUnlock)
             {
                 IndexWriter.Unlock(dir);

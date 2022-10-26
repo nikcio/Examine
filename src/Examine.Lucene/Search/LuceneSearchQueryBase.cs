@@ -187,7 +187,7 @@ namespace Examine.Lucene.Search
 
         private LuceneBooleanOperationBase FieldInternal(string fieldName, IExamineValue fieldValue, Occur occurrence, bool useQueryParser)
         {
-            Query queryToAdd = GetFieldInternalQuery(fieldName, fieldValue, useQueryParser);
+            var queryToAdd = GetFieldInternalQuery(fieldName, fieldValue, useQueryParser);
 
             if (queryToAdd != null)
                 Query.Add(queryToAdd, occurrence);
@@ -340,7 +340,7 @@ namespace Examine.Lucene.Search
                     }
                     break;
                 case Examineness.Proximity:
-                    int proximity = Convert.ToInt32(fieldValue.Level);                    
+                    var proximity = Convert.ToInt32(fieldValue.Level);                    
                     if (useQueryParser)
                     {
                         queryToAdd = _queryParser.GetProximityQueryInternal(fieldName, fieldValue.Value, proximity);
@@ -481,7 +481,7 @@ namespace Examine.Lucene.Search
             }
 
             //This will align the key value pairs:            
-            for (int i = 0; i < fields.Count; i++)
+            for (var i = 0; i < fields.Count; i++)
             {
                 var queryVal = fieldVals[i];
                 var q = GetFieldInternalQuery(fields[i], queryVal, true);
