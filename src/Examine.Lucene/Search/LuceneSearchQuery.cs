@@ -21,10 +21,7 @@ namespace Examine.Lucene.Search
         public LuceneSearchQuery(
             ISearchContext searchContext,
             string category, Analyzer analyzer, LuceneSearchOptions searchOptions, BooleanOperation occurance)
-            : base(CreateQueryParser(searchContext, analyzer, searchOptions), category, searchOptions, occurance)
-        {   
-            _searchContext = searchContext;
-        }
+            : base(CreateQueryParser(searchContext, analyzer, searchOptions), category, searchOptions, occurance) => _searchContext = searchContext;
 
         private static CustomMultiFieldQueryParser CreateQueryParser(ISearchContext searchContext, Analyzer analyzer, LuceneSearchOptions searchOptions)
         {

@@ -72,10 +72,7 @@ namespace Examine.Lucene.Directories
         /// Returns true if the resource is currently locked.  Note that one must
         ///             still call <see cref="M:Lucene.Net.Store.Lock.Obtain"/> before using the resource. 
         /// </summary>
-        
-        public override bool IsLocked()
-        {
-            return _dirMaster.IsLocked() || _dirChild.IsLocked();
-        }
+
+        public override bool IsLocked() => _dirMaster.IsLocked() || _dirChild.IsLocked();
     }
 }

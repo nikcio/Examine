@@ -25,16 +25,10 @@ namespace Examine.Lucene.Indexing
             doc.Add(new Int32Field(FieldName,parsedVal, Store ? Field.Store.YES : Field.Store.NO));;
         }
 
-        public override Query GetQuery(string query)
-        {
-            return !TryConvert(query, out int parsedVal) ? null : GetQuery(parsedVal, parsedVal);
-        }
+        public override Query GetQuery(string query) => !TryConvert(query, out int parsedVal) ? null : GetQuery(parsedVal, parsedVal);
 
-        public override Query GetQuery(int? lower, int? upper, bool lowerInclusive = true, bool upperInclusive = true)
-        {
-            return NumericRangeQuery.NewInt32Range(FieldName,
+        public override Query GetQuery(int? lower, int? upper, bool lowerInclusive = true, bool upperInclusive = true) => NumericRangeQuery.NewInt32Range(FieldName,
                 lower,
                 upper, lowerInclusive, upperInclusive);
-        }
     }
 }

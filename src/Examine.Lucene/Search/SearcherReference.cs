@@ -9,10 +9,7 @@ namespace Examine.Lucene.Search
         private readonly SearcherManager _searcherManager;
         private IndexSearcher _searcher;
 
-        public SearcherReference(SearcherManager searcherManager)
-        {
-            _searcherManager = searcherManager;
-        }
+        public SearcherReference(SearcherManager searcherManager) => _searcherManager = searcherManager;
 
         public IndexSearcher IndexSearcher
         {
@@ -42,10 +39,8 @@ namespace Examine.Lucene.Search
             }
         }
 
-        public void Dispose()
-        {
+        public void Dispose() =>
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
-        }
     }
 }

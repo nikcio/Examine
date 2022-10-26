@@ -13,30 +13,18 @@ namespace Examine.Lucene.Search
         private Query _wrapped;
         public Query Wrapped => _wrapped ?? (_wrapped = _factory());
 
-        public LateBoundQuery(Func<Query> factory)
-        {
-            _factory = factory;
-        }
+        public LateBoundQuery(Func<Query> factory) => _factory = factory;
 
-        public override object Clone()
-        {
-            return Wrapped.Clone();
-        }
+        public override object Clone() => Wrapped.Clone();
 
-        public override Weight CreateWeight(IndexSearcher searcher)
-        {
-            return Wrapped.CreateWeight(searcher);
-        }
+        public override Weight CreateWeight(IndexSearcher searcher) => Wrapped.CreateWeight(searcher);
 
         /// <summary>
         /// Expert: adds all terms occuring in this query to the terms set. Only
         ///             works if this query is in its <see cref="M:Lucene.Net.Search.Query.Rewrite(Lucene.Net.Index.IndexReader)">rewritten</see> form.
         /// </summary>
         /// <throws>UnsupportedOperationException if this query is not yet rewritten </throws>
-        public override void ExtractTerms(ISet<Term> terms)
-        {
-            Wrapped.ExtractTerms(terms);
-        }
+        public override void ExtractTerms(ISet<Term> terms) => Wrapped.ExtractTerms(terms);
 
         /// <summary>
         /// Gets or sets the boost for this query clause to <c>b</c>.  Documents
@@ -49,19 +37,13 @@ namespace Examine.Lucene.Search
             set => Wrapped.Boost = value;
         }
 
-     
-
-        public override Query Rewrite(IndexReader reader)
-        {
-            return Wrapped.Rewrite(reader);
-        }
-
-  
 
 
-        public override string ToString(string field)
-        {
-            return Wrapped.ToString(field);
-        }
+        public override Query Rewrite(IndexReader reader) => Wrapped.Rewrite(reader);
+
+
+
+
+        public override string ToString(string field) => Wrapped.ToString(field);
     }
 }

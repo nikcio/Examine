@@ -39,15 +39,9 @@ namespace Examine
             return -1;
         }
 
-        protected override TKey GetKeyForItem(KeyValuePair<TKey, TVal> item)
-        {
-            return item.Key;
-        }
+        protected override TKey GetKeyForItem(KeyValuePair<TKey, TVal> item) => item.Key;
 
-        public bool ContainsKey(TKey key)
-        {            
-            return base.Contains(key);
-        }
+        public bool ContainsKey(TKey key) => base.Contains(key);
 
         public void Add(TKey key, TVal value)
         {

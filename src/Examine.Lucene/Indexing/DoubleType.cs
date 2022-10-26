@@ -25,16 +25,10 @@ namespace Examine.Lucene.Indexing
             doc.Add(new DoubleField(FieldName,parsedVal, Store ? Field.Store.YES : Field.Store.NO));
         }
 
-        public override Query GetQuery(string query)
-        {
-            return !TryConvert(query, out double parsedVal) ? null : GetQuery(parsedVal, parsedVal);
-        }
+        public override Query GetQuery(string query) => !TryConvert(query, out double parsedVal) ? null : GetQuery(parsedVal, parsedVal);
 
-        public override Query GetQuery(double? lower, double? upper, bool lowerInclusive = true, bool upperInclusive = true)
-        {
-            return NumericRangeQuery.NewDoubleRange(FieldName,
+        public override Query GetQuery(double? lower, double? upper, bool lowerInclusive = true, bool upperInclusive = true) => NumericRangeQuery.NewDoubleRange(FieldName,
                 lower ?? double.MinValue,
                 upper ?? double.MaxValue, lowerInclusive, upperInclusive);
-        }
     }
 }

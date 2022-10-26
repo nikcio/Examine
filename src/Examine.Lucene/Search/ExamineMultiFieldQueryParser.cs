@@ -13,10 +13,7 @@ namespace Examine.Lucene.Search
         private readonly ISearchContext _searchContext;
 
         public ExamineMultiFieldQueryParser(ISearchContext searchContext, LuceneVersion matchVersion, Analyzer analyzer)
-            : base(matchVersion, searchContext.SearchableFields, analyzer)
-        {
-            _searchContext = searchContext ?? throw new System.ArgumentNullException(nameof(searchContext));
-        }
+            : base(matchVersion, searchContext.SearchableFields, analyzer) => _searchContext = searchContext ?? throw new System.ArgumentNullException(nameof(searchContext));
 
         /// <summary>
         /// Override to provide support for numerical range query parsing

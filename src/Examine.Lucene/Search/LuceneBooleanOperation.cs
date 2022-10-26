@@ -13,12 +13,9 @@ namespace Examine.Lucene.Search
     public class LuceneBooleanOperation : LuceneBooleanOperationBase, IQueryExecutor
     {
         private readonly LuceneSearchQuery _search;
-        
+
         public LuceneBooleanOperation(LuceneSearchQuery search)
-            : base(search)
-        {
-            _search = search;
-        }
+            : base(search) => _search = search;
 
         #region IBooleanOperation Members
 

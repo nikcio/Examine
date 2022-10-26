@@ -773,10 +773,7 @@ namespace Examine.Lucene.Providers
             /// </summary>
             private const int MaxWaitMilliseconds = 300000;
 
-            public IndexCommiter(LuceneIndex index)
-            {
-                _index = index;
-            }
+            public IndexCommiter(LuceneIndex index) => _index = index;
 
             public void CommitNow()
             {

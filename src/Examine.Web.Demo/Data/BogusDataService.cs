@@ -12,15 +12,12 @@ namespace Examine.Web.Demo.Controllers
         /// Return a ton of people
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<ValueSet> GenerateData(int count)
-        {
-            return Enumerable.Range(1, count)
+        public IEnumerable<ValueSet> GenerateData(int count) => Enumerable.Range(1, count)
                 .Select(x => new Person())
                 .Select((person, index) => new ValueSet(
                                index.ToString(),
                                "person",
                                PersonValues(person)));
-        }
 
         private IDictionary<string, IEnumerable<object>> PersonValues(Person person)
         {

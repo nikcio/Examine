@@ -17,10 +17,7 @@ namespace Examine.Lucene.Indexing
         public override string SortableFieldName => FieldName;
 
         public DateTimeType(string fieldName, ILoggerFactory logger, DateResolution resolution, bool store = true)
-            : base(fieldName, logger, store)
-        {
-            Resolution = resolution;
-        }
+            : base(fieldName, logger, store) => Resolution = resolution;
 
         protected override void AddSingleValue(Document doc, object value)
         {
@@ -37,10 +34,7 @@ namespace Examine.Lucene.Indexing
         /// </summary>
         /// <param name="date"></param>
         /// <returns></returns>
-        protected long DateToLong(DateTime date)
-        {
-            return DateTools.Round(date, Resolution).Ticks;
-        }
+        protected long DateToLong(DateTime date) => DateTools.Round(date, Resolution).Ticks;
 
         public override Query GetQuery(string query)
         {
@@ -50,11 +44,8 @@ namespace Examine.Lucene.Indexing
             return GetQuery(parsedVal, parsedVal);
         }
 
-        public override Query GetQuery(DateTime? lower, DateTime? upper, bool lowerInclusive = true, bool upperInclusive = true)
-        {
-            return NumericRangeQuery.NewInt64Range(FieldName,
+        public override Query GetQuery(DateTime? lower, DateTime? upper, bool lowerInclusive = true, bool upperInclusive = true) => NumericRangeQuery.NewInt64Range(FieldName,
                 lower != null ? DateToLong(lower.Value) : (long?)null,
                 upper != null ? DateToLong(upper.Value) : (long?)null, lowerInclusive, upperInclusive);
-        }
     }
 }

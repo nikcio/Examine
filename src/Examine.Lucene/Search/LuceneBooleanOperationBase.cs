@@ -9,10 +9,7 @@ namespace Examine.Lucene.Search
     {
         private readonly LuceneSearchQueryBase _search;
 
-        protected LuceneBooleanOperationBase(LuceneSearchQueryBase search)
-        {
-            _search = search;
-        }
+        protected LuceneBooleanOperationBase(LuceneSearchQueryBase search) => _search = search;
 
         public abstract IQuery And();
         public abstract IQuery Or();

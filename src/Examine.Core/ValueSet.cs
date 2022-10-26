@@ -112,10 +112,7 @@ namespace Examine
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IEnumerable<object> GetValues(string key)
-        {
-            return !Values.TryGetValue(key, out IReadOnlyList<object> values) ? Enumerable.Empty<object>() : values;
-        }
+        public IEnumerable<object> GetValues(string key) => !Values.TryGetValue(key, out IReadOnlyList<object> values) ? Enumerable.Empty<object>() : values;
 
         /// <summary>
         /// Gets a single value for the key
@@ -124,10 +121,7 @@ namespace Examine
         /// <returns>
         /// If there are multiple values, this will return the first
         /// </returns>
-        public object GetValue(string key)
-        {
-            return !Values.TryGetValue(key, out IReadOnlyList<object> values) ? null : values.Count > 0 ? values[0] : null;
-        }
+        public object GetValue(string key) => !Values.TryGetValue(key, out IReadOnlyList<object> values) ? null : values.Count > 0 ? values[0] : null;
 
         /// <summary>
         /// Helper method to return IEnumerable from a single

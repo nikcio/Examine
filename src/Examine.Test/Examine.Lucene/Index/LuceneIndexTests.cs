@@ -616,11 +616,9 @@ namespace Examine.Test.Examine.Lucene.Index
             {
                 var waitHandle = new ManualResetEvent(false);
 
-                void OperationComplete(object sender, IndexOperationEventArgs e)
-                {
+                void OperationComplete(object sender, IndexOperationEventArgs e) =>
                     //signal that we are done
                     waitHandle.Set();
-                }
 
                 //add the handler for optimized since we know it will be optimized last based on the commit count
                 customIndexer.IndexOperationComplete += OperationComplete;
@@ -728,11 +726,9 @@ namespace Examine.Test.Examine.Lucene.Index
                 {
                     var waitHandle = new ManualResetEvent(false);
 
-                    void OperationComplete(object sender, IndexOperationEventArgs e)
-                    {
+                    void OperationComplete(object sender, IndexOperationEventArgs e) =>
                         //signal that we are done
                         waitHandle.Set();
-                    }
 
                     //add the handler for optimized since we know it will be optimized last based on the commit count
                     customIndexer.IndexOperationComplete += OperationComplete;
@@ -747,10 +743,8 @@ namespace Examine.Test.Examine.Lucene.Index
                         .ToList();
 
                     Func<int, XElement> getNode = (index) =>
-                    {
                         // clone it
-                        return new XElement(nodes[index]);
-                    };
+                        new XElement(nodes[index]);
 
                     // we know there are 20 documents available, this is important for the getNode call
                     var idQueue = new ConcurrentQueue<int>(Enumerable.Range(1, 20));

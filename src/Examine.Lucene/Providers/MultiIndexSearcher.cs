@@ -22,10 +22,7 @@ namespace Examine.Lucene.Providers
         /// <param name="indexes"></param>
         /// <param name="analyzer"></param>
         public MultiIndexSearcher(string name, IEnumerable<IIndex> indexes, Analyzer analyzer = null)
-            : base(name, analyzer ?? new StandardAnalyzer(LuceneInfo.CurrentVersion))
-        {
-            _searchers = new Lazy<IEnumerable<ISearcher>>(() => indexes.Select(x => x.Searcher));
-        }
+            : base(name, analyzer ?? new StandardAnalyzer(LuceneInfo.CurrentVersion)) => _searchers = new Lazy<IEnumerable<ISearcher>>(() => indexes.Select(x => x.Searcher));
 
         /// <summary>
         /// Constructor to allow for creating a searcher at runtime
@@ -34,10 +31,7 @@ namespace Examine.Lucene.Providers
         /// <param name="searchers"></param>
         /// <param name="analyzer"></param>
         public MultiIndexSearcher(string name, Lazy<IEnumerable<ISearcher>> searchers, Analyzer analyzer = null)
-            : base(name, analyzer ?? new StandardAnalyzer(LuceneInfo.CurrentVersion))
-        {
-            _searchers = searchers;
-        }
+            : base(name, analyzer ?? new StandardAnalyzer(LuceneInfo.CurrentVersion)) => _searchers = searchers;
 
         ///<summary>
         /// The underlying LuceneSearchers that will be searched across

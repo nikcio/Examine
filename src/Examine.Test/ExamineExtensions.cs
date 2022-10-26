@@ -40,12 +40,9 @@ namespace Examine
         /// </summary>
         /// <param name="x"></param>
         /// <returns></returns>
-        internal static string ExamineNodeTypeAlias(this XElement x)
-        {
-            return string.IsNullOrEmpty(((string) x.Attribute("nodeTypeAlias")))
+        internal static string ExamineNodeTypeAlias(this XElement x) => string.IsNullOrEmpty(((string)x.Attribute("nodeTypeAlias")))
                 ? x.Name.LocalName
-                : (string) x.Attribute("nodeTypeAlias");
-        }
+                : (string)x.Attribute("nodeTypeAlias");
 
         /// <summary>
         /// Returns umbraco value for a data element with the specified alias.

@@ -53,12 +53,10 @@ namespace Examine.Lucene.Search
             }
         }
 
-        public IIndexFieldValueType GetFieldValueType(string fieldName)
-        {
+        public IIndexFieldValueType GetFieldValueType(string fieldName) =>
             //Get the value type for the field, or use the default if not defined
-            return _fieldValueTypeCollection.GetValueType(
-                fieldName, 
+            _fieldValueTypeCollection.GetValueType(
+                fieldName,
                 _fieldValueTypeCollection.ValueTypeFactories.GetRequiredFactory(FieldDefinitionTypes.FullText));
-        }
     }
 }
