@@ -393,7 +393,7 @@ namespace Examine.Test.Examine.Lucene.Index
                 {
                     global::Lucene.Net.Search.IndexSearcher luceneSearcher = searchRef.IndexSearcher;
                     IIndexableField[] fields = luceneSearcher.Doc(0).Fields.ToArray();
-                    ;
+
                     Assert.AreEqual(2, fields.Count(x => x.Name == "item1"));
                     Assert.AreEqual(3, fields.Count(x => x.Name == "item2"));
 

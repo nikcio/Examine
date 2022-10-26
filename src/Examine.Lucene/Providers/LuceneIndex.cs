@@ -1312,7 +1312,10 @@ namespace Examine.Lucene.Providers
 
         public void Dispose() => Dispose(disposing: true);
 
-        void ReferenceManager.IRefreshListener.BeforeRefresh() { }
+        void ReferenceManager.IRefreshListener.BeforeRefresh()
+        {
+            // Method intentionally left empty.
+        }
 
         void ReferenceManager.IRefreshListener.AfterRefresh(bool didRefresh)
         {

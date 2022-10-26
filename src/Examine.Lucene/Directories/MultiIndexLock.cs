@@ -12,7 +12,7 @@ namespace Examine.Lucene.Directories
     {
         private readonly Lock _dirMaster;
         private readonly Lock _dirChild;
-        private bool _isDisposed = false;
+        private readonly bool _isDisposed = false;
 
 
         public MultiIndexLock(Lock dirMaster, Lock dirChild)
@@ -54,7 +54,7 @@ namespace Examine.Lucene.Directories
                         isChild = true;
                         _dirChild.Dispose();
                     }
-                    catch (System.Exception ex2)
+                    catch (System.Exception)
                     {
                         //if an error occurs above for the master still attempt to release child
                         if (!isChild)

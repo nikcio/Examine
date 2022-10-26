@@ -156,7 +156,7 @@ namespace Examine.Lucene.Search
         {
             string id = doc.Get("id");
 
-            if (string.IsNullOrEmpty(id) == true)
+            if (string.IsNullOrEmpty(id))
             {
                 id = doc.Get(ExamineFieldNames.ItemIdFieldName);
             }

@@ -34,7 +34,7 @@ namespace Examine.Lucene.Search
         {
             // if the field is IIndexRangeValueType then return it's query, else return the default
             IIndexFieldValueType fieldType = _searchContext.GetFieldValueType(field);
-            if (fieldType != null && fieldType is IIndexRangeValueType rangeType)
+            if (fieldType is IIndexRangeValueType rangeType)
             {
                 return rangeType.GetQuery(part1, part2, startInclusive, endInclusive);
             }

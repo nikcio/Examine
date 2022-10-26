@@ -363,7 +363,6 @@ namespace Examine.Lucene.Search
                     queryToAdd = CreatePhraseQuery(fieldName, fieldValue.Value);
 
                     break;
-                case Examineness.Explicit:
                 default:
                     if (useQueryParser)
                     {

@@ -55,7 +55,10 @@ namespace Examine.Test.Examine.Core.Options
             }
 
             // This won't be called, but is required for the interface
-            public void Configure(LuceneDirectoryIndexOptions options) { }
+            public void Configure(LuceneDirectoryIndexOptions options)
+            {
+                // Method intentionally left empty.
+            }
         }
 
         private class TestService : IHostedService
