@@ -37,10 +37,7 @@ namespace Examine.Lucene.Indexing
         /// </summary>
         /// <param name="date"></param>
         /// <returns></returns>
-        protected long DateToLong(DateTime date)
-        {
-            return DateTools.Round(date, Resolution).Ticks;
-        }
+        protected long DateToLong(DateTime date) => DateTools.Round(date, Resolution).Ticks;
 
         public override Query GetQuery(string query)
         {

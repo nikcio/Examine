@@ -500,10 +500,7 @@ namespace Examine.Lucene.Search
         /// <returns>
         /// A <see cref="System.String"/> that represents this instance.
         /// </returns>
-        public override string ToString()
-        {
-            return $"{{ Category: {Category}, LuceneQuery: {Query} }}";
-        }
+        public override string ToString() => $"{{ Category: {Category}, LuceneQuery: {Query} }}";
 
 
     }

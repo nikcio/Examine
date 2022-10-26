@@ -9,7 +9,10 @@ namespace Examine.Lucene.Directories
     {
         private readonly Func<string, Directory> _factory;
 
-        public GenericDirectoryFactory(Func<string, Directory> factory) => _factory = factory;
+        public GenericDirectoryFactory(Func<string, Directory> factory)
+        {
+            _factory = factory;
+        }
 
         protected override Directory CreateDirectory(LuceneIndex luceneIndex, bool forceUnlock)
         {

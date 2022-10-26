@@ -36,20 +36,14 @@ namespace Examine
             throw new InvalidOperationException("No index found with name " + indexName);
         }
 
-        public static void DeleteFromIndex(this IIndex index, string itemId)
-        {
-            index.DeleteFromIndex(new[] {itemId});
-        }
+        public static void DeleteFromIndex(this IIndex index, string itemId) => index.DeleteFromIndex(new[] { itemId });
 
         /// <summary>
         /// Method to re-index specific data
         /// </summary>
         /// <param name="index"></param>
         /// <param name="node"></param>
-        public static void IndexItem(this IIndex index, ValueSet node)
-        {
-            index.IndexItems(new[] { node });
-        }
+        public static void IndexItem(this IIndex index, ValueSet node) => index.IndexItems(new[] { node });
 
     }
 }

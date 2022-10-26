@@ -36,7 +36,10 @@ namespace Examine
         /// </summary>
         /// <param name="id"></param>
         /// <remarks>normally used for deletions</remarks>
-        public ValueSet(string id) => Id = id;
+        public ValueSet(string id)
+        {
+            Id = id;
+        }
 
         public static ValueSet FromObject(string id, string category, string itemType, object values)
             => new ValueSet(id, category, itemType, ObjectExtensions.ConvertObjectToDictionary(values));
@@ -112,10 +115,7 @@ namespace Examine
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IEnumerable<object> GetValues(string key)
-        {
-            return !Values.TryGetValue(key, out var values) ? Enumerable.Empty<object>() : values;
-        }
+        public IEnumerable<object> GetValues(string key) => !Values.TryGetValue(key, out var values) ? Enumerable.Empty<object>() : values;
 
         /// <summary>
         /// Gets a single value for the key
@@ -124,10 +124,7 @@ namespace Examine
         /// <returns>
         /// If there are multiple values, this will return the first
         /// </returns>
-        public object GetValue(string key)
-        {
-            return !Values.TryGetValue(key, out var values) ? null : values.Count > 0 ? values[0] : null;
-        }
+        public object GetValue(string key) => !Values.TryGetValue(key, out var values) ? null : values.Count > 0 ? values[0] : null;
 
         /// <summary>
         /// Helper method to return IEnumerable from a single

@@ -10,8 +10,11 @@ namespace Examine.Lucene.Search
         private readonly ISearchContext[] _inner;
         
         private string[] _fields;
-        
-        public MultiSearchContext(ISearchContext[] inner) => _inner = inner;
+
+        public MultiSearchContext(ISearchContext[] inner)
+        {
+            _inner = inner;
+        }
 
         public ISearcherReference GetSearcher()
             => new MultiSearchSearcherReference(_inner.Select(x => x.GetSearcher()).ToArray());

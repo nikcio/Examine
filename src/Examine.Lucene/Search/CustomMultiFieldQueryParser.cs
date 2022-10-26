@@ -17,7 +17,9 @@ namespace Examine.Lucene.Search
 
         public CustomMultiFieldQueryParser(LuceneVersion matchVersion, string[] fields, Analyzer analyzer)
             : base(matchVersion, fields, analyzer)
-            => SearchableFields = fields;
+        {
+            SearchableFields = fields;
+        }
 
         internal static QueryParser KeywordAnalyzerQueryParser { get; } = new QueryParser(LuceneInfo.CurrentVersion, string.Empty, new KeywordAnalyzer());
 
@@ -47,10 +49,7 @@ namespace Examine.Lucene.Search
         /// 
         /// TODO: We could go further and override the field query and check if it is a numeric field, if so then we can automatically generate a numeric range query for the single digit too.
         /// </remarks>
-        protected override Query GetRangeQuery(string field, string part1, string part2, bool startInclusive, bool endInclusive)
-        {
-            return base.GetRangeQuery(field, part1, part2, startInclusive, endInclusive);
-        }
+        protected override Query GetRangeQuery(string field, string part1, string part2, bool startInclusive, bool endInclusive) => base.GetRangeQuery(field, part1, part2, startInclusive, endInclusive);
 
         public virtual Query GetWildcardQueryInternal(string field, string termStr)
         {

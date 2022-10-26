@@ -5,7 +5,10 @@ namespace Examine.Lucene.Search
 {
     public class MultiSearchSearcherReference : ISearcherReference
     {
-        public MultiSearchSearcherReference(ISearcherReference[] inner) => _inner = inner;
+        public MultiSearchSearcherReference(ISearcherReference[] inner)
+        {
+            _inner = inner;
+        }
 
         private bool _disposedValue;
         private IndexSearcher _searcher;
@@ -45,10 +48,8 @@ namespace Examine.Lucene.Search
             }
         }
 
-        public void Dispose()
-        {
+        public void Dispose() =>
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
-        }
     }
 }

@@ -23,9 +23,11 @@ namespace Examine.Lucene
         /// </summary>
         /// <param name="valueTypeFactories"></param>
         public ValueTypeFactoryCollection(IReadOnlyDictionary<string, IFieldValueTypeFactory> valueTypeFactories)
-            => _valueTypeFactories = new ConcurrentDictionary<string, IFieldValueTypeFactory>(
-                valueTypeFactories,
-                StringComparer.InvariantCultureIgnoreCase);
+        {
+            _valueTypeFactories = new ConcurrentDictionary<string, IFieldValueTypeFactory>(
+                        valueTypeFactories,
+                        StringComparer.InvariantCultureIgnoreCase);
+        }
 
         public bool TryGetFactory(string valueTypeName, out IFieldValueTypeFactory fieldValueTypeFactory)
             => _valueTypeFactories.TryGetValue(valueTypeName, out fieldValueTypeFactory);

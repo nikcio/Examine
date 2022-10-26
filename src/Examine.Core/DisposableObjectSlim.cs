@@ -15,10 +15,7 @@ namespace Examine
         protected bool Disposed { get; private set; }
 
         // implements IDisposable
-        public void Dispose()
-        {
-            Dispose(true);
-        }
+        public void Dispose() => Dispose(true);
 
         private void Dispose(bool disposing)
         {

@@ -31,17 +31,11 @@ namespace Examine
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
-        public static string GenerateSha1Hash(this string str)
-        {
-            return str.GenerateHash("SHA1");
-        }
+        public static string GenerateSha1Hash(this string str) => str.GenerateHash("SHA1");
 
         /// <summary>Generate a MD5 hash of a string
         /// </summary>
-        public static string GenerateMd5(this string str)
-        {
-            return str.GenerateHash("MD5");
-        }
+        public static string GenerateMd5(this string str) => str.GenerateHash("MD5");
 
         /// <summary>Generate a MD5 hash of a string
         /// </summary>
@@ -72,10 +66,7 @@ namespace Examine
             }
         }
 
-        internal static string EnsureEndsWith(this string input, char value)
-        {
-            return input.EndsWith(value.ToString(CultureInfo.InvariantCulture)) ? input : input + value;
-        }
+        internal static string EnsureEndsWith(this string input, char value) => input.EndsWith(value.ToString(CultureInfo.InvariantCulture)) ? input : input + value;
 
         internal static string ReplaceNonAlphanumericChars(this string input, string replacement)
         {

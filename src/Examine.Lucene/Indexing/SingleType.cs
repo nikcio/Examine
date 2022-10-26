@@ -25,10 +25,7 @@ namespace Examine.Lucene.Indexing
             doc.Add(new DoubleField(FieldName,parsedVal, Store ? Field.Store.YES : Field.Store.NO));
         }
 
-        public override Query GetQuery(string query)
-        {
-            return !TryConvert(query, out float parsedVal) ? null : GetQuery(parsedVal, parsedVal);
-        }
+        public override Query GetQuery(string query) => !TryConvert(query, out float parsedVal) ? null : GetQuery(parsedVal, parsedVal);
 
         public override Query GetQuery(float? lower, float? upper, bool lowerInclusive = true, bool upperInclusive = true)
         {

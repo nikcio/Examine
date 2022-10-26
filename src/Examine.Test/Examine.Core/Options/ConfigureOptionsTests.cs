@@ -65,7 +65,10 @@ namespace Examine.Test.Examine.Core.Options
         {
             private readonly IExamineManager _examineManager;
 
-            public TestService(IExamineManager examineManager) => _examineManager = examineManager;
+            public TestService(IExamineManager examineManager)
+            {
+                _examineManager = examineManager;
+            }
 
             public Task StartAsync(CancellationToken cancellationToken)
             {

@@ -115,10 +115,7 @@ namespace Examine
         /// Override this method so that the Distinct() operator works
         /// </summary>
         /// <returns></returns>
-        public override int GetHashCode()
-        {
-            return Id.GetHashCode();
-        }
+        public override int GetHashCode() => Id.GetHashCode();
 
     }
 }

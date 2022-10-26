@@ -41,10 +41,7 @@ namespace Examine
         /// <param name="s">The string to configure fuzzy matching on.</param>
         /// <returns>An IExamineValue for the required operation</returns>
         /// <exception cref="System.ArgumentException">Thrown when the string is null or empty</exception>
-        public static IExamineValue Fuzzy(this string s)
-        {
-            return Fuzzy(s, 0.5f);
-        }
+        public static IExamineValue Fuzzy(this string s) => Fuzzy(s, 0.5f);
 
         /// <summary>
         /// Configures the string for fuzzy matching in Lucene using the supplied fuzziness level

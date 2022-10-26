@@ -137,10 +137,7 @@ namespace Examine.Lucene.Indexing
         /// <param name="query"></param>
         /// 
         /// <returns></returns>
-        public override Query GetQuery(string query)
-        {
-            return GenerateQuery(FieldName, query, _analyzer);
-        }
+        public override Query GetQuery(string query) => GenerateQuery(FieldName, query, _analyzer);
 
     }
 }
