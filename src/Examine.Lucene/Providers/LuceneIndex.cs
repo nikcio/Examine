@@ -18,6 +18,7 @@ using Microsoft.Extensions.Options;
 using Lucene.Net.Analysis.Standard;
 using Examine.Lucene.Indexing;
 using Examine.Lucene.Directories;
+using Lucene.Net.Facet;
 
 namespace Examine.Lucene.Providers
 {
@@ -752,9 +753,9 @@ namespace Examine.Lucene.Providers
             {
                 return;
             }
-
+            FacetsConfig config = new FacetsConfig();
             // TODO: try/catch with OutOfMemoryException (see docs on UpdateDocument), though i've never seen this in real life
-            _latestGen = IndexWriter.UpdateDocument(new Term(ExamineFieldNames.ItemIdFieldName, valueSet.Id), doc);
+            _latestGen = IndexWriter.UpdateDocument(new Term(ExamineFieldNames.ItemIdFieldName, valueSet.Id), config.Build(doc));
         }
 
         /// <summary>

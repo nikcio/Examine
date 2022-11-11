@@ -15,8 +15,8 @@ namespace Examine.Lucene.Search
     [DebuggerDisplay("Category: {Category}, LuceneQuery: {Query}")]
     public class LuceneSearchQuery : LuceneSearchQueryBase, IQueryExecutor
     {
-        private readonly ISearchContext _searchContext;
-        private ISet<string> _fieldsToLoad = null;
+        protected readonly ISearchContext _searchContext;
+        protected ISet<string> _fieldsToLoad = null;
 
         public LuceneSearchQuery(
             ISearchContext searchContext,
@@ -180,7 +180,7 @@ namespace Examine.Lucene.Search
         /// <summary>
         /// Performs a search with a maximum number of results
         /// </summary>
-        private ISearchResults Search(QueryOptions options)
+        protected virtual ISearchResults Search(QueryOptions options)
         {
             // capture local
             var query = Query;

@@ -1,0 +1,38 @@
+using Examine.Lucene.Search;
+using Examine.Search;
+using Lucene.Net.Search;
+
+namespace Examine.Facets.Lucene
+{
+    /// <summary>
+    /// Implements facets for <see cref="IBooleanOperation"/> with Lucene
+    /// </summary>
+    internal class FacetBooleanOperation : LuceneBooleanOperation
+    {
+        private readonly FacetSearchQuery _search;
+
+        public FacetBooleanOperation(FacetSearchQuery search)
+            : base(search)
+        {
+            _search = search;
+        }
+
+        public override ISearchResults Execute(QueryOptions options = null) => _search.Execute(options);
+
+        public override IQuery And() => new FacetQuery(_search, Occur.MUST);
+
+        public override IQuery Or() => new FacetQuery(_search, Occur.SHOULD);
+
+        public override IQuery Not() => new FacetQuery(_search, Occur.MUST_NOT);
+
+        protected override INestedQuery AndNested() => new FacetQuery(_search, Occur.MUST);
+
+        protected override INestedQuery OrNested() => new FacetQuery(_search, Occur.SHOULD);
+
+        protected override INestedQuery NotNested() => new FacetQuery(_search, Occur.MUST_NOT);
+
+        public override IOrdering OrderBy(params SortableField[] fields) => _search.OrderBy(fields);
+
+        public override IOrdering OrderByDescending(params SortableField[] fields) => _search.OrderByDescending(fields);
+    }
+}

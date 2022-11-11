@@ -22,7 +22,7 @@ namespace Examine.Lucene.Indexing
     /// </remarks>
     public class FullTextType : IndexFieldValueTypeBase
     {
-        private readonly bool _sortable;
+        protected readonly bool _sortable;
         private readonly Analyzer _analyzer;
 
         /// <summary>

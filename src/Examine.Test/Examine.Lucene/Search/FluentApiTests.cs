@@ -10,14 +10,93 @@ using Lucene.Net.Analysis.Standard;
 using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.Search;
 using NUnit.Framework;
-
-
+using Examine.Facets;
+using Examine.Facets.Lucene;
+using Examine.Lucene;
+using static Lucene.Net.Util.Packed.PackedInt32s;
+using Lucene.Net.Index;
 
 namespace Examine.Test.Examine.Lucene.Search
 {
     [TestFixture]
     public class FluentApiTests : ExamineBaseTest
     {
+        [Test]
+        public void Basic_Facet()
+        {
+            var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
+            using (var luceneDir = new RandomIdRAMDirectory())
+            using (var indexer = GetTestIndex(
+                luceneDir,
+                analyzer,
+                new FieldDefinitionCollection(new FieldDefinition("parentID", FieldDefinitionTypes.Integer), new FieldDefinition("nodeName", FieldDefinitionTypes.TextFacetField))))
+            {
+                indexer.IndexItems(new[] {
+                    ValueSet.FromObject(1.ToString(), "content",
+                        new { nodeName = "location 1", bodyText = "Zanzibar is in Africa"}),
+                    ValueSet.FromObject(2.ToString(), "content",
+                        new { nodeName = "location 2", bodyText = "In Canada there is a town called Sydney in Nova Scotia"}),
+                    ValueSet.FromObject(3.ToString(), "content",
+                        new { nodeName = "location 3", bodyText = "Sydney is the capital of NSW in Australia"})
+                });
+
+                TrackingIndexWriter writer = indexer.IndexWriter;
+                var searcherManager = new SearcherManager(writer.IndexWriter, true, new SearcherFactory());
+                var searcher = new FacetSearcher(nameof(FacetSearcher), searcherManager, analyzer, indexer.FieldValueTypeCollection);
+
+                var query = searcher.CreateQuery("content").NativeQuery("sydney");
+
+                query.And().Facet("nodeName");
+
+                Console.WriteLine(query);
+
+                var results = query.Execute();
+
+                var facet = results.GetFacet("nodeName");
+                Assert.AreEqual(2, facet.Count());
+                Assert.AreEqual(2, results.TotalItemCount);
+            }
+        }
+
+        [Test]
+        public void Facet_By_Value()
+        {
+            var analyzer = new StandardAnalyzer(LuceneInfo.CurrentVersion);
+            using (var luceneDir = new RandomIdRAMDirectory())
+            using (var indexer = GetTestIndex(
+                luceneDir,
+                analyzer,
+                new FieldDefinitionCollection(new FieldDefinition("parentID", FieldDefinitionTypes.Integer), new FieldDefinition("nodeName", FieldDefinitionTypes.TextFacetField))))
+            {
+                indexer.IndexItems(new[] {
+                    ValueSet.FromObject(1.ToString(), "content",
+                        new { nodeName = "location 1", bodyText = "Zanzibar is in Africa"}),
+                    ValueSet.FromObject(2.ToString(), "content",
+                        new { nodeName = "location 2", bodyText = "In Canada there is a town called Sydney in Nova Scotia"}),
+                    ValueSet.FromObject(3.ToString(), "content",
+                        new { nodeName = "location 3", bodyText = "Sydney is the capital of NSW in Australia"})
+                });
+
+                TrackingIndexWriter writer = indexer.IndexWriter;
+                var searcherManager = new SearcherManager(writer.IndexWriter, true, new SearcherFactory());
+                var searcher = new FacetSearcher(nameof(FacetSearcher), searcherManager, analyzer, indexer.FieldValueTypeCollection);
+
+                var query = searcher.CreateQuery("content").NativeQuery("sydney");
+
+                query.And().Facet("nodeName", "location 2");
+
+                Console.WriteLine(query);
+
+                var results = query.Execute();
+
+                var facet = results.GetFacet("nodeName");
+                Assert.AreEqual(1, facet.Count());
+                Assert.AreEqual(1, facet.First().Value);
+                Assert.AreEqual("location 2", facet.First().Label);
+                Assert.AreEqual(2, results.TotalItemCount);
+            }
+        }
+
         [Test]
         public void Allow_Leading_Wildcards()
         {

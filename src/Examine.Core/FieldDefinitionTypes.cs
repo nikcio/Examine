@@ -1,4 +1,4 @@
-﻿namespace Examine
+namespace Examine
 {
     /// <summary>
     /// Contains the names of field definition types
@@ -40,5 +40,10 @@
         /// Will be indexed with an email address analyzer
         /// </summary>
         public const string EmailAddress = "emailaddress";
+
+        /// <summary>
+        /// Will be indexed for facets using the SortedSetDocValuesFacetField
+        /// </summary>
+        public const string TextFacetField = "textfacetfield";
     }
 }

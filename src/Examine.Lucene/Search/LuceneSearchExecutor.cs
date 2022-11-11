@@ -16,12 +16,12 @@ namespace Examine.Lucene.Search
     {
         private readonly QueryOptions _options;
         private readonly IEnumerable<SortField> _sortField;
-        private readonly ISearchContext _searchContext;
-        private readonly Query _luceneQuery;
+        protected readonly ISearchContext _searchContext;
+        protected readonly Query _luceneQuery;
         private readonly ISet<string> _fieldsToLoad;
         private int? _maxDoc;
 
-        internal LuceneSearchExecutor(QueryOptions options, Query query, IEnumerable<SortField> sortField, ISearchContext searchContext, ISet<string> fieldsToLoad)
+        protected internal LuceneSearchExecutor(QueryOptions options, Query query, IEnumerable<SortField> sortField, ISearchContext searchContext, ISet<string> fieldsToLoad)
         {
             _options = options ?? QueryOptions.Default;
             _luceneQuery = query ?? throw new ArgumentNullException(nameof(query));
@@ -45,7 +45,7 @@ namespace Examine.Lucene.Search
             }
         }
 
-        public ISearchResults Execute()
+        public virtual ISearchResults Execute()
         {
             var extractTermsSupported = CheckQueryForExtractTerms(_luceneQuery);
 
@@ -91,30 +91,39 @@ namespace Examine.Lucene.Search
                 topDocsCollector = TopScoreDocCollector.Create(maxResults, true);
             }
 
+            return ExecuteSearch(topDocsCollector, sortFields);
+        }
+
+        protected virtual ISearchResults ExecuteSearch(ICollector topDocsCollector, SortField[] sortFields)
+        {
             using (ISearcherReference searcher = _searchContext.GetSearcher())
             {
                 searcher.IndexSearcher.Search(_luceneQuery, topDocsCollector);
 
-                TopDocs topDocs;
-                if (sortFields.Length > 0)
-                {
-                    topDocs = ((TopFieldCollector)topDocsCollector).GetTopDocs(_options.Skip, _options.Take);
-                }
-                else
-                {
-                    topDocs = ((TopScoreDocCollector)topDocsCollector).GetTopDocs(_options.Skip, _options.Take);
-                }
-
-                var totalItemCount = topDocs.TotalHits;
-
-                var results = new List<ISearchResult>();
-                for (int i = 0; i < topDocs.ScoreDocs.Length; i++)
-                {
-                    var result = GetSearchResult(i, topDocs, searcher.IndexSearcher);
-                    results.Add(result);
-                }
+                GetSearchResults(topDocsCollector, sortFields, searcher, out int totalItemCount, out List<ISearchResult> results);
 
                 return new LuceneSearchResults(results, totalItemCount);
+            }
+        }
+
+        protected void GetSearchResults(ICollector topDocsCollector, SortField[] sortFields, ISearcherReference searcher, out int totalItemCount, out List<ISearchResult> results)
+        {
+            TopDocs topDocs;
+            if (sortFields.Length > 0)
+            {
+                topDocs = ((TopFieldCollector)topDocsCollector).GetTopDocs(_options.Skip, _options.Take);
+            }
+            else
+            {
+                topDocs = ((TopScoreDocCollector)topDocsCollector).GetTopDocs(_options.Skip, _options.Take);
+            }
+
+            totalItemCount = topDocs.TotalHits;
+            results = new List<ISearchResult>();
+            for (int i = 0; i < topDocs.ScoreDocs.Length; i++)
+            {
+                var result = GetSearchResult(i, topDocs, searcher.IndexSearcher);
+                results.Add(result);
             }
         }
 
