@@ -198,6 +198,12 @@ namespace Examine.Lucene.Search
                     var longFacetCounts = new Int64RangeFacetCounts(facetLongField.Field, facetsCollector, facetLongField.LongRanges);
 
                     var longFacets = longFacetCounts.GetTopChildren(0, facetLongField.Field);
+
+                    if(longFacets == null)
+                    {
+                        continue;
+                    }
+
                     facets.Add(facetLongField.Field, new Examine.Search.FacetResult(longFacets.LabelValues.Select(labelValue => new FacetValue(labelValue.Label, labelValue.Value))));
                 }
                 else if (field is FacetDoubleField facetDoubleField)
@@ -213,6 +219,12 @@ namespace Examine.Lucene.Search
                     }
 
                     var doubleFacets = doubleFacetCounts.GetTopChildren(0, facetDoubleField.Field);
+
+                    if(doubleFacets == null)
+                    {
+                        continue;
+                    }
+
                     facets.Add(facetDoubleField.Field, new Examine.Search.FacetResult(doubleFacets.LabelValues.Select(labelValue => new FacetValue(labelValue.Label, labelValue.Value))));
                 }
             }
@@ -242,6 +254,12 @@ namespace Examine.Lucene.Search
             else
             {
                 var sortedFacets = sortedFacetsCounts.GetTopChildren(facetFullTextField.MaxCount, facetFullTextField.Field);
+
+                if(sortedFacets == null)
+                {
+                    return;
+                }
+
                 facets.Add(facetFullTextField.Field, new Examine.Search.FacetResult(sortedFacets.LabelValues.Select(labelValue => new FacetValue(labelValue.Label, labelValue.Value))));
             }
         }
