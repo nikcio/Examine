@@ -6,7 +6,7 @@ namespace Examine.Lucene.Search
 {
     public class LuceneSearchResults : ISearchResults, IFacetResults
     {
-        public static LuceneSearchResults Empty { get; } = new LuceneSearchResults(Array.Empty<ISearchResult>(), 0,float.NaN, default);
+        public static LuceneSearchResults Empty { get; } = new LuceneSearchResults(Array.Empty<ISearchResult>(), 0, float.NaN, default, new Dictionary<string, IFacetResult>());
 
         private readonly IReadOnlyCollection<ISearchResult> _results;
 
