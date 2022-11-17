@@ -4,12 +4,17 @@ using Microsoft.Extensions.Logging;
 
 namespace Examine.Lucene.Indexing
 {
+    /// <summary>
+    /// Represents a facet version of <see cref="Int32Type"/>
+    /// </summary>
     public class FacetInt32Type : Int32Type
     {
+        /// <inheritdoc/>
         public FacetInt32Type(string fieldName, ILoggerFactory logger, bool store = true) : base(fieldName, logger, store)
         {
         }
 
+        /// <inheritdoc/>
         protected override void AddSingleValue(Document doc, object value)
         {
             base.AddSingleValue(doc, value);

@@ -6,9 +6,14 @@ using Microsoft.Extensions.Logging;
 
 namespace Examine.Lucene.Indexing
 {
-
+    /// <summary>
+    /// Represents a DateTime <see cref="IndexFieldRangeValueType{T}"/>
+    /// </summary>
     public class DateTimeType : IndexFieldRangeValueType<DateTime>
     {
+        /// <summary>
+        /// Specifies date granularity
+        /// </summary>
         public DateResolution Resolution { get; }
 
         /// <summary>
@@ -16,12 +21,14 @@ namespace Examine.Lucene.Indexing
         /// </summary>
         public override string SortableFieldName => FieldName;
 
+        /// <inheritdoc/>
         public DateTimeType(string fieldName, ILoggerFactory logger, DateResolution resolution, bool store = true)
             : base(fieldName, logger, store)
         {
             Resolution = resolution;
         }
 
+        /// <inheritdoc/>
         protected override void AddSingleValue(Document doc, object value)
         {
             if (!TryConvert(value, out DateTime parsedVal))
@@ -42,6 +49,7 @@ namespace Examine.Lucene.Indexing
             return DateTools.Round(date, Resolution).Ticks;
         }
 
+        /// <inheritdoc/>
         public override Query GetQuery(string query)
         {
             if (!TryConvert(query, out DateTime parsedVal))
@@ -50,6 +58,7 @@ namespace Examine.Lucene.Indexing
             return GetQuery(parsedVal, parsedVal);
         }
 
+        /// <inheritdoc/>
         public override Query GetQuery(DateTime? lower, DateTime? upper, bool lowerInclusive = true, bool upperInclusive = true)
         {
             return NumericRangeQuery.NewInt64Range(FieldName,
