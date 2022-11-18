@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -13,7 +14,7 @@ namespace Examine.Lucene.Indexing
         public string FieldName { get; }
 
         //by default it will not be sortable
-        public virtual string SortableFieldName => null;
+        public virtual string? SortableFieldName => null;
 
         public bool Store { get; }
 
@@ -24,13 +25,13 @@ namespace Examine.Lucene.Indexing
             Store = store;
         }
 
-        public virtual Analyzer Analyzer => null;
+        public virtual Analyzer? Analyzer => null;
 
         public ILogger Logger { get; }
 
-        public virtual void AddValue(Document doc, object value) => AddSingleValueInternal(doc, value);
+        public virtual void AddValue(Document doc, object? value) => AddSingleValueInternal(doc, value);
 
-        private void AddSingleValueInternal(Document doc, object value)
+        private void AddSingleValueInternal(Document doc, object? value)
         {
             if (value != null)
             {
@@ -46,7 +47,7 @@ namespace Examine.Lucene.Indexing
         /// <param name="query"></param>
         /// 
         /// <returns></returns>
-        public virtual Query GetQuery(string query) => new TermQuery(new Term(FieldName, query));
+        public virtual Query? GetQuery(string query) => new TermQuery(new Term(FieldName, query));
 
 
         //TODO: We shoud convert this to the TryConvertTo in the umb codebase!
@@ -58,7 +59,11 @@ namespace Examine.Lucene.Indexing
         /// <param name="val"></param>
         /// <param name="parsedVal"></param>
         /// <returns></returns>        
-        protected bool TryConvert<T>(object val, out T parsedVal)
+        protected bool TryConvert<T>(object val,
+#if !NETSTANDARD2_0
+            [MaybeNullWhen(false)]
+#endif
+            out T parsedVal)
         {
             // TODO: This throws all the time and then logs! 
 
@@ -76,7 +81,19 @@ namespace Examine.Lucene.Indexing
 
             if (typeof(T) == typeof(string))
             {
-                parsedVal = (T)(object)val.ToString();
+                var valString = val.ToString();
+                if(valString == null)
+                {
+                    parsedVal = default;
+                    return false;
+                }
+                var valType = (T?)(object)valString;
+                if(valType == null)
+                {
+                    parsedVal = default;
+                    return false;
+                }
+                parsedVal = valType;
                 return true;
             }
 
@@ -86,6 +103,11 @@ namespace Examine.Lucene.Indexing
                 try
                 {
                     var converted = inputConverter.ConvertTo(val, typeof(T));
+                    if(converted == null)
+                    {
+                        parsedVal = default;
+                        return false;
+                    }
                     parsedVal = (T) converted;
                     return true;
                 }
@@ -106,6 +128,11 @@ namespace Examine.Lucene.Indexing
                 try
                 {
                     var converted = outputConverter.ConvertFrom(val);
+                    if (converted == null)
+                    {
+                        parsedVal = default;
+                        return false;
+                    }
                     parsedVal = (T)converted;
                     return true;
                 }

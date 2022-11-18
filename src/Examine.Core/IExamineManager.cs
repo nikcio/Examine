@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Examine
@@ -29,7 +30,11 @@ namespace Examine
         /// <param name="indexName"></param>
         /// <param name="index"></param>
         /// <returns>true if the index was found by name</returns>
-        bool TryGetIndex(string indexName, out IIndex index);
+        bool TryGetIndex(string indexName,
+#if !NETSTANDARD2_0
+            [MaybeNullWhen(false)]
+#endif
+            out IIndex index);
 
         /// <summary>
         /// Returns a searcher that was registered with <see cref="AddSearcher"/> or via config
@@ -39,7 +44,11 @@ namespace Examine
         /// <returns>
         /// true if the searcher was found by name
         /// </returns>
-        bool TryGetSearcher(string searcherName, out ISearcher searcher);
+        bool TryGetSearcher(string searcherName,
+#if !NETSTANDARD2_0
+            [MaybeNullWhen(false)]
+#endif
+        out ISearcher searcher);
 
     }
 }

@@ -23,7 +23,7 @@ namespace Examine.Lucene.Search
         private BooleanOperation _boolOp;
 
         protected LuceneSearchQueryBase(CustomMultiFieldQueryParser queryParser,
-            string category, LuceneSearchOptions searchOptions, BooleanOperation occurance)
+            string? category, LuceneSearchOptions searchOptions, BooleanOperation occurance)
         {
             Category = category;
             SearchOptions = searchOptions;
@@ -44,7 +44,7 @@ namespace Examine.Lucene.Search
             }
         }
 
-        public string Category { get; }
+        public string? Category { get; }
 
         public string[] AllFields => _queryParser.SearchableFields;
 
@@ -86,7 +86,7 @@ namespace Examine.Lucene.Search
         public IBooleanOperation Id(string id) => IdInternal(id, Occurrence);
 
         public abstract IBooleanOperation Field<T>(string fieldName, T fieldValue) where T : struct;
-        public abstract IBooleanOperation ManagedQuery(string query, string[] fields = null);
+        public abstract IBooleanOperation ManagedQuery(string query, string[]? fields = null);
         public abstract IBooleanOperation RangeQuery<T>(string[] fields, T? min, T? max, bool minInclusive = true, bool maxInclusive = true) where T : struct;
 
         public IBooleanOperation Field(string fieldName, string fieldValue)
@@ -96,9 +96,9 @@ namespace Examine.Lucene.Search
             => FieldInternal(fieldName, fieldValue, Occurrence);
 
         public IBooleanOperation GroupedAnd(IEnumerable<string> fields, params string[] query)
-            => GroupedAnd(fields, query?.Select(f => new ExamineValue(Examineness.Explicit, f)).Cast<IExamineValue>().ToArray());
+            => GroupedAnd(fields, query.Select(f => new ExamineValue(Examineness.Explicit, f)).Cast<IExamineValue>().ToArray());
 
-        public IBooleanOperation GroupedAnd(IEnumerable<string> fields, params IExamineValue[] fieldVals)
+        public IBooleanOperation GroupedAnd(IEnumerable<string> fields, params IExamineValue[]? fieldVals)
         {
             if (fields == null)
                 throw new ArgumentNullException(nameof(fields));
@@ -111,7 +111,7 @@ namespace Examine.Lucene.Search
         public IBooleanOperation GroupedOr(IEnumerable<string> fields, params string[] query)
             => GroupedOr(fields, query?.Select(f => new ExamineValue(Examineness.Explicit, f)).Cast<IExamineValue>().ToArray());
 
-        public IBooleanOperation GroupedOr(IEnumerable<string> fields, params IExamineValue[] query)
+        public IBooleanOperation GroupedOr(IEnumerable<string> fields, params IExamineValue[]? query)
         {
             if (fields == null)
                 throw new ArgumentNullException(nameof(fields));
@@ -139,7 +139,7 @@ namespace Examine.Lucene.Search
         private static readonly string[] s_emptyStringArray = new string[0];
 
         protected abstract INestedBooleanOperation FieldNested<T>(string fieldName, T fieldValue) where T : struct;
-        protected abstract INestedBooleanOperation ManagedQueryNested(string query, string[] fields = null);
+        protected abstract INestedBooleanOperation ManagedQueryNested(string query, string[]? fields = null);
         protected abstract INestedBooleanOperation RangeQueryNested<T>(string[] fields, T? min, T? max, bool minInclusive = true, bool maxInclusive = true) where T : struct;
 
         INestedBooleanOperation INestedQuery.Field(string fieldName, string fieldValue)
@@ -166,7 +166,7 @@ namespace Examine.Lucene.Search
         INestedBooleanOperation INestedQuery.GroupedNot(IEnumerable<string> fields, params IExamineValue[] query)
             => GroupedNotInternal(fields == null ? s_emptyStringArray : fields.ToArray(), query);
 
-        INestedBooleanOperation INestedQuery.ManagedQuery(string query, string[] fields) => ManagedQueryNested(query, fields);
+        INestedBooleanOperation INestedQuery.ManagedQuery(string query, string[]? fields) => ManagedQueryNested(query, fields);
 
         INestedBooleanOperation INestedQuery.RangeQuery<T>(string[] fields, T? min, T? max, bool minInclusive, bool maxInclusive)
             => RangeQueryNested(fields, min, max, minInclusive, maxInclusive);
@@ -196,7 +196,7 @@ namespace Examine.Lucene.Search
             return CreateOp();
         }
 
-        protected internal LuceneBooleanOperationBase GroupedAndInternal(string[] fields, IExamineValue[] fieldVals, Occur occurrence)
+        protected internal LuceneBooleanOperationBase GroupedAndInternal(string[] fields, IExamineValue[]? fieldVals, Occur occurrence)
         {
             if (fields == null)
                 throw new ArgumentNullException(nameof(fields));
@@ -247,7 +247,7 @@ namespace Examine.Lucene.Search
             return CreateOp();
         }
 
-        protected internal LuceneBooleanOperationBase GroupedOrInternal(string[] fields, IExamineValue[] fieldVals, Occur occurrence)
+        protected internal LuceneBooleanOperationBase GroupedOrInternal(string[] fields, IExamineValue[]? fieldVals, Occur occurrence)
         {
             if (fields == null)
                 throw new ArgumentNullException(nameof(fields));
@@ -328,10 +328,10 @@ namespace Examine.Lucene.Search
                     if (useQueryParser)
                     {
                         queryToAdd = _queryParser.GetFieldQueryInternal(fieldName, fieldValue.Value);
-                        if (queryToAdd != null)
-                        { 
+                        //if (queryToAdd != null) // TODO: Does this ever happen? Then the method should be made with a nullable return
+                        //{
                             queryToAdd.Boost = fieldValue.Level;
-                        }
+                        //}
                     }
                     else
                     {
@@ -341,7 +341,7 @@ namespace Examine.Lucene.Search
                     }
                     break;
                 case Examineness.Proximity:
-                    int proximity = Convert.ToInt32(fieldValue.Level);                    
+                    int proximity = Convert.ToInt32(fieldValue.Level);
                     if (useQueryParser)
                     {
                         queryToAdd = _queryParser.GetProximityQueryInternal(fieldName, fieldValue.Value, proximity);

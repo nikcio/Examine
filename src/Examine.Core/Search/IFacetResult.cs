@@ -9,6 +9,6 @@ namespace Examine.Lucene.Search
         /// </summary>
         /// <param name="label"></param>
         /// <returns></returns>
-        IFacetValue Facet(string label);
+        IFacetValue? Facet(string label);
     }
 }

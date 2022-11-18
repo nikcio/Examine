@@ -22,11 +22,11 @@ namespace Examine.Lucene.Search
         private readonly IEnumerable<SortField> _sortField;
         private readonly ISearchContext _searchContext;
         private readonly Query _luceneQuery;
-        private readonly ISet<string> _fieldsToLoad;
+        private readonly ISet<string>? _fieldsToLoad;
         private readonly IList<IFacetField> _facetFields;
         private int? _maxDoc;
 
-        internal LuceneSearchExecutor(QueryOptions options, Query query, IEnumerable<SortField> sortField, ISearchContext searchContext, ISet<string> fieldsToLoad, IList<IFacetField> facetFields)
+        internal LuceneSearchExecutor(QueryOptions? options, Query query, IEnumerable<SortField> sortField, ISearchContext searchContext, ISet<string>? fieldsToLoad, IList<IFacetField> facetFields)
         {
             _options = options ?? QueryOptions.Default;
             _luceneQuery = query ?? throw new ArgumentNullException(nameof(query));
@@ -99,7 +99,7 @@ namespace Examine.Lucene.Search
 
             using (ISearcherReference searcher = _searchContext.GetSearcher())
             {
-                FacetsCollector facetsCollector;
+                FacetsCollector? facetsCollector;
                 if(_facetFields.Count > 0)
                 {
                     facetsCollector = new FacetsCollector();
@@ -127,7 +127,10 @@ namespace Examine.Lucene.Search
                 for (int i = 0; i < topDocs.ScoreDocs.Length; i++)
                 {
                     var result = GetSearchResult(i, topDocs, searcher.IndexSearcher);
-                    results.Add(result);
+                    if(result != null)
+                    {
+                        results.Add(result);
+                    }
                 }
 
                 var facets = ExtractFacets(facetsCollector, searcher);
@@ -136,7 +139,7 @@ namespace Examine.Lucene.Search
             }
         }
 
-        private IDictionary<string, IFacetResult> ExtractFacets(FacetsCollector facetsCollector, ISearcherReference searcher)
+        private IDictionary<string, IFacetResult> ExtractFacets(FacetsCollector? facetsCollector, ISearcherReference searcher)
         {
             var facets = new Dictionary<string, IFacetResult>();
             if (facetsCollector == null || _facetFields.Count == 0)
@@ -146,7 +149,7 @@ namespace Examine.Lucene.Search
 
             var facetFields = _facetFields.OrderBy(field => field.FacetField);
 
-            SortedSetDocValuesReaderState sortedSetReaderState = null;
+            SortedSetDocValuesReaderState? sortedSetReaderState = null;
 
             foreach(var field in facetFields)
             {
@@ -193,7 +196,7 @@ namespace Examine.Lucene.Search
             return facets;
         }
 
-        private static void ExtractFullTextFacets(FacetsCollector facetsCollector, ISearcherReference searcher, Dictionary<string, IFacetResult> facets, SortedSetDocValuesReaderState sortedSetReaderState, IFacetField field, FacetFullTextField facetFullTextField)
+        private static void ExtractFullTextFacets(FacetsCollector facetsCollector, ISearcherReference searcher, Dictionary<string, IFacetResult> facets, SortedSetDocValuesReaderState? sortedSetReaderState, IFacetField field, FacetFullTextField facetFullTextField)
         {
             if (sortedSetReaderState == null || !sortedSetReaderState.Field.Equals(field.FacetField))
             {
@@ -225,12 +228,12 @@ namespace Examine.Lucene.Search
             }
         }
 
-        private ISearchResult GetSearchResult(int index, TopDocs topDocs, IndexSearcher luceneSearcher)
+        private ISearchResult? GetSearchResult(int index, TopDocs topDocs, IndexSearcher luceneSearcher)
         {
             // I have seen IndexOutOfRangeException here which is strange as this is only called in one place
             // and from that one place "i" is always less than the size of this collection. 
             // but we'll error check here anyways
-            if (topDocs?.ScoreDocs.Length < index)
+            if (topDocs.ScoreDocs.Length < index)
             {
                 return null;
             }

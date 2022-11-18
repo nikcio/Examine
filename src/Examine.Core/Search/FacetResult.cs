@@ -21,7 +21,7 @@ namespace Examine.Search
             return _values.GetEnumerator();
         }
 
-        public IFacetValue Facet(string label)
+        public IFacetValue? Facet(string label)
         {
             return _values.FirstOrDefault(field => field.Label.Equals(label));
         }

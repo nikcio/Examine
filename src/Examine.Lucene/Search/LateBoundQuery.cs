@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
@@ -10,7 +10,7 @@ namespace Examine.Lucene.Search
     {
         private readonly Func<Query> _factory;
 
-        private Query _wrapped;
+        private Query? _wrapped;
         public Query Wrapped => _wrapped ?? (_wrapped = _factory());
 
         public LateBoundQuery(Func<Query> factory)
@@ -18,12 +18,12 @@ namespace Examine.Lucene.Search
             _factory = factory;
         }
 
-        public override object Clone()
+        public override object? Clone()
         {
             return Wrapped.Clone();
         }
 
-        public override Weight CreateWeight(IndexSearcher searcher)
+        public override Weight? CreateWeight(IndexSearcher searcher)
         {
             return Wrapped.CreateWeight(searcher);
         }
@@ -51,7 +51,7 @@ namespace Examine.Lucene.Search
 
      
 
-        public override Query Rewrite(IndexReader reader)
+        public override Query? Rewrite(IndexReader reader)
         {
             return Wrapped.Rewrite(reader);
         }
@@ -59,7 +59,7 @@ namespace Examine.Lucene.Search
   
 
 
-        public override string ToString(string field)
+        public override string? ToString(string field)
         {
             return Wrapped.ToString(field);
         }

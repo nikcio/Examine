@@ -9,7 +9,7 @@ namespace Examine.Lucene.Search
     {
         private readonly ISearchContext[] _inner;
         
-        private string[] _fields;
+        private string[]? _fields;
         
         public MultiSearchContext(ISearchContext[] inner) => _inner = inner;
 
@@ -18,7 +18,7 @@ namespace Examine.Lucene.Search
 
         public string[] SearchableFields => _fields ?? (_fields = _inner.SelectMany(x => x.SearchableFields).Distinct().ToArray());
 
-        public IIndexFieldValueType GetFieldValueType(string fieldName)
+        public IIndexFieldValueType? GetFieldValueType(string fieldName)
             => _inner.Select(cc => cc.GetFieldValueType(fieldName)).FirstOrDefault(type => type != null);
 
     }

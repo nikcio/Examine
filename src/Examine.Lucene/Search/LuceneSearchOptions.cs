@@ -43,7 +43,7 @@ namespace Examine.Lucene.Search
         //     your application really needs to use the old-fashioned boolean queries expansion
         //     rewriting and the above points are not relevant then use this change the rewrite
         //     method.
-        public MultiTermQuery.RewriteMethod MultiTermRewriteMethod { get; set; }
+        public MultiTermQuery.RewriteMethod? MultiTermRewriteMethod { get; set; }
 
         //
         // Summary:
@@ -53,12 +53,12 @@ namespace Examine.Lucene.Search
         //
         // Summary:
         //     Get or Set locale used by date range parsing.
-        public CultureInfo Locale { get; set; }
+        public CultureInfo? Locale { get; set; }
 
         //
         // Summary:
         //     Gets or Sets the time zone.
-        public TimeZoneInfo TimeZone { get; set; }
+        public TimeZoneInfo? TimeZone { get; set; }
 
         //
         // Summary:

@@ -5,6 +5,6 @@ namespace Examine
         public IndexOptions() => FieldDefinitions = new FieldDefinitionCollection();
 
         public FieldDefinitionCollection FieldDefinitions { get; set; }
-        public IValueSetValidator Validator { get; set; }
+        public IValueSetValidator? Validator { get; set; }
     }
 }

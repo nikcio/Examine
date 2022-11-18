@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace Examine
 {
@@ -41,6 +41,6 @@ namespace Examine
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        string this[string key] { get; }
+        string? this[string key] { get; }
     }
 }

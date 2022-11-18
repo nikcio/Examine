@@ -12,7 +12,7 @@ namespace Examine.Lucene.Search
     {
         private readonly SearcherManager _searcherManager;
         private readonly FieldValueTypeCollection _fieldValueTypeCollection;
-        private string[] _searchableFields;
+        private string[]? _searchableFields;
 
         public SearchContext(SearcherManager searcherManager, FieldValueTypeCollection fieldValueTypeCollection)
         {

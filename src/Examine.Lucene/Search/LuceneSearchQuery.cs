@@ -17,12 +17,12 @@ namespace Examine.Lucene.Search
     public class LuceneSearchQuery : LuceneSearchQueryBase, IQueryExecutor
     {
         private readonly ISearchContext _searchContext;
-        private ISet<string> _fieldsToLoad = null;
+        private ISet<string>? _fieldsToLoad = null;
         private readonly IList<IFacetField> _facetFields = new List<IFacetField>();
 
         public LuceneSearchQuery(
             ISearchContext searchContext,
-            string category, Analyzer analyzer, LuceneSearchOptions searchOptions, BooleanOperation occurance)
+            string? category, Analyzer analyzer, LuceneSearchOptions searchOptions, BooleanOperation occurance)
             : base(CreateQueryParser(searchContext, analyzer, searchOptions), category, searchOptions, occurance)
         {   
             _searchContext = searchContext;
@@ -86,7 +86,7 @@ namespace Examine.Lucene.Search
         public override IBooleanOperation Field<T>(string fieldName, T fieldValue)
             => RangeQueryInternal<T>(new[] { fieldName }, fieldValue, fieldValue, true, true, Occurrence);
 
-        public override IBooleanOperation ManagedQuery(string query, string[] fields = null)
+        public override IBooleanOperation ManagedQuery(string query, string[]? fields = null)
             => ManagedQueryInternal(query, fields, Occurrence);
 
         public override IBooleanOperation RangeQuery<T>(string[] fields, T? min, T? max, bool minInclusive = true, bool maxInclusive = true)
@@ -95,20 +95,20 @@ namespace Examine.Lucene.Search
         protected override INestedBooleanOperation FieldNested<T>(string fieldName, T fieldValue)
             => RangeQueryInternal<T>(new[] { fieldName }, fieldValue, fieldValue, true, true, Occurrence);
 
-        protected override INestedBooleanOperation ManagedQueryNested(string query, string[] fields = null)
+        protected override INestedBooleanOperation ManagedQueryNested(string query, string[]? fields = null)
             => ManagedQueryInternal(query, fields, Occurrence);
 
         protected override INestedBooleanOperation RangeQueryNested<T>(string[] fields, T? min, T? max, bool minInclusive = true, bool maxInclusive = true)
             => RangeQueryInternal(fields, min, max, minInclusive, maxInclusive, Occurrence);
 
-        internal LuceneBooleanOperationBase ManagedQueryInternal(string query, string[] fields, Occur occurance)
+        internal LuceneBooleanOperationBase ManagedQueryInternal(string query, string[]? fields, Occur occurance)
         {
             Query.Add(new LateBoundQuery(() =>
             {
                 //if no fields are specified then use all fields
                 fields = fields ?? AllFields;
 
-                var types = fields.Select(f => _searchContext.GetFieldValueType(f)).Where(t => t != null);
+                var types = fields.Select(f => _searchContext.GetFieldValueType(f)).OfType<IIndexFieldValueType>();
 
                 //Strangely we need an inner and outer query. If we don't do this then the lucene syntax returned is incorrect 
                 //since it doesn't wrap in parenthesis properly. I'm unsure if this is a lucene issue (assume so) since that is what
@@ -194,12 +194,12 @@ namespace Examine.Lucene.Search
         }
 
         /// <inheritdoc />
-        public ISearchResults Execute(QueryOptions options = null) => Search(options);
+        public ISearchResults Execute(QueryOptions? options = null) => Search(options);
 
         /// <summary>
         /// Performs a search with a maximum number of results
         /// </summary>
-        private ISearchResults Search(QueryOptions options)
+        private ISearchResults Search(QueryOptions? options)
         {
             // capture local
             var query = Query;

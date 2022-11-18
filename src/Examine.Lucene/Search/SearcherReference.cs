@@ -7,7 +7,7 @@ namespace Examine.Lucene.Search
     {
         private bool _disposedValue;
         private readonly SearcherManager _searcherManager;
-        private IndexSearcher _searcher;
+        private IndexSearcher? _searcher;
 
         public SearcherReference(SearcherManager searcherManager)
         {

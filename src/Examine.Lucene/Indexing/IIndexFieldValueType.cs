@@ -15,18 +15,18 @@ namespace Examine.Lucene.Indexing
         /// <summary>
         /// Returns the sortable field name or null if the value isn't sortable
         /// </summary>
-        string SortableFieldName { get; }
+        string? SortableFieldName { get; }
 
         bool Store { get; }
 
         /// <summary>
         /// Returns the analyzer for this field type, or null to use the default
         /// </summary>
-        Analyzer Analyzer { get; }
+        Analyzer? Analyzer { get; }
 
-        void AddValue(Document doc, object value);
+        void AddValue(Document doc, object? value);
         
-        Query GetQuery(string query);
+        Query? GetQuery(string query);
 
         //IHighlighter GetHighlighter(Query query, Searcher searcher, FacetsLoader facetsLoader);
 

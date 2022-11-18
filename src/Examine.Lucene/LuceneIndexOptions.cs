@@ -12,9 +12,9 @@ namespace Examine.Lucene
     public class LuceneIndexOptions : IndexOptions
     {
 
-        public IndexDeletionPolicy IndexDeletionPolicy { get; set; }
+        public IndexDeletionPolicy? IndexDeletionPolicy { get; set; }
 
-        public Analyzer Analyzer { get; set; }
+        public Analyzer? Analyzer { get; set; }
 
         /// <summary>
         /// Records per-dimension configuration.  By default a
@@ -29,6 +29,6 @@ namespace Examine.Lucene
         /// Specifies the index value types to use for this indexer, if this is not specified then the result of <see cref="ValueTypeFactoryCollection.GetDefaultValueTypes"/> will be used.
         /// This is generally used to initialize any custom value types for your indexer since the value type collection cannot be modified at runtime.
         /// </summary>
-        public IReadOnlyDictionary<string, IFieldValueTypeFactory> IndexValueTypesFactory { get; set; }
+        public IReadOnlyDictionary<string, IFieldValueTypeFactory>? IndexValueTypesFactory { get; set; }
     }
 }

@@ -33,7 +33,7 @@ namespace Examine.Lucene.Analyzers
         {
             Tokenizer tokenizer = new LetterOrDigitTokenizer(reader);
 
-            TokenStream result = null;
+            TokenStream? result = null;
 
             if (_caseInsensitive)
             {
