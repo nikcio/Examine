@@ -1,5 +1,8 @@
 namespace Examine.Search
 {
+    /// <summary>
+    /// Represents a facet double range query field
+    /// </summary>
     public interface IFacetDoubleRangeQueryField : IBooleanOperation
     {
         /// <summary>

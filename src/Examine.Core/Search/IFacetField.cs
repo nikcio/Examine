@@ -1,5 +1,8 @@
 namespace Examine.Lucene.Search
 {
+    /// <summary>
+    /// Represents a base facet field
+    /// </summary>
     public interface IFacetField
     {
         /// <summary>

@@ -4,6 +4,9 @@ using Examine.Lucene.Search;
 
 namespace Examine.Lucene
 {
+    /// <summary>
+    /// Extensions related to faceting
+    /// </summary>
     public static class FacetExtensions
     {
         /// <summary>

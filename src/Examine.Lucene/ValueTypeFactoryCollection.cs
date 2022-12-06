@@ -28,6 +28,12 @@ namespace Examine.Lucene
                 valueTypeFactories,
                 StringComparer.InvariantCultureIgnoreCase);
 
+        /// <summary>
+        /// Try get for the factory
+        /// </summary>
+        /// <param name="valueTypeName"></param>
+        /// <param name="fieldValueTypeFactory"></param>
+        /// <returns></returns>
         public bool TryGetFactory(string valueTypeName,
 #if !NETSTANDARD2_0
             [MaybeNullWhen(false)]
@@ -48,6 +54,9 @@ namespace Examine.Lucene
             return fieldValueTypeFactory;
         }
 
+        /// <summary>
+        /// The ammount of key/value pairs in the collection
+        /// </summary>
         public int Count => _valueTypeFactories.Count;
 
         /// <summary>
@@ -92,9 +101,11 @@ namespace Examine.Lucene
             };
 
 
+        /// <inheritdoc/>
         public IEnumerator<KeyValuePair<string, IFieldValueTypeFactory>> GetEnumerator()
             => _valueTypeFactories.GetEnumerator();
 
+        /// <inheritdoc/>
         IEnumerator IEnumerable.GetEnumerator()
             => GetEnumerator();
     }

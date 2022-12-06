@@ -1,5 +1,8 @@
 namespace Examine.Lucene.Search
 {
+    /// <summary>
+    /// Represents a single facet value
+    /// </summary>
     public interface IFacetValue
     {
         /// <summary>

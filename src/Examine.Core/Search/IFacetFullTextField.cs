@@ -2,6 +2,9 @@ using Examine.Lucene.Search;
 
 namespace Examine.Search
 {
+    /// <summary>
+    /// Representsa full text facet field
+    /// </summary>
     public interface IFacetFullTextField : IFacetField
     {
         /// <summary>
