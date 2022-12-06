@@ -54,6 +54,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" Version="12.13.1" />
+    <PackageReference Include="coverlet.collector" Version="3.2.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Lucene.Net.Spatial">
       <Version>4.8.0-beta00016</Version>
     </PackageReference>
