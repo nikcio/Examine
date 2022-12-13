@@ -308,7 +308,7 @@ var searcher = myIndex.Searcher;
 var results = searcher.CreateQuery()
  .Field("Address", "Hills")
  .And()
- .Facet("Address") // Get facets of the Address field
+ .WithFacet("Address") // Get facets of the Address field
  .Execute();
 
 var addressFacetResults = results.GetFacet("Address"); // Returns the facets for the specific field Address
@@ -319,7 +319,7 @@ var addressFacetResults = results.GetFacet("Address"); // Returns the facets for
 * Label: Hollywood, Value: 10
 */
 
-var hillsValue = addressFacetResults.Facet("Hills"); // Gets the IFacetValue for the facet Hills
+var hillsValue = addressFacetResults.WithFacet("Hills"); // Gets the IFacetValue for the facet Hills
 ```
 
 Filtered value example
@@ -338,7 +338,7 @@ var addressFacetResults = results.GetFacet("Address"); // Returns the facets for
 * Label: Hills, Value: 2 <-- As Hills was the only filtered value we will only get this facet
 */
 
-var hillsValue = addressFacetResults.Facet("Hills"); // Gets the IFacetValue for the facet Hills
+var hillsValue = addressFacetResults.WithFacet("Hills"); // Gets the IFacetValue for the facet Hills
 ```
 
 MaxCount example
@@ -347,7 +347,7 @@ var searcher = myIndex.Searcher;
 var results = searcher.CreateQuery()
  .Field("Address", "Hills")
  .And()
- .Facet("Address") // Get facets of the Address field
+ .WithFacet("Address") // Get facets of the Address field
  .Execute();
 
 var addressFacetResults = results.GetFacet("Address"); // Returns the facets for the specific field Address
@@ -362,7 +362,7 @@ var addressFacetResults = results.GetFacet("Address"); // Returns the facets for
 results = searcher.CreateQuery()
  .Field("Address", "Hills")
  .And()
- .Facet("Address") // Get facets of the Address field
+ .WithFacet("Address") // Get facets of the Address field
     .MaxCount(2) // Gets the top 2 results (The facets with the highest value)
  .Execute();
 
@@ -399,7 +399,7 @@ var searcher = myIndex.Searcher;
 var results = searcher.CreateQuery()
  .Field("Address", "Hills")
  .And()
- .Facet("Address") // Get facets of the Address field
+ .WithFacet("Address") // Get facets of the Address field
     .FacetField("address_facet")
  .Execute();
 
@@ -422,7 +422,7 @@ Double range example
 ```csharp
 var searcher = myIndex.Searcher;
 var results = searcher.CreateQuery()
- .Facet("Price", new DoubleRange[] {
+ .WithFacet("Price", new DoubleRange[] {
   new DoubleRange("0-10", 0, true, 10, true),
   new DoubleRange("11-20", 11, true, 20, true)
  }) // Get facets of the price field
@@ -438,14 +438,14 @@ var priceFacetResults = results.GetFacet("Price"); // Returns the facets for the
 * Label: 11-20, Value: 10
 */
 
-var firstRangeValue = priceFacetResults.Facet("0-10"); // Gets the IFacetValue for the facet "0-10"
+var firstRangeValue = priceFacetResults.WithFacet("0-10"); // Gets the IFacetValue for the facet "0-10"
 ```
 
 Float range example
 ```csharp
 var searcher = myIndex.Searcher;
 var results = searcher.CreateQuery()
- .Facet("Price", new DoubleRange[] {
+ .WithFacet("Price", new DoubleRange[] {
   new DoubleRange("0-10", 0, true, 10, true),
   new DoubleRange("11-20", 11, true, 20, true)
  }) // Get facets of the price field
@@ -462,14 +462,14 @@ var priceFacetResults = results.GetFacet("Price"); // Returns the facets for the
 * Label: 11-20, Value: 10
 */
 
-var firstRangeValue = priceFacetResults.Facet("0-10"); // Gets the IFacetValue for the facet "0-10"
+var firstRangeValue = priceFacetResults.WithFacet("0-10"); // Gets the IFacetValue for the facet "0-10"
 ```
 
 Int/Long range example
 ```csharp
 var searcher = myIndex.Searcher;
 var results = searcher.CreateQuery()
- .Facet("Price", new Int64Range[] {
+ .WithFacet("Price", new Int64Range[] {
   new Int64Range("0-10", 0, true, 10, true),
   new Int64Range("11-20", 11, true, 20, true)
  }) // Get facets of the price field
@@ -485,14 +485,14 @@ var priceFacetResults = results.GetFacet("Price"); // Returns the facets for the
 * Label: 11-20, Value: 10
 */
 
-var firstRangeValue = priceFacetResults.Facet("0-10"); // Gets the IFacetValue for the facet "0-10"
+var firstRangeValue = priceFacetResults.WithFacet("0-10"); // Gets the IFacetValue for the facet "0-10"
 ```
 
 DateTime range example
 ```csharp
 var searcher = myIndex.Searcher;
 var results = searcher.CreateQuery()
- .Facet("Created", new Int64Range[] {
+ .WithFacet("Created", new Int64Range[] {
   new Int64Range("first", DateTime.UtcNow.AddDays(-1).Ticks, true, DateTime.UtcNow.Ticks, true),
   new Int64Range("last", DateTime.UtcNow.AddDays(1).Ticks, true, DateTime.UtcNow.AddDays(2).Ticks, true)
  }) // Get facets of the price field
@@ -508,5 +508,4 @@ var createdFacetResults = results.GetFacet("Created"); // Returns the facets for
 * Label: last, Value: 10
 */
 
-var firstRangeValue = createdFacetResults.Facet("first"); // Gets the IFacetValue for the facet "first"
-```
+var firstRangeValue = createdFacetResults.WithFacet("first"); // Gets the IFacetValue for the facet "first"
