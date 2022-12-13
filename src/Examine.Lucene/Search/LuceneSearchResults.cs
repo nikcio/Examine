@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Examine.Lucene.Search
 {
@@ -37,7 +38,7 @@ namespace Examine.Lucene.Search
         public float MaxScore { get; }
 
         public SearchAfterOptions SearchAfter { get; }
-        public IDictionary<string, IFacetResult> Facets { get; }
+        public IReadOnlyDictionary<string, IFacetResult> Facets { get; }
 
         public IEnumerator<ISearchResult> GetEnumerator() => _results.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
