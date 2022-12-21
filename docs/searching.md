@@ -307,7 +307,7 @@ Basic example
 var searcher = myIndex.Searcher;
 var results = searcher.CreateQuery()
  .Field("Address", "Hills")
- .WithFacets(facets => facets.WithFacet("Address")) // Get facets of the Address field
+ .WithFacets(facets => facets.Facet("Address")) // Get facets of the Address field
  .Execute();
 
 var addressFacetResults = results.GetFacet("Address"); // Returns the facets for the specific field Address
@@ -326,7 +326,7 @@ Filtered value example
 var searcher = myIndex.Searcher;
 var results = searcher.CreateQuery()
     .Field("Address", "Hills")
-    .WithFacets(facets => facets.WithFacet("Address", "Hills")) // Get facets of the Address field
+    .WithFacets(facets => facets.Facet("Address", "Hills")) // Get facets of the Address field
     .Execute();
 
 var addressFacetResults = results.GetFacet("Address"); // Returns the facets for the specific field Address
@@ -344,7 +344,7 @@ MaxCount example
 var searcher = myIndex.Searcher;
 var results = searcher.CreateQuery()
     .Field("Address", "Hills")
-    .WithFacets(facets => facets.WithFacet("Address")) // Get facets of the Address field
+    .WithFacets(facets => facets.Facet("Address")) // Get facets of the Address field
     .Execute();
 
 var addressFacetResults = results.GetFacet("Address"); // Returns the facets for the specific field Address
@@ -358,7 +358,7 @@ var addressFacetResults = results.GetFacet("Address"); // Returns the facets for
 
 results = searcher.CreateQuery()
     .Field("Address", "Hills")
-    .WithFacets(facets => facets.WithFacet("Address").MaxCount(2)) // Get facets of the Address field & Gets the top 2 results (The facets with the highest value)
+    .WithFacets(facets => facets.Facet("Address", config => config.MaxCount(2))) // Get facets of the Address field & Gets the top 2 results (The facets with the highest value)
     .Execute();
 
 addressFacetResults = results.GetFacet("Address"); // Returns the facets for the specific field Address
@@ -393,7 +393,7 @@ services.AddExamineLuceneIndex("MyIndex",
 var searcher = myIndex.Searcher;
 var results = searcher.CreateQuery()
     .Field("Address", "Hills")
-    .WithFacets(facets => facets.WithFacet("Address").FacetField("address_facet")) // Get facets of the Address field from the facet field address_facet
+    .WithFacets(facets => facets.Facet("Address")) // Get facets of the Address field from the facet field address_facet (The facet field is automatically read from the FacetsConfig)
     .Execute();
 
 var addressFacetResults = results.GetFacet("Address"); // Returns the facets for the specific field Address
@@ -416,7 +416,7 @@ Double range example
 var searcher = myIndex.Searcher;
 var results = searcher.CreateQuery()
     .All()
-    .WithFacets(facets => facets.WithFacet("Price", new DoubleRange[] {
+    .WithFacets(facets => facets.Facet("Price", new DoubleRange[] {
         new DoubleRange("0-10", 0, true, 10, true),
         new DoubleRange("11-20", 11, true, 20, true)
     })) // Get facets of the price field
@@ -438,7 +438,7 @@ Float range example
 var searcher = myIndex.Searcher;
 var results = searcher.CreateQuery()
     .All()
-    .WithFacets(facets => facets.WithFacet("Price", new FloatRange[] {
+    .WithFacets(facets => facets.Facet("Price", new FloatRange[] {
         new FloatRange("0-10", 0, true, 10, true),
         new FloatRange("11-20", 11, true, 20, true)
     })) // Get facets of the price field
@@ -460,7 +460,7 @@ Int/Long range example
 var searcher = myIndex.Searcher;
 var results = searcher.CreateQuery()
     .All()
-    .WithFacets(facets => facets.WithFacet("Price", new Int64Range[] {
+    .WithFacets(facets => facets.Facet("Price", new Int64Range[] {
         new Int64Range("0-10", 0, true, 10, true),
         new Int64Range("11-20", 11, true, 20, true)
     })) // Get facets of the price field
@@ -482,7 +482,7 @@ DateTime range example
 var searcher = myIndex.Searcher;
 var results = searcher.CreateQuery()
     .All()
-    .WithFacets(facets => facets.WithFacet("Created", new Int64Range[] {
+    .WithFacets(facets => facets.Facet("Created", new Int64Range[] {
         new Int64Range("first", DateTime.UtcNow.AddDays(-1).Ticks, true, DateTime.UtcNow.Ticks, true),
         new Int64Range("last", DateTime.UtcNow.AddDays(1).Ticks, true, DateTime.UtcNow.AddDays(2).Ticks, true)
     })) // Get facets of the price field
